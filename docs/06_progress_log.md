@@ -107,3 +107,32 @@
   - The boot check is evidence capture under timeout, not a long-running stability test.
   - Manual interactive shell testing is TODO.
   - Second-person code review is TODO.
+
+## 2026-06-04: stage2b red-team lab1 patch reproducibility
+
+- Commit hash: TODO after commit
+- Role: strict reviewer + engineering red team + OS lab TA (Claude Code).
+- Goal: verify the lab1 patch is reproducible from a clean baseline and that the evidence chain is honest enough for judges.
+- Completed (real runs in WSL2 Ubuntu, inside the ignored `external/xv6-riscv/`):
+  - Reviewed `0001-add-hello-syscall.patch`: only lab1-necessary files; no build artifacts/logs/personal paths; `SYS_hello 22` has no conflict; full user->kernel chain present.
+  - Reset the ignored baseline tree to commit `74f84181a3404d1d6a6ff98d342233979066ebb8` with `git reset --hard` + `git clean -fdx`; confirmed CLEAN.
+  - `git apply --check` returned exit 0 (patch applies cleanly to clean baseline).
+  - `git apply` then `make` (clean full build) succeeded (exit 0); only the known `LOAD segment with RWX permissions` linker warning.
+  - Captured `hello syscall returned 2026` from xv6 shell (COMMAND_EVIDENCE_FOUND).
+  - Added `docs/12_lab1_patch_review.md` (reproduction review report).
+  - Added `scripts/xv6/apply-lab1-patch.sh` (preview by default; `--run` resets clean + applies; `--make` optional).
+  - Corrected stale README status (baseline imported, lab1 minimal hello verified) without overstating; framed lab1 as a minimal syscall closed loop.
+  - Recorded the independent reproduction in `docs/04_test_report.md` and linked it from `tests/lab1/README.md`.
+- Real result:
+  - clean baseline apply: PASS (`git apply --check` exit 0)
+  - clean make: PASS (exit 0)
+  - hello output: `hello syscall returned 2026`
+  - stage2b make log (ignored): `logs/xv6-make-20260604-004515.log`
+  - stage2b hello log (ignored): `logs/xv6-command-hello-20260604-004630.log`
+- Boundaries:
+  - `external/xv6-riscv/` and `logs/*.log` remain ignored and were not committed (verified `git ls-files` empty for both).
+  - Evidence is timeout-based capture, not a long-running stability test or full manual interaction.
+  - Single-person + AI reproduction; second-person independent reproduction remains TODO.
+- Next:
+  - Have a second team member reproduce on another machine per `docs/12` section 9.
+  - Consider a lab1 extension syscall that demonstrates argument passing.

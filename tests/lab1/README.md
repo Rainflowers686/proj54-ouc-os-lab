@@ -41,6 +41,10 @@ hello syscall returned 2026
 - TODO: syscall number 冲突、用户态 stub 缺失等负向测试。
 - TODO: 由第二名队员进行代码和文档复核。
 
+## clean baseline 复现
+
+patch 已在 stage2b 做过 clean baseline 独立复现（`git apply --check` exit 0、clean `make` 成功、捕获 `hello syscall returned 2026`），详见 [../../docs/12_lab1_patch_review.md](../../docs/12_lab1_patch_review.md)。
+
 ## 与测试报告的关系
 
 正式摘要记录在 `docs/04_test_report.md`。本文件保留 lab1 专项测试说明，不复制完整日志。

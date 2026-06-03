@@ -114,6 +114,27 @@ hello syscall returned 2026
 - 尚未由第二名队员复核 patch。
 - 2026-06-04 00:20:22 +08:00 的一次早期自动输入尝试未检测到 hello 输出，原因是输入可能被构建过程消耗；脚本改为先构建 `fs.img` 后复跑，2026-06-04 00:21:47 +08:00 获得预期输出证据。
 
+### lab1 patch clean-baseline 复现测试（stage2b 红队）
+
+| 字段 | 内容 |
+| --- | --- |
+| 测试名称 | lab1 patch clean-baseline 复现测试 |
+| 日期时间 | 2026-06-04 00:45-00:46 +08:00 |
+| 环境 | WSL2 Ubuntu 24.04，`riscv64-linux-gnu-gcc`，`qemu-system-riscv64` |
+| 步骤 | 在被忽略的 `external/xv6-riscv/` 中 `git reset --hard 74f8418` + `git clean -fdx` 得到 clean baseline，再 `git apply` patch |
+| `git apply --check` | exit 0（patch 可干净应用，无 fuzz/offset/reject） |
+| clean `make` 结果 | 成功（exit 0，全量从零编译） |
+| hello 输出结果 | 捕获到 `hello syscall returned 2026`（`COMMAND_EVIDENCE_FOUND`） |
+| 本次 make 日志 | `logs/xv6-make-20260604-004515.log`（被 Git 忽略） |
+| 本次 hello 日志 | `logs/xv6-command-hello-20260604-004630.log`（被 Git 忽略） |
+| 结论 | patch 从 clean baseline 可复现；详见 `docs/12_lab1_patch_review.md` |
+
+边界说明：
+
+- 该测试为独立二次复现（从 clean baseline 重新 apply），与 stage2a 团队记录结果一致。
+- 仍为 timeout 自动捕获，不等于长期稳定性或完整人工交互测试。
+- 原始日志未提交；第二名队员独立复核仍为 TODO。
+
 ## 当前风险与后续动作
 
 | 风险 | 状态 / 处理 |

@@ -22,6 +22,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 | GitHub workflow | `docs/09_github_workflow.md` | exists | workflow draft |
 | Internal red-team review | `docs/10_red_team_review.md` | exists | draft |
 | xv6 baseline plan | `docs/11_xv6_baseline_plan.md` | exists | stage1b plan |
+| lab1 patch reproducibility review | `docs/12_lab1_patch_review.md` | exists | stage2b red-team; clean-baseline apply/make/hello verified |
 | lab0 environment guide | `labs/lab0-env-setup/README.md` | exists | xv6 baseline make succeeded; boot evidence found; manual interaction TODO |
 | lab1 syscall lab | `labs/lab1-system-call/README.md` | exists | hello syscall patch generated and verified |
 | lab2 process and scheduling | `labs/lab2-process-and-scheduling/README.md` | exists | planned |
@@ -36,6 +37,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 | xv6 baseline check script | `scripts/xv6/check-xv6-baseline.sh` | exists | stage1b tooling; make not run by default |
 | xv6 boot evidence script | `scripts/xv6/boot-xv6.sh` | exists | captures boot keywords under timeout |
 | xv6 command evidence script | `scripts/xv6/run-xv6-command.sh` | exists | captures user program output under timeout |
+| lab1 patch apply helper | `scripts/xv6/apply-lab1-patch.sh` | exists | preview by default; --run resets clean baseline and applies; --make optional |
 | lab1 hello syscall patch | `patches/lab1-system-call/0001-add-hello-syscall.patch` | exists | tracked patch; third-party source not submitted |
 | lab1 patch guide | `patches/lab1-system-call/README.md` | exists | apply/build/run instructions |
 | external directory guide | `external/README.md` | exists | baseline management notes |

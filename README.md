@@ -6,7 +6,7 @@
 - 赛题编号：proj54
 - 赛题名称：面向操作系统课程的操作系统竞赛和实验
 - 赛题类型：教学型
-- 当前阶段：初赛 MVP v0.1
+- 当前阶段：初赛 MVP；xv6-riscv baseline 已引入并构建，lab1 最小 hello syscall 已通过 clean baseline 复现验证
 
 ## 队伍信息
 
@@ -28,12 +28,15 @@
 1. 项目首页与定位：[README.md](README.md)
 2. 赛题拆解与评分项对应：[docs/01_requirement_analysis.md](docs/01_requirement_analysis.md)
 3. 项目计划与里程碑：[docs/00_project_plan.md](docs/00_project_plan.md)
-4. lab0 环境教程：[labs/lab0-env-setup/README.md](labs/lab0-env-setup/README.md)
-5. lab1 系统调用实验设计：[labs/lab1-system-call/README.md](labs/lab1-system-call/README.md)
-6. AI 使用记录：[docs/05_ai_usage_record.md](docs/05_ai_usage_record.md)
-7. 引用与许可证：[docs/08_reference_and_license.md](docs/08_reference_and_license.md)
-8. 内部红队审查报告：[docs/10_red_team_review.md](docs/10_red_team_review.md)
-9. 初赛材料索引：[submissions/draft-report-index.md](submissions/draft-report-index.md)
+4. lab0 环境与 baseline 验证：[labs/lab0-env-setup/README.md](labs/lab0-env-setup/README.md)
+5. lab1 最小 hello syscall 实验：[labs/lab1-system-call/README.md](labs/lab1-system-call/README.md)
+6. lab1 patch 与应用说明：[patches/lab1-system-call/README.md](patches/lab1-system-call/README.md)
+7. lab1 patch 复现审查报告：[docs/12_lab1_patch_review.md](docs/12_lab1_patch_review.md)
+8. 测试报告（真实证据摘要）：[docs/04_test_report.md](docs/04_test_report.md)
+9. AI 使用记录：[docs/05_ai_usage_record.md](docs/05_ai_usage_record.md)
+10. 引用与许可证：[docs/08_reference_and_license.md](docs/08_reference_and_license.md)
+11. 内部红队审查报告：[docs/10_red_team_review.md](docs/10_red_team_review.md)
+12. 初赛材料索引：[submissions/draft-report-index.md](submissions/draft-report-index.md)
 
 ## 项目定位
 
@@ -48,26 +51,30 @@
 
 ## 当前状态
 
+下表反映真实进度，已验证项均有日志/命令证据；自动捕获的证据不等于长期稳定或完整人工交互测试。
+
 | 模块 | 状态 | 说明 |
 | --- | --- | --- |
 | scaffold | 已完成 | 已建立 README、docs、labs、scripts、tests、references、slides、videos、submissions 等目录 |
-| lab0 | 文档初版 | 已形成环境教程初版，安装方式和 baseline 跑通步骤仍需待验证 |
-| lab1 | 实验设计初版 | 已形成系统调用实验设计，尚未引入 xv6-riscv baseline |
-| xv6-riscv baseline | TODO，未引入 | 本轮不引入 xv6 源码，后续需确认版本、许可证和引入方式 |
-| 测试脚本 | 最小占位可运行 | `scripts/` 中脚本可运行，但不执行 xv6 构建或测试 |
-| 技术报告 | TODO | 初赛报告索引见 `submissions/draft-report-index.md` |
+| xv6-riscv baseline | 已引入（不提交源码） | commit `74f84181a3404d1d6a6ff98d342233979066ebb8`；源码在被 `.gitignore` 忽略的 `external/xv6-riscv/`，仓库只提交 patch 与 metadata |
+| lab0 环境与 baseline | 已真实验证 | WSL2 Ubuntu 工具链 OK；baseline `make` 成功；boot evidence 捕获到 `xv6 kernel is booting` 与 `init: starting sh`（timeout 自动捕获） |
+| lab1 最小 hello syscall | patch 已复现验证 | `patches/lab1-system-call/` 中 patch 可从 clean baseline `git apply` 成功、`make` 成功、捕获到 `hello syscall returned 2026`；属最小 syscall 闭环，非完整实验体系 |
+| xv6 脚本 | 可运行 | `scripts/xv6/` 提供 fetch/check/boot/run 与 apply 脚本，原始日志写入被忽略的 `logs/` |
+| lab2-lab5 / 教学正文 | 占位/计划中 | `docs/03`、lab2-lab5 仍为模板或 TODO |
+| 技术报告 / PPT / Demo | TODO | 初赛报告索引见 `submissions/draft-report-index.md` |
 
 ## 当前未完成事项
 
-为避免夸大，明确列出当前**尚未完成**的关键事项（详见 [docs/10_red_team_review.md](docs/10_red_team_review.md)）：
+为避免夸大，明确列出当前**尚未完成**的关键事项（详见 [docs/10_red_team_review.md](docs/10_red_team_review.md) 与 [docs/12_lab1_patch_review.md](docs/12_lab1_patch_review.md)）：
 
-- xv6-riscv baseline 未引入，QEMU 与 RISC-V 工具链未在本项目环境中验证。
-- 无任何 lab 实现代码，实现完整度当前接近零。
-- 无任何真实测试执行记录，测试完整度当前接近零。
-- 教学正文（`docs/03_step_by_step_guide.md`、lab2-lab5）仍为占位或 TODO。
+- lab1 仅为最小 `hello()` syscall 闭环，未演示参数传递等进阶内容；lab2-lab5 与 `docs/03_step_by_step_guide.md` 仍为占位或 TODO。
+- 长期 QEMU 稳定性测试、人工交互 shell 测试、负向测试、第二名队员独立复核均为 TODO。
 - 队内分工尚未具名。
 - 仓库根目录尚无自有 LICENSE 文件，待团队确认开源许可后补充。
 - 技术报告、PPT、Demo 视频均为 TODO。
+- 创新性落地物（如海大特色一键自检/自动评分）仍较薄。
+
+> 注意：xv6-riscv 第三方源码（`external/xv6-riscv/`）与原始日志（`logs/*.log`）按策略不提交；可提交的 lab1 产物是 patch 与复现文档。
 
 ## 仓库目录说明
 
