@@ -1,8 +1,8 @@
-# lab0: Environment Setup and Baseline Preparation
+# lab0: Environment Setup and Baseline Build
 
 ## Goal
 
-lab0 helps students prepare the OS lab environment, inspect required tools, and fetch the xv6-riscv baseline metadata without claiming any unverified build or boot result.
+lab0 helps students prepare the OS lab environment, inspect required tools, fetch the xv6-riscv baseline metadata, and record the first real baseline build result.
 
 ## Recommended Environment
 
@@ -30,7 +30,7 @@ Observed result:
 | `riscv64-linux-gnu-gcc` | OK | Available in WSL2 |
 | `riscv64-unknown-elf-gcc` | WARN | Missing, but `riscv64-linux-gnu-gcc` is available |
 
-This means the local environment is ready for baseline structure checks. It does not mean xv6 has been built or booted.
+This means the local environment is ready for baseline structure checks and baseline build verification.
 
 ## Manual Check Commands
 
@@ -98,29 +98,56 @@ The check verifies:
 
 This command does not run `make`.
 
-## Build Status
+## Real Build Verification Record
 
-Current status:
+The team lead has run:
 
-- xv6-riscv baseline fetch: stage1b in progress.
-- xv6-riscv `make`: TODO, not run in this stage.
-- QEMU boot: TODO, not run in this stage.
+```bash
+bash scripts/xv6/check-xv6-baseline.sh --make
+```
 
-Do not write “xv6 built successfully” or “xv6 booted successfully” until the real command has been run and recorded.
+Real result:
+
+| Item | Result |
+| --- | --- |
+| Date/time | 2026-06-03 23:50:03 +08:00 |
+| Result | make completed successfully |
+| Compiler used | `riscv64-linux-gnu-gcc` |
+| Linker used | `riscv64-linux-gnu-ld` |
+| QEMU tool | `qemu-system-riscv64` detected, but boot not run |
+| Warning | linker `LOAD segment with RWX permissions` warning |
+| Log file | `logs/xv6-make-20260603-235003.log` |
+| Test report | `docs/04_test_report.md` |
+
+This successful `make` only proves that the baseline build completed in this WSL2 environment. It does not prove that xv6 boots successfully.
+
+## Current Status
+
+- xv6-riscv baseline fetch: completed locally under `external/xv6-riscv/`.
+- xv6-riscv `make`: completed successfully once.
+- Raw make log: ignored by Git; do not commit `logs/*.log`.
+- QEMU boot: TODO, not run.
+- lab1 system call implementation: TODO, not started.
+
+Do not write "xv6 booted successfully" until `make qemu` or an equivalent boot command has really been run and recorded.
 
 ## Common Issues
 
 ### Windows path contains spaces
 
-The current repository path contains spaces. For actual xv6 work, WSL-native paths such as `~/workspace/proj54-ouc-os-lab` are usually safer than `/mnt/d/...`, especially for build and shell quoting behavior. This is a recommendation, not a verified requirement.
+The current repository path contains spaces. The baseline build succeeded once in this path, but WSL-native paths such as `~/workspace/proj54-ouc-os-lab` may still be safer for repeated build and boot work.
 
 ### `riscv64-unknown-elf-gcc` is missing
 
-Current WSL2 has `riscv64-linux-gnu-gcc`, which may be enough depending on the xv6 Makefile prefix detection. This must be confirmed by a real future build.
+Current WSL2 has `riscv64-linux-gnu-gcc`, and the baseline make succeeded with it. Keep this recorded and re-check if the xv6 Makefile or toolchain setup changes.
 
-### QEMU is missing
+### Linker RWX warning
 
-If `qemu-system-riscv64` is missing, install the proper QEMU package in WSL2 after team-lead authorization. Do not record QEMU boot success without running it.
+The make log includes a linker `LOAD segment with RWX permissions` warning. The build still completed successfully, but the warning should be understood before final reporting.
+
+### QEMU boot is not verified
+
+`qemu-system-riscv64` is available, but `make qemu` has not been run. Boot success remains TODO.
 
 ### Shell script line endings
 

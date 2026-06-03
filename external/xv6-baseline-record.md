@@ -12,10 +12,12 @@ It is safe to commit this metadata file. Do not commit the third-party source tr
 | Remote URL | `https://github.com/mit-pdos/xv6-riscv.git` |
 | LICENSE file exists | yes |
 | Record generated at | 2026-06-03T23:27:49+08:00 |
-| Built | no, pending real `make` |
+| Built | yes, `make` completed successfully at 2026-06-03 23:50:03 +08:00 |
+| Build log | `logs/xv6-make-20260603-235003.log` (ignored by Git) |
+| Booted | no, `make qemu` not run |
 
 ## Notes
 
 - `external/xv6-riscv/` is ignored by `.gitignore` and should not be committed as third-party source code.
-- This record does not claim that xv6-riscv has been built or booted.
+- This record claims only that `make` completed successfully. It does not claim that xv6-riscv has booted.
 - Future build logs should be generated only from real commands and recorded under `logs/` or summarized in project docs.

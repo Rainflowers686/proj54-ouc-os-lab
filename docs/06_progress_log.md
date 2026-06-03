@@ -54,4 +54,28 @@
 - Next:
   - Run fetch/status/check scripts.
   - Confirm `external/xv6-riscv/` is ignored.
-  - Do not run `make` until team lead authorizes it.
+  - Build verification has now been run separately by the team lead; see the next progress entry.
+
+## 2026-06-03: xv6-riscv baseline make success
+
+- Commit hash: TODO after commit
+- Completed:
+  - The team lead ran `bash scripts/xv6/check-xv6-baseline.sh --make` in WSL2 Ubuntu.
+  - xv6-riscv baseline `make` completed successfully.
+  - Raw log file exists locally at `logs/xv6-make-20260603-235003.log`.
+  - The raw log remains ignored by Git and should not be committed.
+  - `docs/04_test_report.md` and `labs/lab0-env-setup/README.md` summarize the real build evidence.
+- Real result:
+  - Date/time: 2026-06-03 23:50:03 +08:00
+  - Toolchain: `riscv64-linux-gnu-gcc`, `riscv64-linux-gnu-ld`
+  - `qemu-system-riscv64`: OK
+  - `riscv64-unknown-elf-gcc`: WARN
+  - Linker warning: `LOAD segment with RWX permissions`
+  - make exit result: success
+- Explicitly not run:
+  - `make qemu`
+  - xv6 boot into shell
+  - lab1 system call implementation
+- Next:
+  - Ask the team lead before running QEMU boot verification.
+  - If boot is run later, record the exact command, output summary, and risks in `docs/04_test_report.md`.
