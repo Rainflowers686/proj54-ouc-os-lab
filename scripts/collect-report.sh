@@ -51,6 +51,8 @@ mkdir -p submissions
   status_line "docs/10_red_team_review.md" "Internal red-team review" "draft"
   status_line "docs/11_xv6_baseline_plan.md" "xv6 baseline plan" "stage1b plan"
   status_line "docs/12_lab1_patch_review.md" "lab1 patch reproducibility review" "stage2b red-team; clean-baseline apply/make/hello verified"
+  status_line "docs/13_technical_report_v0.1.md" "Technical report v0.1" "stage2c draft; not final report"
+  status_line "reproducibility/README.md" "Reproducibility package" "lab0/lab1 reproduction checklist and template"
   status_line "labs/lab0-env-setup/README.md" "lab0 environment guide" "xv6 baseline make succeeded; boot evidence found; manual interaction TODO"
   status_line "labs/lab1-system-call/README.md" "lab1 syscall lab" "hello syscall patch generated and verified"
   status_line "labs/lab2-process-and-scheduling/README.md" "lab2 process and scheduling" "planned"
@@ -72,8 +74,9 @@ mkdir -p submissions
   baseline_record_status
   status_line "logs/README.md" "logs directory guide" "raw logs ignored by default; current make log is not tracked"
   status_line "references/README.md" "reference directory guide" "placeholder"
-  status_line "slides/README.md" "PPT notes" "TODO"
-  status_line "videos/README.md" "Demo video notes" "TODO"
+  status_line "slides/README.md" "PPT structure plan" "stage2c outline; actual PPT TODO"
+  status_line "videos/README.md" "Demo video notes" "records video policy and TODO status"
+  status_line "videos/demo_script.md" "Demo script draft" "2-3 minute lab0/lab1 demo flow; recording TODO"
   echo "| Final submission | \`submissions/\` | - | TODO: organize against official requirements |"
   echo
   echo "## Notes"
@@ -81,6 +84,7 @@ mkdir -p submissions
   echo "- File existence is checked by this script; content quality still needs human review."
   echo "- \`external/xv6-riscv/\` is intentionally not listed as a tracked submission artifact."
   echo "- xv6 baseline make, boot evidence, lab1 patched make, and hello output are summarized in docs/04_test_report.md."
+  echo "- Technical report v0.1 and reproducibility package are drafts for review, not final submission files."
   echo "- Raw logs remain ignored by Git; do not submit logs/*.log."
   echo "- QEMU long-running stability and manual interactive shell testing remain TODO."
 } > "$out"

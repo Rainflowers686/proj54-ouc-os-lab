@@ -23,6 +23,8 @@ It is not the final technical report, does not generate PDF, and does not includ
 | Internal red-team review | `docs/10_red_team_review.md` | exists | draft |
 | xv6 baseline plan | `docs/11_xv6_baseline_plan.md` | exists | stage1b plan |
 | lab1 patch reproducibility review | `docs/12_lab1_patch_review.md` | exists | stage2b red-team; clean-baseline apply/make/hello verified |
+| Technical report v0.1 | `docs/13_technical_report_v0.1.md` | exists | stage2c draft; not final report |
+| Reproducibility package | `reproducibility/README.md` | exists | lab0/lab1 reproduction checklist and template |
 | lab0 environment guide | `labs/lab0-env-setup/README.md` | exists | xv6 baseline make succeeded; boot evidence found; manual interaction TODO |
 | lab1 syscall lab | `labs/lab1-system-call/README.md` | exists | hello syscall patch generated and verified |
 | lab2 process and scheduling | `labs/lab2-process-and-scheduling/README.md` | exists | planned |
@@ -44,8 +46,9 @@ It is not the final technical report, does not generate PDF, and does not includ
 | xv6 baseline metadata | `external/xv6-baseline-record.md` | exists | metadata generated; records make success and boot evidence; manual interaction TODO |
 | logs directory guide | `logs/README.md` | exists | raw logs ignored by default; current make log is not tracked |
 | reference directory guide | `references/README.md` | exists | placeholder |
-| PPT notes | `slides/README.md` | exists | TODO |
-| Demo video notes | `videos/README.md` | exists | TODO |
+| PPT structure plan | `slides/README.md` | exists | stage2c outline; actual PPT TODO |
+| Demo video notes | `videos/README.md` | exists | records video policy and TODO status |
+| Demo script draft | `videos/demo_script.md` | exists | 2-3 minute lab0/lab1 demo flow; recording TODO |
 | Final submission | `submissions/` | - | TODO: organize against official requirements |
 
 ## Notes
@@ -53,5 +56,6 @@ It is not the final technical report, does not generate PDF, and does not includ
 - File existence is checked by this script; content quality still needs human review.
 - `external/xv6-riscv/` is intentionally not listed as a tracked submission artifact.
 - xv6 baseline make, boot evidence, lab1 patched make, and hello output are summarized in docs/04_test_report.md.
+- Technical report v0.1 and reproducibility package are drafts for review, not final submission files.
 - Raw logs remain ignored by Git; do not submit logs/*.log.
 - QEMU long-running stability and manual interactive shell testing remain TODO.

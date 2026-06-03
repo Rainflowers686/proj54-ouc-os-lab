@@ -108,6 +108,36 @@
   - Manual interactive shell testing is TODO.
   - Second-person code review is TODO.
 
+## 2026-06-04: stage2c technical report and reproducibility package
+
+- Commit hash: TODO after commit
+- Completed:
+  - Added `docs/13_technical_report_v0.1.md` as the initial technical report draft.
+  - Added `reproducibility/README.md` for lab0/lab1 reproduction steps and teammate review template.
+  - Added `videos/demo_script.md` for a short lab0/lab1 demo plan.
+  - Updated `slides/README.md` with the initial PPT structure plan.
+  - Updated `README.md` to include the technical report, reproducibility package, demo script, and current status.
+  - Updated `scripts/collect-report.sh` and regenerated `submissions/draft-report-index.md`.
+  - Updated AI usage record for stage2c.
+- Verification run in this stage:
+  - `bash scripts/check-env.sh`
+  - `bash scripts/xv6/check-xv6-baseline.sh`
+  - `bash scripts/xv6/boot-xv6.sh`
+  - `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"`
+  - `bash scripts/collect-report.sh`
+  - `git diff --check`
+- Real result:
+  - Environment precheck: OK for required base tools; `riscv64-unknown-elf-gcc` remains WARN.
+  - Baseline structure check: OK.
+  - Boot evidence: found.
+  - hello output evidence: found.
+- Boundaries:
+  - No new OS feature was implemented in stage2c.
+  - No lab2 implementation was started.
+  - Second teammate independent reproduction remains TODO.
+  - Manual interaction video remains TODO.
+  - Third-party source and raw logs remain ignored and must not be committed.
+
 ## 2026-06-04: stage2b red-team lab1 patch reproducibility
 
 - Commit hash: TODO after commit
