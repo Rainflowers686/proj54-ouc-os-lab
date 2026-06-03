@@ -14,6 +14,27 @@
 - 队伍：蓝色系统队
 - 队内分工：TODO，持续维护在 [docs/00_project_plan.md](docs/00_project_plan.md)
 
+## 代码仓库与提交说明
+
+- 官方比赛主仓库（最终提交以此为准）：GitLab `origin`。
+- 私有协作备份仓库：GitHub `github`，仅用于备份、协作和 issue 管理，**不是最终提交平台**。
+- 两个 remote 同时存在，推送时需分别 `git push origin main` 与 `git push github main`，详见 [docs/09_github_workflow.md](docs/09_github_workflow.md)。
+- 仓库不提交报名材料、个人隐私、账号密码、token、截图原件或大型二进制文件。
+
+## 评委快速查看路径
+
+为便于快速评审，建议按以下顺序查看：
+
+1. 项目首页与定位：[README.md](README.md)
+2. 赛题拆解与评分项对应：[docs/01_requirement_analysis.md](docs/01_requirement_analysis.md)
+3. 项目计划与里程碑：[docs/00_project_plan.md](docs/00_project_plan.md)
+4. lab0 环境教程：[labs/lab0-env-setup/README.md](labs/lab0-env-setup/README.md)
+5. lab1 系统调用实验设计：[labs/lab1-system-call/README.md](labs/lab1-system-call/README.md)
+6. AI 使用记录：[docs/05_ai_usage_record.md](docs/05_ai_usage_record.md)
+7. 引用与许可证：[docs/08_reference_and_license.md](docs/08_reference_and_license.md)
+8. 内部红队审查报告：[docs/10_red_team_review.md](docs/10_red_team_review.md)
+9. 初赛材料索引：[submissions/draft-report-index.md](submissions/draft-report-index.md)
+
 ## 项目定位
 
 本项目面向中国海洋大学低年级计算机学生，建设一套 OS 竞赛入门实验体系。项目暂定以 xv6-riscv 为主线，参考 rCore/uCore 课程资源的组织方式，构建从环境配置、系统调用、进程与调度、页表与内存、文件系统到最终集成的 step by step 实验教程、代码框架、测试用例、参考实现、FAQ 和过程记录。
@@ -35,6 +56,18 @@
 | xv6-riscv baseline | TODO，未引入 | 本轮不引入 xv6 源码，后续需确认版本、许可证和引入方式 |
 | 测试脚本 | 最小占位可运行 | `scripts/` 中脚本可运行，但不执行 xv6 构建或测试 |
 | 技术报告 | TODO | 初赛报告索引见 `submissions/draft-report-index.md` |
+
+## 当前未完成事项
+
+为避免夸大，明确列出当前**尚未完成**的关键事项（详见 [docs/10_red_team_review.md](docs/10_red_team_review.md)）：
+
+- xv6-riscv baseline 未引入，QEMU 与 RISC-V 工具链未在本项目环境中验证。
+- 无任何 lab 实现代码，实现完整度当前接近零。
+- 无任何真实测试执行记录，测试完整度当前接近零。
+- 教学正文（`docs/03_step_by_step_guide.md`、lab2-lab5）仍为占位或 TODO。
+- 队内分工尚未具名。
+- 仓库根目录尚无自有 LICENSE 文件，待团队确认开源许可后补充。
+- 技术报告、PPT、Demo 视频均为 TODO。
 
 ## 仓库目录说明
 

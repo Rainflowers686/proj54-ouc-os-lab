@@ -63,3 +63,41 @@
   - 完成 lab0 环境真实验证。
   - 确认 xv6-riscv baseline 来源、版本和许可证。
   - 开始 lab1 系统调用最小实现设计与测试计划。
+
+## 2026-06-03（红队审查与修复轮）
+
+- commit hash：TODO: after commit
+- 完成人：Claude（AI 辅助）+ TODO：队长复核
+- 变更范围：内部红队审查与低风险文档/脚本改进，未引入任何第三方源码，未改动 remote。
+- 已完成：
+  - 新增内部红队审查报告 `docs/10_red_team_review.md`（总体结论、按评分项预估、风险 Top 10、必改/可留/可缓、证据清单、两周路线、自查表、MVP 差距判定）。
+  - README 增加「代码仓库与提交说明」「评委快速查看路径」「当前未完成事项」，并明确 GitHub 为私有备份、GitLab 为比赛主仓库。
+  - `docs/01` 强化「题目二为主、题目一为辅」论证，并把评分项一一对应到具体文件路径与「是否已有证据」。
+  - `docs/00` 收缩为 6/30 前可完成的 v0.1/v0.2/v0.3/final 四里程碑，新增止损线与三角色协作节奏。
+  - `docs/02` 明确 MVP 强保 lab0+lab1、lab2/lab4 二选一、lab3/lab5 扩展，并为每个 lab 增加「验收证据」字段。
+  - lab0 增加真实验证记录模板（留空待填、禁止伪造）；lab1 增加实现前置检查清单与代码修改点清单（文件名待 baseline 核对）。
+  - 重写 `scripts/collect-report.sh`：材料索引覆盖 `docs/07`、`docs/10` 与全部 lab，并新增「内容状态」列。
+  - `docs/05` 增加「AI 输出不得直接视为事实」声明与本轮 Claude 红队审查记录。
+  - `docs/08` 增加 xv6 许可证检查清单与「引用外部资料必须写改造说明」的硬性要求。
+- 验证命令：
+  - `bash scripts/check-env.sh`
+  - `bash scripts/run-lab.sh lab0`
+  - `bash scripts/run-lab.sh lab1`
+  - `bash scripts/collect-report.sh`
+  - `git diff --check`
+- 验证结果：
+  - 三个脚本均 exit 0；缺少 `make`、`qemu-system-riscv64`、`riscv64-unknown-elf-gcc` 时优雅输出 `[WARN]`。
+  - `git diff --check` 通过；脚本与文档均为 LF 换行，无 CRLF 风险。
+  - `collect-report.sh` 重新生成的 `submissions/draft-report-index.md` 已包含 `docs/10` 与内容状态列。
+  - 本轮验证不涉及 xv6 构建或运行，不代表 xv6 已跑通。
+- 遗留问题：
+  - **xv6-riscv baseline 仍未引入。**
+  - **QEMU 与 RISC-V 工具链仍未在本项目环境中真实验证（当前为 WARN）。**
+  - lab1 系统调用实验仍未实现，代码修改点清单中的文件名待真实核对。
+  - 真实测试报告、技术报告、PPT、Demo 视频仍为 TODO。
+  - 队内三角色仍未具名；仓库根目录仍无自有 LICENSE。
+  - 红队报告中的评分预估为 AI 内部参考，需队长人工复核后采纳。
+- 下一步：
+  - 队长复核本轮红队报告，确认范围收缩与里程碑。
+  - 进入 v0.2：确认 xv6-riscv baseline 来源/commit/许可证，真实跑通 lab0 并捕获日志。
+  - 三角色具名，开始按协作节奏推进。
