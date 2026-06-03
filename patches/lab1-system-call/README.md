@@ -1,14 +1,15 @@
-# lab1 hello syscall patch
+# lab1 syscall patches
 
 ## 目标
 
-该 patch 为 xv6-riscv 增加最小 `hello()` system call。系统调用返回整数 `2026`，用户态测试程序输出：
+本目录保存 lab1 的可提交 patch。xv6-riscv 第三方源码位于 ignored 的 `external/xv6-riscv/`，不提交到本仓库。
 
-```text
-hello syscall returned 2026
-```
+当前 lab1 分两档：
 
-本 patch 用于 lab1 教学闭环，重点展示 user space 到 kernel space 的 syscall 路径。
+| Patch | 内容 | 教学重点 |
+| --- | --- | --- |
+| `0001-add-hello-syscall.patch` | 新增无参数 `hello()` syscall，返回 `2026` | syscall 最小闭环 |
+| `0002-add-argint-add2-syscall.patch` | 新增 `add2(int a, int b)` syscall，返回 `a + b` | `argint()` 参数传递 |
 
 ## baseline
 
@@ -18,11 +19,24 @@ hello syscall returned 2026
 | baseline commit | `74f84181a3404d1d6a6ff98d342233979066ebb8` |
 | baseline branch | `riscv` |
 | 本地源码路径 | `external/xv6-riscv/` |
-| patch 文件 | `patches/lab1-system-call/0001-add-hello-syscall.patch` |
 
-## 修改文件
+## 应用顺序
 
-patch 修改：
+必须从 clean baseline 开始，先应用 `0001`，再应用 `0002`：
+
+```bash
+cd external/xv6-riscv
+git reset --hard 74f84181a3404d1d6a6ff98d342233979066ebb8
+git clean -fdx
+git apply ../../patches/lab1-system-call/0001-add-hello-syscall.patch
+git apply ../../patches/lab1-system-call/0002-add-argint-add2-syscall.patch
+```
+
+如果工作区不是 clean baseline，不要直接声称复现成功。
+
+## 0001 修改内容
+
+`0001` 修改：
 
 - `kernel/syscall.h`
 - `kernel/syscall.c`
@@ -31,47 +45,9 @@ patch 修改：
 - `user/usys.pl`
 - `Makefile`
 
-patch 新增：
+`0001` 新增：
 
 - `user/hello.c`
-
-## 应用方式
-
-从 clean xv6-riscv baseline 开始：
-
-```bash
-cd external/xv6-riscv
-git status --short
-git apply ../../patches/lab1-system-call/0001-add-hello-syscall.patch
-```
-
-如果 `git status --short` 在应用 patch 前不为空，应先恢复 clean baseline 或重新 clone。不要在未知状态下应用 patch 后声称复现成功。
-
-## 构建方式
-
-```bash
-make
-```
-
-在本仓库中，实际验证使用：
-
-```bash
-bash scripts/xv6/check-xv6-baseline.sh --make
-```
-
-## 运行方式
-
-人工运行：
-
-```bash
-make qemu
-```
-
-进入 xv6 shell 后输入：
-
-```text
-hello
-```
 
 预期输出：
 
@@ -79,22 +55,65 @@ hello
 hello syscall returned 2026
 ```
 
-本仓库中还使用以下脚本捕获自动化证据：
+## 0002 修改内容
+
+`0002` 修改：
+
+- `kernel/syscall.h`
+- `kernel/syscall.c`
+- `kernel/sysproc.c`
+- `user/user.h`
+- `user/usys.pl`
+- `Makefile`
+
+`0002` 新增：
+
+- `user/add2test.c`
+
+`sys_add2()` 使用：
+
+```c
+argint(0, &a);
+argint(1, &b);
+```
+
+预期输出：
+
+```text
+add2(20, 6) returned 26
+```
+
+## 构建与运行
+
+构建：
+
+```bash
+cd external/xv6-riscv
+make
+```
+
+自动捕获 hello：
 
 ```bash
 bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"
 ```
 
+自动捕获 add2：
+
+```bash
+bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"
+```
+
 ## 当前真实验证状态
 
-| 检查项 | 状态 | 证据 |
-| --- | --- | --- |
-| baseline make | PASS | `logs/xv6-make-20260603-235003.log` |
-| baseline boot evidence | PASS | `logs/xv6-boot-20260604-001736.log` |
-| lab1 patched make | PASS | `logs/xv6-make-20260604-001927.log` |
-| hello output evidence | PASS | `logs/xv6-command-hello-20260604-002147.log` |
-| 长期稳定性测试 | TODO | 未执行 |
-| 人工交互 shell 测试 | TODO | 未执行 |
-| 第二名队员复核 | TODO | 未执行 |
+| 检查项 | 状态 |
+| --- | --- |
+| clean baseline + `0001` + `0002` apply | PASS |
+| `make` | PASS |
+| hello output evidence | PASS |
+| add2test output evidence | PASS |
+| 长期稳定性测试 | TODO |
+| 人工交互 shell 测试 | TODO |
+| 第二名队员复现 | TODO |
 
-原始日志被 Git 忽略。可提交记录位于 `docs/04_test_report.md` 和 `tests/lab1/README.md`。
+原始日志被 Git 忽略。摘要见 `docs/04_test_report.md` 和 `docs/14_lab1_argint_extension_review.md`。

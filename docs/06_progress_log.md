@@ -138,6 +138,31 @@
   - Manual interaction video remains TODO.
   - Third-party source and raw logs remain ignored and must not be committed.
 
+## 2026-06-04: stage3a lab1 argint syscall extension
+
+- Commit hash: TODO after commit
+- Completed:
+  - Added lab1 advanced syscall design: `add2(int a, int b)`.
+  - Implemented `sys_add2()` in ignored `external/xv6-riscv/`, using `argint(0, &a)` and `argint(1, &b)`.
+  - Added user test program `add2test`.
+  - Generated `patches/lab1-system-call/0002-add-argint-add2-syscall.patch` as an incremental patch after `0001`.
+  - Verified clean baseline + `0001` + `0002` patch sequence.
+  - Ran `make` in WSL/bash successfully.
+  - Verified hello still outputs `hello syscall returned 2026`.
+  - Verified add2test outputs `add2(20, 6) returned 26`.
+  - Added `docs/14_lab1_argint_extension_review.md`.
+  - Updated lab1 docs, patch docs, test report, technical report, reproducibility package, demo script, AI record, and report index.
+- Real process notes:
+  - A direct PowerShell `make` attempt failed because `make` was not available in Windows shell; WSL/bash make succeeded.
+  - The first handwritten `0002` patch was malformed; it was regenerated with WSL Git as a clean incremental patch.
+  - A Windows Git / WSL Git line-ending risk was observed and corrected by regenerating the patch with WSL Git.
+- Boundaries:
+  - No lab2/lab4 work was done.
+  - Timeout command capture is not long-running stability testing.
+  - Manual interaction video remains TODO.
+  - Second teammate independent reproduction remains TODO.
+  - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.
+
 ## 2026-06-04: stage2b red-team lab1 patch reproducibility
 
 - Commit hash: TODO after commit

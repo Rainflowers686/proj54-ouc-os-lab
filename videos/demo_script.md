@@ -7,6 +7,7 @@
 - 项目定位是教学型 OS 实验体系。
 - xv6-riscv baseline 被隔离在 `external/`，不提交第三方源码。
 - lab1 通过 patch 复现最小 `hello()` syscall。
+- lab1 进阶 patch 通过 `add2(int a, int b)` 演示 `argint()` 参数传递。
 - 真实证据包括环境检查、boot evidence 和 hello 输出捕获。
 
 当前状态：
@@ -54,8 +55,14 @@
    bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"
    ```
 
-8. 展示 `docs/12_lab1_patch_review.md`，说明 clean baseline apply 复现已审查。
-9. 展示 `docs/04_test_report.md`，说明只记录真实执行证据。
+8. 捕获 add2 输出：
+
+   ```bash
+   bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"
+   ```
+
+9. 展示 `docs/12_lab1_patch_review.md` 和 `docs/14_lab1_argint_extension_review.md`，说明 clean baseline apply 复现已审查。
+10. 展示 `docs/04_test_report.md`，说明只记录真实执行证据。
 
 ## 可选人工交互流程
 
@@ -70,12 +77,14 @@ make qemu
 
 ```text
 hello
+add2test
 ```
 
 预期输出：
 
 ```text
 hello syscall returned 2026
+add2(20, 6) returned 26
 ```
 
 退出 QEMU：
@@ -87,7 +96,7 @@ x
 
 ## 讲解词草案
 
-> 本项目对应 proj54 教学型赛题，目标不是单纯堆内核功能，而是为低年级同学提供可以逐步复现的 OS 竞赛入门实验体系。当前 v0.1 打通了 lab0 和 lab1 的最小闭环：lab0 完成环境检查、xv6 baseline build 和 boot evidence；lab1 通过 patch 增加一个最小 hello system call，并能从 clean baseline 应用、构建和捕获输出。第三方 xv6 源码放在 ignored 的 external 目录，原始日志也不提交，仓库只提交自有文档、脚本、patch 和证据摘要。未完成的队友复现、人工录屏和长期稳定性测试均明确标记为 TODO。
+> 本项目对应 proj54 教学型赛题，目标不是单纯堆内核功能，而是为低年级同学提供可以逐步复现的 OS 竞赛入门实验体系。当前 v0.1 打通了 lab0 和 lab1 的最小闭环：lab0 完成环境检查、xv6 baseline build 和 boot evidence；lab1 通过 patch 增加 hello system call，并通过 add2 system call 演示 argint 参数传递。两个 patch 均可从 clean baseline 应用、构建和捕获输出。第三方 xv6 源码放在 ignored 的 external 目录，原始日志也不提交，仓库只提交自有文档、脚本、patch 和证据摘要。未完成的队友复现、人工录屏和长期稳定性测试均明确标记为 TODO。
 
 ## 边界说明
 

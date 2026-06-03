@@ -15,7 +15,7 @@
 当前 v0.1 的重点不是堆叠复杂内核功能，而是建立一个诚实、可复现、可扩展的最小工程闭环：
 
 - lab0：环境检查、xv6-riscv baseline 获取、build 与 boot evidence。
-- lab1：最小 `hello()` system call patch、构建验证、QEMU 输出捕获、clean baseline 复现审查。
+- lab1：`hello()` 最小 system call patch、`add2(int a, int b)` 参数传递进阶 patch、构建验证、QEMU 输出捕获、clean baseline 复现审查。
 - 工程治理：第三方源码隔离、原始日志不提交、patch 作为可提交产物、AI 使用和进度记录透明化。
 
 ## 2. 赛题理解
@@ -56,15 +56,25 @@ lab0 的目标是让同学先获得可验证环境，而不是直接进入内核
 - baseline `make` 成功。
 - 捕获 boot evidence：检测到 `xv6 kernel is booting` 和 `init: starting sh`。
 
-### 3.3 lab1：最小 syscall
+### 3.3 lab1：syscall 入门与参数传递
 
-lab1 的目标是展示从用户态到内核态的最小系统调用路径。当前实现选择 `hello()`：
+lab1 的目标是展示从用户态到内核态的系统调用路径，并在最小闭环之后补充整数参数传递。
+
+第一档为 `hello()`：
 
 - 新增 syscall `hello()`。
 - 内核返回整数 `2026`。
 - 用户态程序 `hello` 输出 `hello syscall returned 2026`。
 
-该设计刻意保持简单，便于讲清楚 syscall number、用户态 stub、trap、dispatcher、内核实现和返回值路径。
+第二档为 `add2(int a, int b)`：
+
+- 新增 syscall `add2()`。
+- 用户程序调用 `add2(20, 6)`。
+- 内核通过 `argint(0, &a)` 和 `argint(1, &b)` 获取参数。
+- 内核返回 `a + b`。
+- 用户态程序 `add2test` 输出 `add2(20, 6) returned 26`。
+
+该设计保持小规模，便于讲清楚 syscall number、用户态 stub、trap、dispatcher、`argint()` 参数读取、内核实现和返回值路径。
 
 ### 3.4 后续扩展计划
 
@@ -133,9 +143,11 @@ logs/*.log
 | baseline make | 已成功 | `logs/xv6-make-20260603-235003.log` 摘要见 `docs/04_test_report.md` |
 | baseline boot evidence | 已捕获 | `logs/xv6-boot-20260604-001736.log` 摘要见 `docs/04_test_report.md` |
 | lab1 hello syscall patch | 已生成 | `patches/lab1-system-call/0001-add-hello-syscall.patch` |
+| lab1 add2 argint patch | 已生成 | `patches/lab1-system-call/0002-add-argint-add2-syscall.patch` |
 | clean baseline apply 复现 | 已通过 stage2b 审查 | `docs/12_lab1_patch_review.md` |
 | patched make | 已成功 | 摘要见 `docs/04_test_report.md` 与 `docs/12_lab1_patch_review.md` |
 | hello 输出捕获 | 已成功 | 检测到 `hello syscall returned 2026` |
+| add2 输出捕获 | 已成功 | 检测到 `add2(20, 6) returned 26`，见 `docs/14_lab1_argint_extension_review.md` |
 
 以上均为当前阶段的真实记录。尚未完成的内容继续标记为 TODO。
 
@@ -145,13 +157,14 @@ logs/*.log
 
 | 文件 | 作用 |
 | --- | --- |
-| `kernel/syscall.h` | 增加 `SYS_hello 22`。 |
-| `kernel/syscall.c` | 声明 `sys_hello` 并加入 syscall dispatch table。 |
-| `kernel/sysproc.c` | 实现 `sys_hello()`，返回 `2026`。 |
-| `user/user.h` | 声明 `int hello(void);`。 |
-| `user/usys.pl` | 增加 `entry("hello")`，生成用户态 syscall stub。 |
-| `Makefile` | 将 `_hello` 加入 `UPROGS`。 |
-| `user/hello.c` | 新增用户态程序，调用 `hello()` 并打印返回值。 |
+| `kernel/syscall.h` | 增加 `SYS_hello 22` 和 `SYS_add2 23`。 |
+| `kernel/syscall.c` | 声明 `sys_hello`、`sys_add2` 并加入 syscall dispatch table。 |
+| `kernel/sysproc.c` | 实现 `sys_hello()` 和 `sys_add2()`。 |
+| `user/user.h` | 声明 `int hello(void);` 和 `int add2(int, int);`。 |
+| `user/usys.pl` | 增加 `entry("hello")` 和 `entry("add2")`，生成用户态 syscall stub。 |
+| `Makefile` | 将 `_hello` 和 `_add2test` 加入 `UPROGS`。 |
+| `user/hello.c` | 新增 hello 用户态测试程序。 |
+| `user/add2test.c` | 新增 add2 用户态测试程序。 |
 
 ### 6.2 调用链
 
@@ -166,6 +179,20 @@ user/hello.c
   -> printf 输出 hello syscall returned 2026
 ```
 
+`add2()` 调用链：
+
+```text
+user/add2test.c
+  -> add2(20, 6)
+  -> user/usys.pl 生成的 add2 stub
+  -> ecall / trap 进入 kernel
+  -> kernel/syscall.c 中的 syscall dispatcher
+  -> kernel/sysproc.c 中的 sys_add2()
+  -> argint(0, &a) 读取 20
+  -> argint(1, &b) 读取 6
+  -> 返回 26
+```
+
 ### 6.3 教学意义
 
 该实验可以引导学生依次理解：
@@ -174,6 +201,7 @@ user/hello.c
 - syscall number 如何绑定用户态和内核态。
 - `usys.pl` 如何生成用户态 stub。
 - trap 之后内核如何通过 dispatch table 找到实现函数。
+- `argint()` 如何从用户态寄存器约定中取出整数参数。
 - 返回值如何从内核回到用户态。
 
 ## 7. 测试与证据
@@ -218,19 +246,28 @@ bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"
 
 当前记录：已检测到 `hello syscall returned 2026`。
 
-### 7.6 clean apply review
+### 7.6 add2 输出捕获
+
+```bash
+bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"
+```
+
+当前记录：已检测到 `add2(20, 6) returned 26`。
+
+### 7.7 clean apply review
 
 stage2b 已完成 clean baseline patch reproducibility review，记录见：
 
 ```text
 docs/12_lab1_patch_review.md
+docs/14_lab1_argint_extension_review.md
 ```
 
 ## 8. 风险与边界
 
 | 风险 / 边界 | 当前处理 |
 | --- | --- |
-| timeout 自动捕获不是长期稳定性测试 | 文档中只写 boot evidence 和 hello evidence，不写长期稳定。 |
+| timeout 自动捕获不是长期稳定性测试 | 文档中只写 boot evidence、hello evidence 和 add2 evidence，不写长期稳定。 |
 | 不是人工交互录屏 | 人工 demo 仍为 TODO，见 `videos/demo_script.md`。 |
 | 第二名队员复现 | TODO，不伪造队友复现结果。 |
 | `riscv64-unknown-elf-gcc` 缺失 | 当前使用 `riscv64-linux-gnu-gcc` 构建成功，继续记录 WARN。 |
@@ -261,7 +298,7 @@ AI 工具不得用于：
 
 1. 第二名队员独立复现 lab0/lab1，并填写复现记录。
 2. 完成人工交互 demo：手动进入 xv6 shell，输入 `hello`，退出 QEMU。
-3. 为 lab1 增加带参数 syscall 扩展，展示 `argint` 等机制。
+3. 将 lab1 的 hello/add2 两档内容整理成更完整的 step by step 教程。
 4. 在 lab2 或 lab4 中选择一个方向深化，避免同时展开过多内容。
 5. 将本文档升级为初赛技术报告 v0.2，并补充 PPT 与 Demo 结果。
 
@@ -271,6 +308,7 @@ AI 工具不得用于：
 - 测试报告：`docs/04_test_report.md`
 - 内部红队审查：`docs/10_red_team_review.md`
 - lab1 clean baseline 复现审查：`docs/12_lab1_patch_review.md`
+- lab1 argint 进阶复现审查：`docs/14_lab1_argint_extension_review.md`
 - lab1 patch 说明：`patches/lab1-system-call/README.md`
 - lab1 patch 应用脚本：`scripts/xv6/apply-lab1-patch.sh`
 - 复现包：`reproducibility/README.md`

@@ -26,16 +26,18 @@
    - baseline make 成功。
    - boot evidence 捕获。
 
-5. lab1 hello syscall
+5. lab1 hello / add2 syscall
    - 修改文件列表。
    - 用户态到内核态调用链。
    - `hello syscall returned 2026` 输出证据。
+   - `add2(int a, int b)` 通过 `argint()` 获取参数。
+   - `add2(20, 6) returned 26` 输出证据。
 
 6. clean patch 复现
    - 从 clean baseline reset。
-   - `git apply --check`。
+   - 依次应用 `0001` 和 `0002`。
    - `make`。
-   - hello 输出捕获。
+   - hello 与 add2 输出捕获。
 
 7. 测试证据
    - `docs/04_test_report.md`。

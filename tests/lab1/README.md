@@ -2,49 +2,39 @@
 
 ## 测试目标
 
-lab1 测试用于验证最小 `hello()` system call patch 是否能完成以下闭环：
+lab1 测试用于验证两个 system call patch：
 
-1. patch 可应用到指定 xv6-riscv baseline。
-2. 修改后的 xv6 可以完成 `make`。
-3. QEMU 启动过程中可以捕获 boot evidence。
-4. 用户态程序 `hello` 可以输出预期结果。
-
-预期输出：
-
-```text
-hello syscall returned 2026
-```
+- minimal：`hello()`，输出 `hello syscall returned 2026`。
+- advanced：`add2(int a, int b)`，通过 `argint()` 获取参数，输出 `add2(20, 6) returned 26`。
 
 ## 已真实执行命令
 
 | 目的 | 命令 | 结果 |
 | --- | --- | --- |
-| 构建 patched xv6 | `bash scripts/xv6/check-xv6-baseline.sh --make` | PASS |
-| 捕获 boot evidence | `bash scripts/xv6/boot-xv6.sh` | PASS |
-| 自动运行 hello | `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"` | PASS |
+| 初始 hello 回归 | `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"` | PASS |
+| clean baseline + 0001 + 0002 apply | `git apply` patch sequence | PASS |
+| 构建 patched xv6 | `cd external/xv6-riscv && make` | PASS |
+| hello 回归 | `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"` | PASS |
+| add2 输出捕获 | `bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"` | PASS |
 
 ## 证据摘要
 
-| 证据 | 状态 | 日志 |
+| 证据 | 状态 | 说明 |
 | --- | --- | --- |
-| baseline make | PASS | `logs/xv6-make-20260603-235003.log` |
-| boot evidence | PASS | `logs/xv6-boot-20260604-001736.log` |
-| lab1 patched make | PASS | `logs/xv6-make-20260604-001927.log` |
-| hello 输出 | PASS | `logs/xv6-command-hello-20260604-002147.log` |
+| baseline make | PASS | stage2 已记录 |
+| boot evidence | PASS | stage2 已记录；stage3 最终验证会复跑 |
+| hello output | PASS | stage3a 在 `0001+0002` 后仍成功 |
+| add2test output | PASS | stage3a 捕获到 `add2(20, 6) returned 26` |
 
 原始日志被 Git 忽略，不应提交。
 
 ## 尚未覆盖
 
 - TODO: 长期 QEMU 稳定性测试。
-- TODO: 人工交互 shell 测试。
-- TODO: syscall number 冲突、用户态 stub 缺失等负向测试。
-- TODO: 由第二名队员进行代码和文档复核。
-
-## clean baseline 复现
-
-patch 已在 stage2b 做过 clean baseline 独立复现（`git apply --check` exit 0、clean `make` 成功、捕获 `hello syscall returned 2026`），详见 [../../docs/12_lab1_patch_review.md](../../docs/12_lab1_patch_review.md)。
+- TODO: 人工交互 shell 测试与录屏。
+- TODO: 第二名队员独立复现。
+- TODO: 负向测试，例如 syscall number 冲突、用户态 stub 缺失、参数错误。
 
 ## 与测试报告的关系
 
-正式摘要记录在 `docs/04_test_report.md`。本文件保留 lab1 专项测试说明，不复制完整日志。
+正式摘要记录在 `docs/04_test_report.md`。进阶 add2 复现审查见 `docs/14_lab1_argint_extension_review.md`。本文件保留 lab1 专项测试说明，不复制完整日志。
