@@ -1,56 +1,41 @@
-# 参考资料与许可证说明
+# Reference and License Record
 
-## 参考资料原则
+## Principles
 
-- 不直接复制大段外部内容。
-- 引用外部资料时记录名称、URL、许可证、使用位置和改造说明。
-- 引入第三方源码、图片、图表、课件、视频或测试数据前，必须确认许可证允许使用。
-- 若后续引入 xv6-riscv 源码，必须保留原许可证、版权声明和来源说明。
-- 不在仓库中提交报名材料、个人隐私、账号密码、token、截图原件或大型二进制文件。
+- Do not copy large blocks of external documentation, source code, papers, slides, or tutorials into this repository.
+- Record the name, URL, license, usage location, and modification notes for every external reference.
+- Keep third-party source code separate from team-owned docs, scripts, and lab materials.
+- Do not claim ownership of upstream xv6-riscv code.
+- If third-party source is fetched locally, commit only metadata and project notes unless the team explicitly chooses a compliant tracked import strategy.
 
-## 后续可能参考的资料
+## Current Third-Party Baseline
 
-以下仅为计划参考清单，当前尚未引入第三方源码：
-
-| 名称 | URL | 许可证 | 计划使用位置 | 改造说明 | 当前状态 |
+| Name | URL | License | Local path | Metadata record | Current status |
 | --- | --- | --- | --- | --- | --- |
-| xv6-riscv | TODO：补充官方仓库 URL | TODO：核验 | 后续 baseline、lab1-lab5 代码实验 | TODO：保留原许可证，围绕教学实验做任务拆分 | 未引入 |
-| xv6-riscv-book | TODO：补充官方 URL | TODO：核验 | 背景知识和代码阅读参考 | TODO：只做必要概念引用和阅读指引，不复制大段内容 | 未引入 |
-| rCore Tutorial | TODO：补充官方 URL | TODO：核验 | 教程组织方式参考 | TODO：参考结构，不直接复制正文 | 未引入 |
-| uCore Tutorial | TODO：补充官方 URL | TODO：核验 | 教程组织方式参考 | TODO：参考结构，不直接复制正文 | 未引入 |
-| 往年 OS 比赛优秀作品 | TODO：补充具体作品 URL | TODO：核验 | step by step 过程记录和实验设计参考 | TODO：说明引用和改造，不复制实现 | 未引入 |
+| xv6-riscv | `https://github.com/mit-pdos/xv6-riscv.git` | TODO: confirm from upstream `LICENSE` | `external/xv6-riscv/` | `external/xv6-baseline-record.md` | metadata generated; source tree ignored |
 
-## 引用记录模板
+`external/xv6-baseline-record.md` is the canonical project record for the local baseline commit, branch, remote URL, LICENSE presence, generation time, and build status. Current recorded commit: `74f84181a3404d1d6a6ff98d342233979066ebb8`.
 
-| 名称 | URL | 许可证 | 使用位置 | 使用内容摘要 | 改造说明 | 复核人 |
-| --- | --- | --- | --- | --- | --- | --- |
-| TODO | TODO | TODO | TODO | TODO | TODO | TODO |
+Do not copy the full upstream LICENSE text into this document. Keep the upstream LICENSE file in the local ignored source tree and record its presence in the metadata file.
 
-## 当前引入情况
+## Planned References
 
-当前仓库尚未引入第三方源码、图片、课件、视频或大型二进制资料。现有内容主要为队伍自有项目文档、脚本和目录说明。
+| Name | URL | License | Planned usage | Notes |
+| --- | --- | --- | --- | --- |
+| xv6-riscv book | TODO | TODO | Background reading for xv6 code paths | Do not copy large sections |
+| rCore Tutorial | TODO | TODO | Course organization reference | Reference structure only |
+| uCore Tutorial | TODO | TODO | Course organization reference | Reference structure only |
+| Prior OS contest works | TODO | TODO | Step-by-step process and teaching design reference | Record all adaptation details |
 
-## 后续引入 xv6-riscv 的许可证检查清单
+## License Checklist for xv6-riscv
 
-在把 xv6-riscv（或任何第三方源码）引入仓库前，必须逐项确认并记录。**未全部完成不得合并第三方源码。**
+- TODO: confirm the exact upstream repository URL in a browser or through Git metadata.
+- TODO: record the fetched commit hash in `external/xv6-baseline-record.md`.
+- TODO: confirm the upstream LICENSE type.
+- TODO: preserve upstream copyright notices in the local ignored source tree.
+- TODO: document any future modifications separately from pristine baseline metadata.
+- TODO: ensure `external/xv6-riscv/` is not staged or committed.
 
-- [ ] 确认所用 xv6-riscv 仓库的准确 URL、commit hash 或 release tag（避免“某个版本”这种模糊记录）。
-- [ ] 阅读并确认其 LICENSE 类型（xv6-riscv 通常为 MIT；以实际仓库为准），确认许可证允许本项目的教学使用与再分发。
-- [ ] 在引入的源码目录中**原样保留**原始 LICENSE 文件与源文件头部版权声明，不删除、不改写版权人。
-- [ ] 在本仓库根目录或 baseline 目录补充 NOTICE/来源说明，写明“本目录基于 `仓库URL@commit`，原许可证为 `LICENSE 名称`”。
-- [ ] 在下方“引用记录模板”和 README/技术报告中登记来源与许可证。
-- [ ] 明确区分“原始 baseline 文件”与“本项目改造/新增文件”，避免对第三方代码主张本队版权。
-- [ ] 确认许可证兼容性：若将来同时参考 GPL 类资源（如部分 rCore 组件），确认不产生许可证冲突。
-- [ ] 不把未真实验证的构建或运行结果写成已完成（参见 [10_red_team_review.md](10_red_team_review.md)）。
+## Current Repository Status
 
-> 关于本项目自有部分的许可证：仓库根目录当前尚无自有 LICENSE 文件。建议团队在 v0.2 前确认自有文档与代码的开源许可（如 MIT 或文档类许可），以满足赛题“完成代码和文档开源”的要求。此项为 TODO，需团队决策，本轮不擅自添加。
-
-## 引用外部教程或往年作品的改造说明要求
-
-参考 rCore/uCore 教程、xv6 book、往年 OS 比赛作品等外部资料时，**必须写明改造说明**，不得直接照搬：
-
-- 必须记录：来源名称、URL、许可证、参考的具体内容（章节/结构/思路）、本项目的改造方式、复核人。
-- “改造说明”要能回答：我们参考了什么、改了什么、为什么这样改、与原作的差异在哪里。
-- 禁止：整段复制外部正文、直接搬运他人实现、引用未注明来源的图片/图表/课件。
-- 对结构性参考（如“借鉴 rCore 的章节组织”）也要登记，避免被误认为原创独立设计。
-- 所有引用同步登记到本文件“引用记录模板”表，并在技术报告中说明。
+The project currently tracks only project-owned docs/scripts and baseline metadata. The xv6-riscv source tree, when fetched under `external/xv6-riscv/`, is ignored and should not be submitted as part of this repository.

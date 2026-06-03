@@ -53,10 +53,13 @@ case "$lab" in
   lab0)
     echo "Next step: run environment precheck:"
     echo "  bash scripts/check-env.sh"
+    echo "Then inspect the fetched xv6 baseline without running make:"
+    echo "  bash scripts/xv6/check-xv6-baseline.sh"
     ;;
   lab1)
     echo "Current status: design stage."
-    echo "Next step: import and verify xv6-riscv baseline before adding real build/run commands."
+    echo "xv6 baseline metadata may now exist under external/xv6-baseline-record.md."
+    echo "Next step: implement the minimal syscall only after the team confirms the baseline build flow."
     ;;
   *)
     echo "Current status: planned."
@@ -65,4 +68,4 @@ case "$lab" in
 esac
 
 echo
-echo "This script does not build, boot, or test xv6-riscv at MVP v0.1."
+echo "This script does not build, boot, or test xv6-riscv."

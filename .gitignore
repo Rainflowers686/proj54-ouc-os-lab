@@ -208,6 +208,10 @@ cython_debug/
 # source trees (e.g. external/xv6-riscv/). If a git submodule is used instead,
 # its gitlink is tracked regardless of this rule. See external/README.md.
 external/*/
+external/xv6-riscv/
 !external/README.md
 !external/*.md
 
+# Build logs are generated from real local commands and are not committed by default.
+logs/*.log
+!logs/README.md
