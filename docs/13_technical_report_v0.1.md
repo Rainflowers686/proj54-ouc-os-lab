@@ -132,7 +132,7 @@ patches/lab1-system-call/0002-add-argint-add2-syscall.patch
 patches/lab2-process-observation/0001-add-pstate-syscall.patch
 ```
 
-评委或队友可以从 clean baseline 应用 patch 复现。
+评委或队友可以从 clean baseline 应用 patch 复现。注意：lab1 序列（`0001`+`0002`）与 lab2 独立 patch **不能直接叠加**（`SYS_hello` 与 `SYS_pstate` 均为 22，已实测 `git apply --check` 冲突）；综合演示需另做统一 patch 序列，详见 `docs/16_patch_strategy_and_integration_plan.md`。
 
 ### 4.4 日志策略
 

@@ -248,3 +248,32 @@
   - Manual interaction video remains TODO.
   - Second teammate independent reproduction remains TODO.
   - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.
+
+## 2026-06-04: stage4b red-team lab2 process observation and patch strategy
+
+- Commit hash: TODO after commit
+- Role: strict reviewer + OS lab TA + engineering red team (Claude Code).
+- Goal: judge whether lab2 works as a process-observation v0.1, and whether lab1/lab2 patches will conflict in a future integrated demo.
+- Completed (real runs in WSL2 Ubuntu, inside the ignored `external/xv6-riscv/`):
+  - Reviewed `0001-add-pstate-syscall.patch`: independent from clean baseline; only pstate/pstatetest changes; `argint(0,&pid)` correct; proc table loop acquires/releases `p->lock` on every path; returns -1 when not found or pid<0.
+  - Reset to clean baseline `74f84181a3404d1d6a6ff98d342233979066ebb8`; applied lab2 patch (`git apply --check` exit 0); clean `make` exit 0; captured `pstate(self) = 4 (RUNNING)`.
+  - MEASURED the lab1/lab2 conflict: lab2 patch does NOT apply on top of lab1 `0001` (or `0001`+`0002`) — `git apply --check` exit 1, all 6 files "patch does not apply"; and `SYS_hello` = `SYS_pstate` = 22.
+  - Wrote `docs/16_patch_strategy_and_integration_plan.md` (current patch types, why lab2 is independent, measured conflict, integrated-labs plan with re-planned numbers hello=22/add2=23/pstate=24, current conclusion).
+  - Strengthened `docs/15`: red-team teaching limits (pstate(self) is tautologically RUNNING; user/kernel enum coupling; snapshot semantics), quantified the lab1/lab2 collision, added stage4b reproduction results.
+  - Fixed combined-build ambiguity: reproducibility "manual" section now says lab1 and lab2 are two separate builds; README step 7 notes the reset wipes lab1; patches/lab2 README and docs/13 link to docs/16.
+- Real result:
+  - lab2 clean apply: PASS (`git apply --check` exit 0)
+  - lab2 clean make: PASS (exit 0)
+  - pstatetest output: PASS (`pstate(self) = 4 (RUNNING)`, both `pstate(self) =` and `RUNNING` patterns)
+  - lab1+lab2 combined apply: FAILS by design (exit 1; SYS number 22 collision) — this is a finding, not a regression
+  - stage4b logs (ignored): `logs/xv6-make-20260604-122410.log`, `logs/xv6-command-pstatetest-20260604-122530.log`
+- Red-team verdict:
+  - lab2 is a correct, reproducible process-observation INTRO (proc table + lock), suitable as a v0.1, but NOT a full scheduling experiment; observing self is near-tautological RUNNING, so observing other/child processes is the real next step.
+  - lab1 and lab2 patches are individually reproducible but CANNOT be combined as-is; an integrated patch sequence with re-planned syscall numbers is required for any unified demo (docs/16).
+- Boundaries:
+  - `external/xv6-riscv/` and `logs/*.log` remain ignored and were not committed (verified `git ls-files` empty for both).
+  - Evidence is timeout-based capture, not long-running stability or manual interaction.
+  - No lab3/lab4 work; no integrated patch built this round (TODO for stage4c/5a).
+- Next:
+  - Build `patches/integrated-labs/` unified sequence (hello=22, add2=23, pstate=24) and validate all three in one build.
+  - Extend lab2 to observe a child/other pid to show non-RUNNING states; add negative tests.

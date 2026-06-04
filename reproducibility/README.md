@@ -78,23 +78,22 @@ bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
 
 ## 人工复现方式
 
-进入 xv6 shell 后可手动运行：
+重要：lab1 与 lab2 patch **不能共存于同一个 xv6 构建**（`SYS_hello` 与 `SYS_pstate` 都用 22，且 hunk 冲突，已实测，见 [../docs/16_patch_strategy_and_integration_plan.md](../docs/16_patch_strategy_and_integration_plan.md)）。因此手动复现要**分两次、各自从 clean baseline 构建**，不要期望一个构建里同时出现三者输出。
 
-```text
-hello
-add2test
-pstatetest
-```
+- 路径 A 的构建（lab1）：进入 xv6 shell 后运行 `hello`、`add2test`，预期：
 
-预期输出包括：
+  ```text
+  hello syscall returned 2026
+  add2(20, 6) returned 26
+  ```
 
-```text
-hello syscall returned 2026
-add2(20, 6) returned 26
-pstate(self) = 4 (RUNNING)
-```
+- 路径 B 的构建（lab2）：进入 xv6 shell 后运行 `pstatetest`，预期：
 
-如果 `pstate(self)` 在其他环境中返回有效但不同的状态，应如实记录。
+  ```text
+  pstate(self) = 4 (RUNNING)
+  ```
+
+  如果 `pstate(self)` 在其他环境中返回有效但不同的状态，应如实记录，不得伪造成 `RUNNING`。
 
 手动退出 QEMU：
 

@@ -18,7 +18,7 @@ patches/lab2-process-observation/0001-add-pstate-syscall.patch
 | baseline commit | `74f84181a3404d1d6a6ff98d342233979066ebb8` |
 | 本地源码路径 | `external/xv6-riscv/` |
 
-该 patch 独立于 lab1 patch，从 clean baseline 直接应用。若要与 lab1 patch 合并，需要重新规划 syscall number。
+该 patch 独立于 lab1 patch，从 clean baseline 直接应用。**不能直接叠加到 lab1 patch 之上**：`SYS_pstate` 与 lab1 `SYS_hello` 都用 22，且实测 `git apply --check` 在 lab1 之上返回 exit 1。若要综合演示，需另做统一 patch 序列并重排 syscall number，详见 [../../docs/16_patch_strategy_and_integration_plan.md](../../docs/16_patch_strategy_and_integration_plan.md)。
 
 ## 修改文件列表
 

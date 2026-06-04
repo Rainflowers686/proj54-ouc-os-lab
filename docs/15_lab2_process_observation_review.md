@@ -109,21 +109,45 @@ bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
 
 ## 教学价值评估
 
-该实验适合作为 lab1 之后的进程观察实验：
+该实验适合作为 lab1 之后的进程观察入门（真加分项）：
 
-- lab1 已经讲过 syscall 参数传递。
-- lab2 使用 pid 作为参数，引导学生进入进程表。
-- `pstate()` 只观察单个进程，范围小、可讲清楚。
-- 锁设计可以引出并发访问内核数据结构的基本规范。
+- lab1 已经讲过 syscall 参数传递，lab2 用 pid 作参数自然过渡到进程表。
+- `pstate()` 只观察单个进程，范围小、可讲清楚 `struct proc`、`enum procstate`、`proc[]` 遍历。
+- 锁设计（读 `p->state` 持有 `p->lock`）可以引出并发访问内核数据结构的基本规范。
+
+### stage4b 红队的教学局限判断（需诚实承认）
+
+1. **`pstate(self)` 结果几乎是恒真的 `RUNNING`**：进程必须正在运行才能发起这个 syscall，所以观察"自己"几乎总是得到 `4 (RUNNING)`，教学上略显循环。要真正体现状态差异（`SLEEPING`/`RUNNABLE`/`ZOMBIE`），应观察**别的进程**（如 `fork` 出子进程后观察其 pid，或 sleep 中的进程），这是更有价值的下一步。
+2. **用户态与内核 enum 的隐式耦合**：`pstatetest.c` 把状态码 `0..5` 硬编码成名字，依赖内核 `enum procstate` 的具体取值。一旦内核 enum 顺序/取值变化，用户态名字会**静默错位**。这是一个真实的可教学点（跨用户/内核边界传递"语义编号"的风险），但当前文档未点明，建议在教学中明确。
+3. **快照语义**：返回的 state 是读取瞬间的快照，用户态打印时可能已过期；对并发观察的教学应说明这一点。
+
+结论：lab2 是一个**正确、可复现、能引出进程表与锁的观察入门 demo**，但要成为"进程/调度观察实验"，下一步应让学生观察**非自身**进程的多种状态，并补负向/并发实验（详见后续扩展）。
 
 ## 当前不足
 
 - 不是完整 `ps`。
 - 不修改调度器。
-- 只观察单个 pid。
+- 只观察单个 pid，且观察"自身"几乎恒为 `RUNNING`（见教学局限）。
 - timeout 自动捕获不是长期稳定性测试。
-- 第二名队员复现 TODO。
-- lab2 patch 独立于 lab1 patch；如果后续要合并 lab1 和 lab2，需要重新分配 syscall number。
+- 人工交互录屏 TODO。
+- 第二名队员独立复现 TODO。
+- **lab2 与 lab1 patch 当前不能直接叠加（已实测）**：lab2 独立于 clean baseline 生成，`SYS_pstate = 22` 与 lab1 `SYS_hello = 22` **撞号**；且把 lab2 `git apply` 到 lab1 之上时 `git apply --check` 返回 exit 1（6 个文件 `patch does not apply`）。综合演示需另做统一 patch 序列，详见 [16_patch_strategy_and_integration_plan.md](16_patch_strategy_and_integration_plan.md)。不得声称现有 lab1/lab2 patch 已合并或可任意组合。
+
+## stage4b 独立复现结果（真实执行，未伪造）
+
+stage4b 红队在被忽略的 `external/xv6-riscv/` 中独立从 clean baseline 重做（主仓库不受影响）：
+
+| 步骤 | 结果 |
+| --- | --- |
+| clean baseline 校验 | CLEAN（HEAD = `74f8418`） |
+| lab2 `git apply --check` / apply | exit 0 / exit 0 |
+| 文件集 | `M Makefile/syscall.c/syscall.h/sysproc.c/user.h/usys.pl` + `?? user/pstatetest.c` |
+| `syscall.h` 尾部 | `SYS_pstate 22` |
+| clean `make` | 成功（exit 0；仅已知 RWX 警告） |
+| boot evidence | `BOOT_EVIDENCE_FOUND` |
+| `pstatetest "pstate(self) ="` | `COMMAND_EVIDENCE_FOUND` |
+| `pstatetest "RUNNING"` | `COMMAND_EVIDENCE_FOUND`，实际 `pstate(self) = 4 (RUNNING)` |
+| 本次日志（忽略，不提交） | `logs/xv6-make-20260604-122410.log`、`logs/xv6-command-pstatetest-20260604-122530.log` |
 
 ## 评委复现路径
 

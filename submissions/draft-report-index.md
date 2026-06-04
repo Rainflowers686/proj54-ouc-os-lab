@@ -24,7 +24,8 @@ It is not the final technical report, does not generate PDF, and does not includ
 | xv6 baseline plan | `docs/11_xv6_baseline_plan.md` | exists | stage1b plan |
 | lab1 patch reproducibility review | `docs/12_lab1_patch_review.md` | exists | stage2b red-team; clean-baseline apply/make/hello verified |
 | lab1 argint extension review | `docs/14_lab1_argint_extension_review.md` | exists | stage3b red-team: 0001+0002 reproduced (make/hello/add2); add2 call chain, argint mechanism, teaching-value assessment |
-| lab2 process observation review | `docs/15_lab2_process_observation_review.md` | exists | stage4a clean-baseline apply/make/pstatetest verified |
+| lab2 process observation review | `docs/15_lab2_process_observation_review.md` | exists | stage4b red-team: clean-baseline apply/make/pstatetest verified; teaching limits + lab1/lab2 conflict measured |
+| patch strategy and integration plan | `docs/16_patch_strategy_and_integration_plan.md` | exists | stage4b: measured lab1/lab2 SYS-22 conflict; integrated-labs sequence planned (not yet built) |
 | Technical report v0.1 | `docs/13_technical_report_v0.1.md` | exists | stage2c draft; not final report |
 | Reproducibility package | `reproducibility/README.md` | exists | lab0/lab1/lab2 reproduction checklist and template |
 | lab0 environment guide | `labs/lab0-env-setup/README.md` | exists | xv6 baseline make succeeded; boot evidence found; manual interaction TODO |
