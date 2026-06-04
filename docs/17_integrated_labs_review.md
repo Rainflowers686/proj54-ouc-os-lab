@@ -155,3 +155,29 @@ stage4e 真实 helper 验证：
 3. 第二名队员按第 10 节在另一台机器独立复现，并录一段真实人工交互演示（手敲 hello/add2test/pstatetest）。
 4. 后续若新增 lab（如 lab3/lab4），同步更新 integrated 序列与号段规划（`0004` 起、号 25+），并复跑本报告第 4-6 节。
 5. 统一处理 `user/usys.pl` 的 file mode warning（patch 记录 100755，Windows/WSL 检出 100644），避免集成时反复出现告警。
+
+## stage5a 更新：integrated 0004
+
+stage5a 在本报告审查过的 `0001-0003` 之后新增了 integrated `0004-extend-process-observation.patch`，用于 lab2 v0.2 进程观察扩展。
+
+更新后的综合序列：
+
+| patch | 基线 | 新增内容 | syscall 号 | 用户程序 |
+| --- | --- | --- | --- | --- |
+| `0001-add-hello-syscall.patch` | clean baseline | `hello()` | `SYS_hello 22` | `hello` |
+| `0002-add-argint-add2-syscall.patch` | `0001` 之后 | `add2(int, int)` | `SYS_add2 23` | `add2test` |
+| `0003-add-pstate-syscall.patch` | `0001`+`0002` 之后 | `pstate(int pid)` | `SYS_pstate 24` | `pstatetest` |
+| `0004-extend-process-observation.patch` | `0001`+`0002`+`0003` 之后 | `pcount(int state)`、子进程状态观察 | `SYS_pcount 25` | `pcounttest`、`pchildtest` |
+
+真实验证状态：
+
+- clean baseline + integrated `0001-0004`：PASS。
+- `apply-integrated-labs.sh --make --yes`：PASS。
+- boot evidence：PASS。
+- `hello`、`add2test`、`pstatetest`、`pcounttest`、`pchildtest` 均捕获到预期关键文本。
+
+说明：
+
+- 原 independent patch 未被替换或重写。
+- `pchildtest` 是实际命令名；原计划 `pstatechildtest` 因 xv6 `DIRSIZ` 文件名限制导致 `mkfs` 失败，已记录为真实问题和修正。
+- 详细 v0.2 审查见 [19_lab2_v0.2_process_observation_review.md](19_lab2_v0.2_process_observation_review.md)。

@@ -7,6 +7,7 @@
 - lab1 minimal syscall：`hello()`
 - lab1 advanced syscall：`add2(int a, int b)`
 - lab2 process state observation：`pstate(int pid)`
+- lab2 v0.2 process table counting：`pcount(int state)`
 
 该序列解决了 stage4b 已实测的 lab1/lab2 独立 patch 冲突问题。原有独立 patch 仍保留，用于单 lab 教学和单独复现；本目录只作为综合演示路径使用。
 
@@ -35,6 +36,7 @@
 | `hello` | 22 | `hello` | 返回 `2026` |
 | `add2` | 23 | `add2test` | 使用 `argint()` 获取两个整数参数并返回和 |
 | `pstate` | 24 | `pstatetest` | 根据 pid 查找 `proc[]` 并返回进程状态 |
+| `pcount` | 25 | `pcounttest` | 统计指定 `enum procstate` 的进程数量 |
 
 ## 推荐助手脚本
 
@@ -48,7 +50,7 @@ bash scripts/xv6/apply-integrated-labs.sh --make --yes
 说明：
 
 - 不带参数时是预览模式，不 reset、不 apply、不 make。
-- `--make --yes` 会在 ignored 的 `external/xv6-riscv/` 中执行 `git reset --hard` 和 `git clean -fdx`，再应用 integrated `0001`、`0002`、`0003` 并运行 `make`。
+- `--make --yes` 会在 ignored 的 `external/xv6-riscv/` 中执行 `git reset --hard` 和 `git clean -fdx`，再应用 integrated `0001`、`0002`、`0003`、`0004` 并运行 `make`。
 - `make` 输出保存到 `logs/integrated-make-YYYYMMDD-HHMMSS.log`，原始日志被 Git 忽略，不提交。
 - 该脚本不会修改主仓库 tracked 文件，不会提交第三方源码。
 
@@ -63,6 +65,7 @@ git clean -fdx
 git apply ../../patches/integrated-labs/0001-add-hello-syscall.patch
 git apply ../../patches/integrated-labs/0002-add-argint-add2-syscall.patch
 git apply ../../patches/integrated-labs/0003-add-pstate-syscall.patch
+git apply ../../patches/integrated-labs/0004-extend-process-observation.patch
 ```
 
 ## 构建方式
@@ -81,19 +84,23 @@ bash scripts/xv6/boot-xv6.sh
 bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"
 bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"
 bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="
-bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
+bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(RUNNING) ="
+bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(99) = -1"
+bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="
 ```
 
 ## 当前真实验证结果
 
 | 检查项 | 状态 |
 | --- | --- |
-| clean baseline + `0001` + `0002` + `0003` apply | PASS |
+| clean baseline + `0001` + `0002` + `0003` + `0004` apply | PASS |
 | `make` | PASS |
 | boot evidence | PASS，检测到 `xv6 kernel is booting` 与 `init: starting sh` |
 | `hello` 输出捕获 | PASS，检测到 `hello syscall returned 2026` |
 | `add2test` 输出捕获 | PASS，检测到 `add2(20, 6) returned 26` |
 | `pstatetest` 输出捕获 | PASS，检测到 `pstate(self) =` 与 `RUNNING` |
+| `pcounttest` 输出捕获 | PASS，检测到 `pcount(RUNNING) =` 和 `pcount(99) = -1` |
+| `pchildtest` 输出捕获 | PASS，检测到 `pstate(child) =` |
 | 长期稳定性测试 | TODO |
 | 人工交互录屏 | TODO |
 | 第二名队员复现 | TODO |
@@ -102,6 +109,8 @@ bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
 
 - `boot-xv6.sh` 和 `run-xv6-command.sh` 使用 timeout 自动退出 QEMU。
 - 上述结果证明当前综合构建可捕获关键输出，不等同于长期稳定性测试或人工交互录屏。
+- `pchildtest` 是子进程观察程序。原计划名 `pstatechildtest` 因 xv6 `DIRSIZ` 文件名限制会导致 `mkfs` 失败，因此实际命令名缩短为 `pchildtest`；输出仍为 `pstate(child) = ...`。
+- 子进程状态受调度时序影响，自动验证只匹配稳定前缀，不固定要求 `SLEEPING`。
 - 原始 `logs/*.log` 被 Git 忽略，不提交。
 
 ## 禁止事项

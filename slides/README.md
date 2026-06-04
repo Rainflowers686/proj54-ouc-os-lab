@@ -40,18 +40,22 @@
    - `make`。
    - hello 与 add2 输出捕获。
 
-7. lab2 pstate 进程观察
+7. lab2 pstate/pcount 进程观察
    - `pstate(int pid)` syscall。
+   - `pcount(int state)` syscall。
+   - `pcounttest` 负向输入：`pcount(99) = -1`。
+   - `pchildtest` 子进程状态观察。
    - `struct proc` 和 `enum procstate`。
    - 遍历 `proc[]`。
    - 持有 `p->lock` 读取 `p->state`。
    - `pstate(self) = 4 (RUNNING)` 输出证据。
+   - `pcount(RUNNING) =`、`pstate(child) =` 输出证据。
 
 8. integrated-labs 综合演示
    - stage4b 已实测 lab1/lab2 independent patch 不能直接叠加。
-   - integrated sequence 统一 syscall number：`hello=22`、`add2=23`、`pstate=24`。
-   - 从 clean baseline 顺序应用 `patches/integrated-labs/0001`、`0002`、`0003`。
-   - 同一 xv6 构建中已捕获 hello、add2test、pstatetest 输出。
+   - integrated sequence 统一 syscall number：`hello=22`、`add2=23`、`pstate=24`、`pcount=25`。
+   - 从 clean baseline 顺序应用 `patches/integrated-labs/0001`、`0002`、`0003`、`0004`。
+   - 同一 xv6 构建中已捕获 hello、add2test、pstatetest、pcounttest、pchildtest 输出。
 
 9. 测试证据
    - `docs/04_test_report.md`。

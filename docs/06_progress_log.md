@@ -387,3 +387,30 @@
 - Next:
   - Optional `--baseline <commit>` flag for judges to confirm baseline explicitly.
   - Second teammate reproduces via the helper on another machine; record a real manual demo.
+
+## 2026-06-04: stage5a lab2 v0.2 process observation extension
+
+- Commit hash: TODO after commit
+- Goal: extend lab2 beyond `pstate(self)` by adding process-state counting, child-process observation, and negative input checks in the integrated-labs path.
+- Completed:
+  - Added `patches/integrated-labs/0004-extend-process-observation.patch`.
+  - Added integrated syscall number `SYS_pcount = 25`, keeping `hello=22`, `add2=23`, `pstate=24`.
+  - Added `pcount(int state)` with `argint(0, &state)`, valid state range check, and per-process `p->lock` while reading `p->state`.
+  - Added user programs `pcounttest` and `pchildtest`.
+  - Updated `scripts/xv6/apply-integrated-labs.sh` so the helper applies integrated `0001`+`0002`+`0003`+`0004`.
+  - Documented a real implementation issue: the originally planned command name `pstatechildtest` caused `mkfs` failure because xv6 `DIRSIZ` limits directory entry names; the program was shortened to `pchildtest`, while its output remains `pstate(child) = ...`.
+- Real validation:
+  - `bash scripts/xv6/apply-integrated-labs.sh`: PASS; preview only.
+  - `bash scripts/xv6/apply-integrated-labs.sh --make --yes`: PASS; clean baseline + integrated `0001-0004` applied and `make` succeeded.
+  - `bash scripts/xv6/boot-xv6.sh`: PASS; boot evidence found.
+  - `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"`: PASS.
+  - `bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"`: PASS.
+  - `bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="`: PASS.
+  - `bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(RUNNING) ="`: PASS; actual observed value included `pcount(RUNNING) = 1`, but the number is not fixed by the test.
+  - `bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(99) = -1"`: PASS.
+  - `bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="`: PASS; actual observed states included `RUNNABLE` and `SLEEPING` in local logs, so docs only require the stable prefix.
+- Boundaries:
+  - This is lab2 process observation v0.2, not a full `ps` tool and not a scheduler modification.
+  - Evidence is timeout-based capture, not long-running stability or manual interaction.
+  - Manual interaction video and second-person reproduction remain TODO.
+  - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.

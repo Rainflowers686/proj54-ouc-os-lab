@@ -8,9 +8,9 @@
 - xv6-riscv baseline 被隔离在 `external/`，不提交第三方源码。
 - lab1 通过 patch 复现最小 `hello()` syscall。
 - lab1 进阶 patch 通过 `add2(int a, int b)` 演示 `argint()` 参数传递。
-- lab2 通过 `pstate(int pid)` 演示进程表查找和进程状态读取。
-- integrated-labs 解决 lab1/lab2 independent patch 不能直接叠加的问题，用同一个 xv6 构建同时运行三个用户程序。
-- 真实证据包括环境检查、boot evidence、hello/add2 输出捕获和 pstatetest 输出捕获。
+- lab2 通过 `pstate(int pid)`、`pcount(int state)` 和子进程观察演示进程表查找、状态读取和进程状态统计。
+- integrated-labs 解决 lab1/lab2 independent patch 不能直接叠加的问题，用同一个 xv6 构建同时运行 hello、add2test、pstatetest、pcounttest、pchildtest。
+- 真实证据包括环境检查、boot evidence、hello/add2 输出捕获、pstatetest 输出捕获、pcounttest 输出捕获和 pchildtest 输出捕获。
 
 当前状态：
 
@@ -72,9 +72,19 @@
    bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="
    ```
 
-10. 展示 `docs/12_lab1_patch_review.md`、`docs/14_lab1_argint_extension_review.md` 和 `docs/15_lab2_process_observation_review.md`，说明 clean baseline apply 复现已审查。
-11. 展示 `docs/16_patch_strategy_and_integration_plan.md` 和 `patches/integrated-labs/README.md`，说明 integrated sequence 已解决综合演示冲突。
-12. 展示 `docs/04_test_report.md`，说明只记录真实执行证据。
+10. 捕获 pcounttest 和 pchildtest 输出：
+
+   ```bash
+   bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(RUNNING) ="
+   bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(99) = -1"
+   bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="
+   ```
+
+   说明：实际命令名使用 `pchildtest`，不是 `pstatechildtest`，因为 xv6 `DIRSIZ` 限制会让过长文件名导致 `mkfs` 失败。
+
+11. 展示 `docs/12_lab1_patch_review.md`、`docs/14_lab1_argint_extension_review.md`、`docs/15_lab2_process_observation_review.md` 和 `docs/19_lab2_v0.2_process_observation_review.md`，说明 clean baseline apply 复现已审查。
+12. 展示 `docs/16_patch_strategy_and_integration_plan.md` 和 `patches/integrated-labs/README.md`，说明 integrated sequence 已解决综合演示冲突，并通过 `0004` 补充 pcount、子进程观察和负向测试。
+13. 展示 `docs/04_test_report.md`，说明只记录真实执行证据。
 
 ## 可选人工交互流程
 
@@ -92,6 +102,8 @@ make qemu
 hello
 add2test
 pstatetest
+pcounttest
+pchildtest
 ```
 
 预期输出：
@@ -100,6 +112,9 @@ pstatetest
 hello syscall returned 2026
 add2(20, 6) returned 26
 pstate(self) = 4 (RUNNING)
+pcount(RUNNING) = <n>
+pcount(99) = -1
+pstate(child) = <state> (<STATE_NAME>)
 ```
 
 退出 QEMU：
@@ -111,7 +126,7 @@ x
 
 ## 讲解词草案
 
-> 本项目对应 proj54 教学型赛题，目标不是单纯堆内核功能，而是为低年级同学提供可以逐步复现的 OS 竞赛入门实验体系。当前 v0.1 打通了 lab0、lab1 和 lab2 的最小闭环：lab0 完成环境检查、xv6 baseline build 和 boot evidence；lab1 通过 hello 和 add2 讲解 syscall 与 argint 参数传递；lab2 通过 pstate 观察当前进程状态，讲解进程表和进程锁。由于 lab1 和 lab2 的独立 patch 不能直接叠加，仓库新增了 integrated-labs 序列，用统一 syscall number 在同一构建中演示 hello、add2test 和 pstatetest。第三方 xv6 源码放在 ignored 的 external 目录，原始日志也不提交，仓库只提交自有文档、脚本、patch 和证据摘要。未完成的队友复现、人工录屏和长期稳定性测试均明确标记为 TODO。
+> 本项目对应 proj54 教学型赛题，目标不是单纯堆内核功能，而是为低年级同学提供可以逐步复现的 OS 竞赛入门实验体系。当前已打通 lab0、lab1 和 lab2 的最小闭环：lab0 完成环境检查、xv6 baseline build 和 boot evidence；lab1 通过 hello 和 add2 讲解 syscall 与 argint 参数传递；lab2 通过 pstate、pcount 和 pchildtest 讲解进程表、进程状态、进程锁、负向输入和调度时序不确定性。由于 lab1 和 lab2 的独立 patch 不能直接叠加，仓库新增了 integrated-labs 序列，用统一 syscall number 在同一构建中演示 hello、add2test、pstatetest、pcounttest 和 pchildtest。第三方 xv6 源码放在 ignored 的 external 目录，原始日志也不提交，仓库只提交自有文档、脚本、patch 和证据摘要。未完成的队友复现、人工录屏和长期稳定性测试均明确标记为 TODO。
 
 ## 边界说明
 

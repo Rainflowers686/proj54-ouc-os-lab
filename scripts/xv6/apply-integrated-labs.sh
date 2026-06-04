@@ -16,6 +16,7 @@ PATCHES="
 patches/integrated-labs/0001-add-hello-syscall.patch
 patches/integrated-labs/0002-add-argint-add2-syscall.patch
 patches/integrated-labs/0003-add-pstate-syscall.patch
+patches/integrated-labs/0004-extend-process-observation.patch
 "
 
 usage() {
@@ -132,7 +133,8 @@ if [ "$DO_RUN" -eq 0 ]; then
     else
       echo "[INFO] current tree does not accept now: ${patch}"
       echo "       Normal if patches are already applied, the tree is not clean baseline, or this"
-      echo "       patch needs predecessors (0002 needs 0001; 0003 needs 0001+0002, applied in --run)."
+      echo "       patch needs predecessors (0002 needs 0001; 0003 needs 0001+0002;"
+      echo "       0004 needs 0001+0002+0003, applied in --run)."
     fi
   done
   exit 0

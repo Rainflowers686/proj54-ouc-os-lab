@@ -169,3 +169,31 @@ bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="
 - scheduler trace: 记录调度切换过程。
 - ps-like summary: 输出简化进程表。
 - 负向实验: 错误 pid、锁遗漏、syscall number 冲突等。
+
+## stage5a v0.2 扩展记录
+
+stage5a 已把上述第一个扩展方向纳入 integrated-labs 综合序列，但未改动本文件前半部分描述的 lab2 independent patch。
+
+新增内容：
+
+- integrated `0004-extend-process-observation.patch`，应用在 integrated `0001`+`0002`+`0003` 之后。
+- 新增 `pcount(int state)`，使用 `SYS_pcount = 25`。
+- 新增 `pcounttest`，验证 `pcount(RUNNING) =` 和负向输入 `pcount(99) = -1`。
+- 新增 `pchildtest`，通过 `fork()` 子进程观察非自身进程状态，输出 `pstate(child) = ...`。
+
+真实验证：
+
+- clean baseline + integrated `0001-0004` apply：PASS。
+- `make`：PASS。
+- boot evidence：PASS。
+- `hello` / `add2test` / `pstatetest` 回归：PASS。
+- `pcounttest "pcount(RUNNING) ="`：PASS。
+- `pcounttest "pcount(99) = -1"`：PASS。
+- `pchildtest "pstate(child) ="`：PASS。
+
+边界：
+
+- `pcount(RUNNING)` 的具体数字不固定承诺。
+- 子进程状态受调度时序影响，本地日志中观察到过 `RUNNABLE` 和 `SLEEPING`，自动验证只匹配稳定前缀。
+- 原计划名 `pstatechildtest` 因 xv6 `DIRSIZ` 文件名限制导致 `mkfs` 失败，实际命令名缩短为 `pchildtest`。
+- 详细审查见 [19_lab2_v0.2_process_observation_review.md](19_lab2_v0.2_process_observation_review.md)。

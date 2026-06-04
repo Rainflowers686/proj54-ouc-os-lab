@@ -111,3 +111,16 @@ helper `--make --yes` 构建的同一 integrated xv6 上：
 3. 第二名队员在另一台机器按第 6 节复现，并录一段真实人工交互演示。
 4. 后续新增 lab 时，把新 patch 加入 helper 的 `PATCHES` 列表并复跑本报告第 4-5 节。
 5. 统一处理 `usys.pl` file mode warning。
+
+## stage5a 更新：helper 应用四个 patch
+
+stage5a 将 `scripts/xv6/apply-integrated-labs.sh` 的 `PATCHES` 列表扩展为 integrated `0001`、`0002`、`0003`、`0004`。
+
+重新验证结果：
+
+- 预览模式仍然只读，不 reset、不 apply、不 make。
+- `--run` / `--make` 仍然始终要求 `--yes`。
+- `--make --yes` 可从 clean baseline 应用 integrated `0001-0004` 并完成 `make`。
+- 后续真实捕获：boot evidence、`hello`、`add2test`、`pstatetest`、`pcounttest`、`pchildtest` 均通过。
+
+安全边界未改变：脚本只 reset/clean ignored 的 `external/xv6-riscv/`，make 日志写入 ignored 的 `logs/integrated-make-*.log`，不提交第三方源码和原始日志。

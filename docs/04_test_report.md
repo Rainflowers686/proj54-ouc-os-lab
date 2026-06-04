@@ -214,6 +214,50 @@ hello syscall returned 2026
 
 ## 当前风险与后续动作
 
+### integrated lab2 v0.2 process observation extension test
+
+| 字段 | 内容 |
+| --- | --- |
+| 测试名称 | integrated lab2 v0.2 process observation extension test |
+| 日期时间 | 2026-06-04 |
+| baseline commit | `74f84181a3404d1d6a6ff98d342233979066ebb8` |
+| patch 序列 | integrated `0001` → `0002` → `0003` → `0004-extend-process-observation.patch` |
+| patch 目标 | 在同一个 xv6 构建中保留 lab1/lab2 v0.1，并新增 `pcount(int state)`、`pcounttest`、`pchildtest` |
+| syscall 号 | `SYS_hello 22`，`SYS_add2 23`，`SYS_pstate 24`，`SYS_pcount 25` |
+| helper 预览命令 | `bash scripts/xv6/apply-integrated-labs.sh` |
+| helper 预览结果 | 成功；预览模式只读，不 reset、不 apply、不 make |
+| helper 构建命令 | `bash scripts/xv6/apply-integrated-labs.sh --make --yes` |
+| helper 构建日志 | `logs/integrated-make-20260604-213013.log`，原始日志 ignored，不提交 |
+| clean apply | 成功 |
+| `make` 结果 | 成功 |
+| boot evidence | 成功检测到 `xv6 kernel is booting` 和 `init: starting sh` |
+| hello 回归 | 成功检测到 `hello syscall returned 2026` |
+| add2test 回归 | 成功检测到 `add2(20, 6) returned 26` |
+| pstatetest 回归 | 成功检测到 `pstate(self) =` |
+| pcounttest 计数 | 成功检测到 `pcount(RUNNING) =`；本地日志中观察到 `pcount(RUNNING) = 1`，但数值不固定承诺 |
+| pcounttest 负向输入 | 成功检测到 `pcount(99) = -1` |
+| 子进程状态观察 | 成功检测到 `pstate(child) =` |
+| 原始日志是否提交 | 否，`logs/*.log` 被 `.gitignore` 忽略 |
+
+实现范围：
+
+- integrated `0004` 在 integrated `0001-0003` 之后应用，不改动原有 independent patch。
+- `pcount(int state)` 使用 `argint()` 获取状态编号；无效状态返回 `-1`；遍历 `proc[]` 时对每个 `proc` 持有 `p->lock` 后读取 `p->state`。
+- `pcounttest` 覆盖一个正向观察前缀和一个负向输入：`pcount(RUNNING) = <n>`、`pcount(99) = -1`。
+- `pchildtest` 通过 `fork()` 创建子进程并调用 `pstate(child_pid)`，输出 `pstate(child) = <state> (<STATE_NAME>)`。
+
+过程问题与真实修正：
+
+- 原计划命令名 `pstatechildtest` 在 xv6 fs image 构建阶段触发真实 `mkfs` 失败，因为 `_pstatechildtest` 超过 xv6 `DIRSIZ` 文件名限制。
+- 修正为较短命令名 `pchildtest`；输出文本仍保留 `pstate(child) = ...`，便于教学和自动验证。
+- 子进程状态受调度时序影响，本地日志中观察到过 `RUNNABLE` 和 `SLEEPING`；自动验证只匹配稳定前缀，不伪造固定状态。
+
+边界说明：
+
+- 该记录证明 integrated `0001-0004` 可从 clean baseline 构建并捕获关键输出。
+- 该记录不等同于长期稳定性测试，不等同于人工交互录屏。
+- lab2 v0.2 仍是进程状态观察实验，不是完整 `ps` 工具，不修改调度器。
+
 | 风险 | 状态 / 处理 |
 | --- | --- |
 | 仓库路径包含空格 | 当前命令已在该路径下运行成功；后续大量实验仍建议优先考虑 WSL-native 路径。 |
