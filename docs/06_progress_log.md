@@ -464,3 +464,28 @@
   - Timeout capture is not long-running stability or manual interaction.
   - Manual video and second teammate reproduction remain TODO.
   - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.
+
+## 2026-06-05: stage6b red-team review of lab4 file table observation
+
+- Commit hash: TODO after commit
+- Goal: strictly re-verify whether lab4 has real teaching value, whether `fcount`/`filecount` is correct/safe, and whether the independent and integrated patches are clean and reproducible.
+- Verdict: independent lab4 patch and integrated `0005` are clean/minimal/correct/safe and need NO code change; lab4 genuinely bridges user fd → kernel `struct file` → `ref` → `ftable.lock`, but remains a file-table count observation, not a full file-system lab. Work this round is documentation + honest-boundary completion only.
+- Patch audit (read-only):
+  - Independent and integrated patches share byte-identical core logic (`filecount()` in `kernel/file.c`, `sys_fcount()` in `kernel/sysfile.c`, `user/fcounttest.c`); they differ only in `SYS_fcount` number (independent `22` after clean-baseline `SYS_close=21`; integrated `26` after `SYS_pcount=25`) and surrounding context.
+  - `0005` adds only fcount/fcounttest increments; no 0001-0004 content duplicated; helper `PATCHES` includes `0005`.
+  - `sys_fcount()` is correctly placed in `kernel/sysfile.c` (with the other file syscalls), not `kernel/sysproc.c`; takes no args; returns `filecount()`.
+  - `filecount()` acquires only `ftable.lock`, counts `f->ref > 0` over `ftable.file[NFILE]` (NFILE=100), releases; reads `f->ref` under the same lock as `filealloc`/`filedup`/`fileclose`. No nested lock → no deadlock. Returns only an int and never touches `f->ip`/`f->pipe`/paths/content → no information leak.
+  - `fcounttest` does `unlink → before=fcount → open(O_CREATE|O_RDWR) → after_open=fcount → write → close → after_close=fcount → unlink → print + done`; prints only, asserts nothing (no fixed number).
+- Real validation (clean baseline, WSL2 Ubuntu-24.04):
+  - A) independent lab4 patch: `git apply` (only the benign `usys.pl` mode warning) + `make` exit 0 + boot + `fcounttest done`; 9 files changed; observed `fcount(before)=1, after_open=2, after_close=1`.
+  - B) integrated `0001-0005` via `apply-integrated-labs.sh --make --yes`: 5 patches all `[OK]`, `make` exit 0 (log `logs/integrated-make-20260605-071545.log`), boot evidence, and hello/add2test/pstatetest/pcounttest/pchildtest/fcounttest all captured.
+  - The `open`→`close` delta `+1/-1` was stable across both builds; the absolute number (1) is environment-dependent and intentionally not asserted.
+- Findings:
+  - Benign reproducible `git apply` warning `warning: user/usys.pl has type 100644, expected 100755` (same `/mnt/d` `core.filemode` cause as lab1/lab2 patches; apply + make still succeed).
+  - `make` emits the baseline `riscv64-linux-gnu-ld: warning: kernel/kernel has a LOAD segment with RWX permissions` — a stock-xv6 + binutils warning unrelated to fcount; build still succeeds.
+  - stage6a's first-boot timeout is a `/mnt/d` mtime-skew rebuild effect; this run's boots captured directly because fs.img was already built.
+- Boundaries:
+  - File table observation only; no inode observation, no fdinfo, no per-process fd table query.
+  - Timeout capture is not long-running stability or manual interaction.
+  - lab3 not done; manual video and second teammate reproduction remain TODO.
+  - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.

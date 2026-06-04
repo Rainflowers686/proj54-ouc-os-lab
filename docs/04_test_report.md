@@ -261,7 +261,9 @@ fcount(after_close) = 1
 fcounttest done
 ```
 
-说明：上述数字只作为一次真实观察样例，不作为固定验收标准。文件表引用数量可能受 shell、console、init 和调度时序影响。
+说明：上述数字只作为一次真实观察样例，不作为固定验收标准。文件表引用数量可能受 shell、console、init 和调度时序影响。真正稳定的是差值方向：`open` 使计数 +1、`close` 使计数 −1（stage6b 在 independent 与 integrated 两种构建中均实测到 `1 → 2 → 1`）。
+
+stage6b 红队复审重验（2026-06-05，WSL2 Ubuntu-24.04）：independent lab4 patch 与 integrated `0005` 均未改动代码；两条 clean-baseline 路径重新跑通——independent（apply + make + boot + `fcounttest done`）与 integrated `0001-0005`（`apply-integrated-labs.sh --make --yes` + boot + hello/add2test/pstatetest/pcounttest/pchildtest/fcounttest）。`make` 仅出现 baseline 自带的 `ld ... LOAD segment with RWX permissions` 警告（与 fcount 无关），无编译错误。日志 `logs/integrated-make-20260605-071545.log`（ignored）。
 
 实现范围：
 
