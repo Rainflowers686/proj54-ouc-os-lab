@@ -258,6 +258,13 @@ hello syscall returned 2026
 - 该记录不等同于长期稳定性测试，不等同于人工交互录屏。
 - lab2 v0.2 仍是进程状态观察实验，不是完整 `ps` 工具，不修改调度器。
 
+stage5b 红队复审重验（2026-06-04，WSL2 Ubuntu-24.04）：
+
+- `0004` patch 未做任何代码改动；本轮为独立重新复现 + 文档补全。
+- 从 clean baseline 重新 `apply 0001-0004 + make`：PASS。日志 `logs/integrated-make-20260604-220936.log`（ignored）。
+- 重验实测值：`pstate(self) = 4 (RUNNING)`、`pcount(RUNNING) = 1`（不固定承诺）、`pcount(99) = -1`；`pchildtest` 在**同一次 boot** 内观察到 `3 (RUNNABLE)` 与 `2 (SLEEPING)` 混合，`pstate(-1) = -1`。
+- 已知无害现象：从 clean baseline `git apply` 时每个 patch 都打印 `warning: user/usys.pl has type 100644, expected 100755`；patch 仍成功应用、`make` 仍成功。成因是 `/mnt/d`（NTFS over WSL）`core.filemode=false` 不保留可执行位，环境相关，详见 `docs/19`。
+
 | 风险 | 状态 / 处理 |
 | --- | --- |
 | 仓库路径包含空格 | 当前命令已在该路径下运行成功；后续大量实验仍建议优先考虑 WSL-native 路径。 |

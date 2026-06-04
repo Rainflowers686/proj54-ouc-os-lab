@@ -414,3 +414,30 @@
   - Evidence is timeout-based capture, not long-running stability or manual interaction.
   - Manual interaction video and second-person reproduction remain TODO.
   - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.
+
+## 2026-06-04: stage5b red-team review of lab2 v0.2 process observation
+
+- Commit hash: TODO after commit
+- Goal: strictly re-verify whether lab2 v0.2 truly improves teaching depth and whether the `0004` patch is clean, reproducible, and safe.
+- Verdict: `0004` patch is clean/minimal/correct and needs NO code change; v0.2 genuinely deepens teaching over v0.1. Work this round is documentation + honest-boundary completion only.
+- `0004` patch audit (read-only):
+  - Contains ONLY `pcount`/`pcounttest`/`pchildtest` increments — no 0001/0002/0003 content, no build artifacts, logs, personal paths, or temp files.
+  - Reuses the `extern struct proc proc[NPROC];` that `0003` added to `kernel/sysproc.c` (no duplicate declaration); correct incremental layering, must apply after `0003`.
+  - `SYS_pcount = 25` does not collide (22/23/24/25).
+  - `sys_pcount` uses `argint(0, &state)`; in this baseline `argint` returns `void`, so there is no return to check (matches `sys_pause`/`sys_add2`/`sys_pstate`).
+  - Range check `state < UNUSED || state > ZOMBIE` == `0..5` for `enum procstate {UNUSED..ZOMBIE}`; compiles clean under `-Wall -Werror`.
+  - Locking is correct: per-slot `acquire/release(&p->lock)`; the running caller does NOT hold its own `p->lock` in the kernel, so scanning its own slot does not self-deadlock. Limitation (not a bug): one lock at a time means the count is a non-atomic aggregate, not a whole-table snapshot.
+  - `pcount(99) = -1` and `pstate(-1) = -1` are real, working negative tests.
+- Real validation (clean baseline, WSL2 Ubuntu-24.04):
+  - `apply-integrated-labs.sh --make --yes`: PASS; clean reset + apply `0001-0004` (all `git apply --check`/apply `[OK]`) + `make` exit 0.
+  - `boot-xv6.sh`: PASS.
+  - hello / add2test / pstatetest / pcounttest(`pcount(RUNNING) =`) / pcounttest(`pcount(99) = -1`) / pchildtest(`pstate(child) =`): all PASS.
+  - Observed values: `pstate(self) = 4 (RUNNING)`, `pcount(RUNNING) = 1` (not fixed), `pcount(99) = -1`; `pchildtest` printed BOTH `3 (RUNNABLE)` and `2 (SLEEPING)` within a single boot — direct evidence of scheduling-timing nondeterminism.
+- Findings:
+  - Benign, reproducible `git apply` warning `warning: user/usys.pl has type 100644, expected 100755` on every patch; apply + make still succeed. Cause: `/mnt/d` (NTFS over WSL) `core.filemode=false` drops the executable bit; upstream `usys.pl` is `100755`. Documented in `docs/19`; patches intentionally NOT re-exported.
+  - No residual wrong command name: all `pstatechildtest` mentions are historical rename explanations; the actual command is `pchildtest` everywhere.
+  - `pchildtest`/`pcounttest` depend on the baseline's `pause` (this pinned baseline renamed xv6 `sleep` → `pause`); safe only under the pinned `baseline commit 74f84181...`.
+- Boundaries:
+  - Evidence is timeout-based capture, not long-running stability or manual interaction.
+  - Manual interaction video and second-person reproduction remain TODO; lab3/lab4 not done.
+  - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.

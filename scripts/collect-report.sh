@@ -56,7 +56,7 @@ mkdir -p submissions
   status_line "docs/16_patch_strategy_and_integration_plan.md" "patch strategy and integration plan" "stage4b conflict measured; stage4c integrated-labs sequence built and verified"
   status_line "docs/17_integrated_labs_review.md" "integrated-labs review" "stage4d red-team plus stage5a update: 0001-0004 reproduced; hello/add2test/pstatetest/pcounttest/pchildtest in one build"
   status_line "docs/18_integrated_helper_review.md" "integrated apply helper safety review" "stage4f red-team plus stage5a update: preview safe; --run/--make always require --yes; --make --yes applies 0001-0004"
-  status_line "docs/19_lab2_v0.2_process_observation_review.md" "lab2 v0.2 process observation review" "stage5a review: pcount, pcounttest, pchildtest, negative input, clean integrated reproduction"
+  status_line "docs/19_lab2_v0.2_process_observation_review.md" "lab2 v0.2 process observation review" "stage5a + stage5b red-team: pcount/pcounttest/pchildtest and negative input; integrated 0001-0004 re-reproduced from clean baseline; 0004 patch unchanged; lock/snapshot analysis and benign usys.pl mode warning documented"
   status_line "docs/13_technical_report_v0.1.md" "Technical report v0.1" "stage2c draft; not final report"
   status_line "reproducibility/README.md" "Reproducibility package" "lab0/lab1/lab2/integrated-labs reproduction checklist and template"
   status_line "labs/lab0-env-setup/README.md" "lab0 environment guide" "xv6 baseline make succeeded; boot evidence found; manual interaction TODO"

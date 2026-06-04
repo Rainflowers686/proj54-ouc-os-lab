@@ -28,7 +28,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 | patch strategy and integration plan | `docs/16_patch_strategy_and_integration_plan.md` | exists | stage4b conflict measured; stage4c integrated-labs sequence built and verified |
 | integrated-labs review | `docs/17_integrated_labs_review.md` | exists | stage4d red-team plus stage5a update: 0001-0004 reproduced; hello/add2test/pstatetest/pcounttest/pchildtest in one build |
 | integrated apply helper safety review | `docs/18_integrated_helper_review.md` | exists | stage4f red-team plus stage5a update: preview safe; --run/--make always require --yes; --make --yes applies 0001-0004 |
-| lab2 v0.2 process observation review | `docs/19_lab2_v0.2_process_observation_review.md` | exists | stage5a review: pcount, pcounttest, pchildtest, negative input, clean integrated reproduction |
+| lab2 v0.2 process observation review | `docs/19_lab2_v0.2_process_observation_review.md` | exists | stage5a + stage5b red-team: pcount/pcounttest/pchildtest and negative input; integrated 0001-0004 re-reproduced from clean baseline; 0004 patch unchanged; lock/snapshot analysis and benign usys.pl mode warning documented |
 | Technical report v0.1 | `docs/13_technical_report_v0.1.md` | exists | stage2c draft; not final report |
 | Reproducibility package | `reproducibility/README.md` | exists | lab0/lab1/lab2/integrated-labs reproduction checklist and template |
 | lab0 environment guide | `labs/lab0-env-setup/README.md` | exists | xv6 baseline make succeeded; boot evidence found; manual interaction TODO |
