@@ -323,7 +323,7 @@ bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(99) = -1"
 bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="
 ```
 
-当前记录：`scripts/xv6/apply-integrated-labs.sh` 已新增；预览模式不修改 external tree；`--make --yes` 可 reset/clean ignored 的 `external/xv6-riscv/`、应用 integrated `0001-0004` 并完成 `make`。boot evidence、hello、add2test、pstatetest、pcounttest、pchildtest 均已通过真实命令验证。该结果只代表 timeout 自动捕获到关键输出，不代表长期稳定性或人工录屏。
+当前记录：`scripts/xv6/apply-integrated-labs.sh` 已新增；预览模式不修改 external tree；`--make --yes` 可 reset/clean ignored 的 `external/xv6-riscv/`、应用 integrated `0001-0005` 并完成 `make`。boot evidence、hello、add2test、pstatetest、pcounttest、pchildtest、fcounttest 均已通过真实命令验证。该结果只代表 timeout 自动捕获到关键输出，不代表长期稳定性或人工录屏。
 
 ## 8. 风险与边界
 
@@ -384,3 +384,45 @@ AI 工具不得用于：
 - 复现包：`reproducibility/README.md`
 - Demo 脚本：`videos/demo_script.md`
 - 初赛材料索引：`submissions/draft-report-index.md`
+
+## stage6a 更新：lab4 文件表观察实验
+
+stage6a 在既有 lab0/lab1/lab2 基础上新增了一个范围克制的 lab4 文件系统观察实验。该实验不修改文件系统布局，不观察 inode，也不实现完整文件系统工具；当前只通过 `fcount()` 观察 xv6 全局文件表中 `ref > 0` 的 `struct file` 数量。
+
+新增交付物：
+
+- independent lab4 patch：`patches/lab4-file-table-observation/0001-add-fcount-syscall.patch`，从 clean baseline 单独应用，使用 `SYS_fcount = 22`。
+- integrated lab4 patch：`patches/integrated-labs/0005-add-file-table-observation.patch`，在 integrated `0001-0004` 之后应用，使用 `SYS_fcount = 26`。
+- lab4 教程：`labs/lab4-file-system/README.md`。
+- lab4 测试说明：`tests/lab4/README.md`。
+- lab4 审查报告：`docs/20_lab4_file_table_observation_review.md`。
+
+当前 integrated final demo patch sequence 扩展为：
+
+| 顺序 | 内容 | syscall number | 用户程序 |
+| --- | --- | --- | --- |
+| `0001` | `hello()` | 22 | `hello` |
+| `0002` | `add2(int, int)` | 23 | `add2test` |
+| `0003` | `pstate(int pid)` | 24 | `pstatetest` |
+| `0004` | `pcount(int state)` 和子进程状态观察 | 25 | `pcounttest`、`pchildtest` |
+| `0005` | `fcount()` 文件表观察 | 26 | `fcounttest` |
+
+真实验证摘要：
+
+- independent lab4 patch：clean baseline apply PASS，`make` PASS，`fcounttest done` 捕获 PASS。
+- integrated `0001-0005`：`apply-integrated-labs.sh --make --yes` PASS，boot evidence PASS。
+- 同一 integrated 构建中已捕获 `hello`、`add2test`、`pstatetest`、`pcounttest`、`pchildtest`、`fcounttest` 的关键输出。
+
+教学价值：
+
+- 从用户态 file descriptor 过渡到内核 `struct file`。
+- 通过 `ref` 引用计数解释打开文件对象生命周期。
+- 通过 `open/close` 前后观察说明用户态操作会影响全局文件表。
+- 通过 `ftable.lock` 引出共享内核数据结构读取时的锁保护。
+
+边界仍需明确：
+
+- `fcount(...)` 的具体数字不固定，不作为验收标准。
+- timeout 自动捕获不是长期稳定性测试。
+- 人工录屏和第二名队员独立复现仍为 TODO。
+- lab3 尚未完成，lab4 当前也不是完整文件系统实验。

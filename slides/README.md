@@ -76,3 +76,22 @@
 - TODO: 不使用未经记录来源和许可证的外部图片。
 - TODO: 不把未完成工作写成已完成。
 - TODO: 生成 PPT 前先确认比赛平台格式和大小要求。
+
+## stage6a 更新：lab4 slide 补充
+
+PPT 结构建议新增一页或一组小页：
+
+11. lab4 文件表观察
+   - `fcount()` syscall。
+   - `fcounttest` 用户程序。
+   - 从 file descriptor 过渡到 `struct file`。
+   - `ref` 引用计数与 `open/close` 的关系。
+   - `ftable.lock` 的锁保护说明。
+   - `fcount(before) =`、`fcount(after_open) =`、`fcount(after_close) =`、`fcounttest done` 输出证据。
+   - 说明具体数字不固定，当前只验证稳定前缀。
+
+integrated-labs 综合演示页同步更新：
+
+- syscall number：`hello=22`、`add2=23`、`pstate=24`、`pcount=25`、`fcount=26`。
+- patch sequence：`0001-0005`。
+- 当前仍不声称人工录屏、长期稳定性测试或队友二次复现已完成。

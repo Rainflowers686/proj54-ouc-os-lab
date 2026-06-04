@@ -183,4 +183,40 @@ pstate(child) = <state> (<STATE_NAME>)
 
 - TODO: 第二名队员在另一台机器独立复现 lab1/lab2。
 - TODO: 失败时补充 FAQ 和 issue 记录。
-- TODO: 第二名队员独立复现 integrated-labs `0001-0004`。
+- TODO: 第二名队员独立复现 integrated-labs `0001-0005`。
+
+## stage6a 更新：lab4 与 integrated 0001-0005
+
+当前 integrated-labs 已扩展到 `0001-0005`，新增 lab4 文件表观察实验：
+
+- `0005-add-file-table-observation.patch`
+- `fcount()` syscall
+- `fcounttest` 用户程序
+
+推荐综合复现命令：
+
+```bash
+bash scripts/xv6/apply-integrated-labs.sh
+bash scripts/xv6/apply-integrated-labs.sh --make --yes
+bash scripts/xv6/boot-xv6.sh
+bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"
+bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"
+bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="
+bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(RUNNING) ="
+bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
+```
+
+如需单独复现 lab4 independent patch：
+
+```bash
+cd external/xv6-riscv
+git reset --hard 74f84181a3404d1d6a6ff98d342233979066ebb8
+git clean -fdx
+git apply ../../patches/lab4-file-table-observation/0001-add-fcount-syscall.patch
+make
+cd ../..
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
+```
+
+`fcount(...)` 的具体数字不固定；复现记录应写实际观察值，不得为了匹配文档而修改输出或伪造固定数字。

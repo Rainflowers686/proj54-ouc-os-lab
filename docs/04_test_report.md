@@ -8,7 +8,7 @@
 - 原始 `logs/*.log` 默认不提交，只在文档中记录路径和关键信息。
 - 不将 `make` 成功写成 QEMU boot 成功。
 - 不将 timeout 自动捕获写成长期稳定性或人工交互测试。
-- 不伪造 lab1/lab2 syscall 输出。
+- 不伪造 lab1/lab2/lab4 syscall 输出。
 
 ## 测试记录
 
@@ -212,6 +212,96 @@ hello syscall returned 2026
 - `make` 仍出现已知 `LOAD segment with RWX permissions` linker warning，但本次 `make` 退出成功。
 - helper 只操作 ignored 的 `external/xv6-riscv/` 和 ignored 的 `logs/*.log`，不修改主仓库 tracked 文件。
 
+### lab4 file table observation test
+
+| 字段 | 内容 |
+| --- | --- |
+| 测试名称 | lab4 file table observation test |
+| 日期时间 | 2026-06-04 |
+| baseline commit | `74f84181a3404d1d6a6ff98d342233979066ebb8` |
+| independent patch | `patches/lab4-file-table-observation/0001-add-fcount-syscall.patch` |
+| integrated patch | `patches/integrated-labs/0005-add-file-table-observation.patch` |
+| independent syscall 号 | `SYS_fcount 22` |
+| integrated syscall 号 | `SYS_fcount 26` |
+| 用户程序 | `fcounttest` |
+| independent clean apply | 成功 |
+| independent `make` | 成功 |
+| integrated `0001-0005` clean apply | 成功 |
+| integrated `make` | 成功 |
+| 原始日志是否提交 | 否，`logs/*.log` 被 `.gitignore` 忽略 |
+
+真实验证命令摘要：
+
+```bash
+make -C external/xv6-riscv
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
+bash scripts/xv6/apply-integrated-labs.sh --make --yes
+bash scripts/xv6/boot-xv6.sh
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(before) ="
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_open) ="
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_close) ="
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
+```
+
+已捕获的稳定输出前缀：
+
+```text
+fcount(before) =
+fcount(after_open) =
+fcount(after_close) =
+fcounttest done
+```
+
+本地一次真实输出中观察到：
+
+```text
+fcount(before) = 1
+fcount(after_open) = 2
+fcount(after_close) = 1
+fcounttest done
+```
+
+说明：上述数字只作为一次真实观察样例，不作为固定验收标准。文件表引用数量可能受 shell、console、init 和调度时序影响。
+
+实现范围：
+
+- `kernel/file.c` 新增 `filecount()`，持有 `ftable.lock` 后遍历 `ftable.file[]`。
+- `kernel/defs.h` 声明 `filecount()`。
+- syscall 层新增 `sys_fcount()`、syscall number、dispatch table entry 和用户态 stub。
+- `user/fcounttest.c` 观察临时文件打开前、打开后、关闭后的文件表引用数量。
+
+边界说明：
+
+- 这是文件表观察实验，不是完整文件系统实验。
+- 不观察 inode，不修改文件系统布局。
+- timeout 自动捕获不等同于长期稳定性测试。
+- 人工交互录屏和第二名队员独立复现仍为 TODO。
+- stage6a 最终复验中，`apply-integrated-labs.sh --make --yes` 后第一次运行 `boot-xv6.sh` 未捕获 boot evidence，原因是 `make qemu` 在 20 秒 timeout 内仍在补建 `fs.img` 相关用户程序；第二次运行 `boot-xv6.sh` 成功捕获 `xv6 kernel is booting` 和 `init: starting sh`。该失败不写成成功，保留为真实边界记录。
+
+### integrated lab1+lab2+lab4 patch sequence test
+
+| 字段 | 内容 |
+| --- | --- |
+| 测试名称 | integrated lab1+lab2+lab4 patch sequence test |
+| 日期时间 | 2026-06-04 |
+| patch 序列 | integrated `0001` → `0002` → `0003` → `0004` → `0005` |
+| syscall 号 | `hello=22`，`add2=23`，`pstate=24`，`pcount=25`，`fcount=26` |
+| helper 构建命令 | `bash scripts/xv6/apply-integrated-labs.sh --make --yes` |
+| `make` 结果 | 成功 |
+| boot evidence | 成功 |
+| 回归命令 | `hello`、`add2test`、`pstatetest`、`pcounttest`、`pchildtest`、`fcounttest` |
+| 回归结果 | 均成功捕获预期关键文本 |
+
+已真实捕获：
+
+- `hello syscall returned 2026`
+- `add2(20, 6) returned 26`
+- `pstate(self) =`
+- `pcount(RUNNING) =`
+- `pcount(99) = -1`
+- `pstate(child) =`
+- `fcounttest done`
+
 ## 当前风险与后续动作
 
 ### integrated lab2 v0.2 process observation extension test
@@ -270,9 +360,9 @@ stage5b 红队复审重验（2026-06-04，WSL2 Ubuntu-24.04）：
 | 仓库路径包含空格 | 当前命令已在该路径下运行成功；后续大量实验仍建议优先考虑 WSL-native 路径。 |
 | `riscv64-unknown-elf-gcc` 缺失 | 当前 baseline 和 lab1 构建使用 `riscv64-linux-gnu-gcc` 成功；若 Makefile 或工具链策略变化需复查。 |
 | linker RWX warning | 当前不阻塞 build，但需要在技术报告中解释。 |
-| QEMU 只做 evidence 捕获 | 已检测到 boot 关键文本、hello 输出、add2 输出和 pstatetest 输出，但未做长期稳定性和完整人工交互测试。 |
+| QEMU 只做 evidence 捕获 | 已检测到 boot 关键文本、hello/add2test/pstatetest/pcounttest/pchildtest/fcounttest 关键输出，但未做长期稳定性和完整人工交互测试。 |
 | patch baseline 依赖 | lab1 与 lab2 patch 均应用于 `74f84181a3404d1d6a6ff98d342233979066ebb8`；baseline 变化时需重新验证。 |
-| lab1/lab2 syscall number 合并 | independent patch 仍不能直接叠加；integrated-labs 已提供统一序列，使用 `hello=22/add2=23/pstate=24` 并完成真实验证。 |
+| lab1/lab2/lab4 syscall number 合并 | independent patch 仍不能直接叠加；integrated-labs 已提供统一序列，使用 `hello=22/add2=23/pstate=24/pcount=25/fcount=26` 并完成真实验证。 |
 
 ## 后续记录模板
 

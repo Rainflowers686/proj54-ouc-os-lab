@@ -1,25 +1,42 @@
-# lab4 测试计划
+# lab4 测试记录
 
 ## 当前测试目标
 
-lab4 未来用于验证文件系统实验，包括文件创建、打开、读写、关闭、错误路径和边界条件。
+lab4 v0.1 用于验证文件表观察实验：
 
-当前状态：规划中，尚未引入 xv6-riscv baseline，没有真实测试结果。
+- `fcount()` syscall 能返回当前全局文件表中 `ref > 0` 的 `struct file` 数量。
+- `fcounttest` 能输出打开临时文件前、打开后、关闭后的观察结果。
+- 测试不固定具体数值，只验证稳定输出前缀。
 
-## 未来测试方式
+## 已真实执行的验证
 
-- TODO：编写文件读写用户态测试程序。
-- TODO：覆盖正常读写、空文件、大文件或边界长度等用例。
-- TODO：覆盖不存在文件、权限或参数错误等错误路径。
-- TODO：记录构建命令、运行命令、输出和结论。
+| 项目 | 结果 |
+| --- | --- |
+| independent lab4 patch clean apply | PASS |
+| independent lab4 patch `make` | PASS |
+| independent `fcounttest` | PASS，检测到 `fcounttest done` |
+| integrated `0001-0005` clean apply + `make` | PASS |
+| integrated `fcounttest` 前缀捕获 | PASS，检测到 `fcount(before) =`、`fcount(after_open) =`、`fcount(after_close) =`、`fcounttest done` |
+
+本地一次输出中观察到 `fcount(before) = 1`、`fcount(after_open) = 2`、`fcount(after_close) = 1`。该数值只作为一次真实样例，不作为固定测试期望。
+
+## 推荐验证命令
+
+```bash
+bash scripts/xv6/apply-integrated-labs.sh --make --yes
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(before) ="
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_open) ="
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_close) ="
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
+```
 
 ## 记录要求
 
 - 不伪造测试结果。
-- 不写虚假的 PASS。
-- 实际命令和输出应记录在 docs/04_test_report.md 或后续测试日志中。
-- 文件系统测试可能修改运行时镜像，需记录初始状态和清理方式 TODO。
+- 不提交 `logs/*.log` 原始日志。
+- 只在 `docs/04_test_report.md` 中摘录关键命令、结果、风险和边界。
+- 若后续数值变化，应记录为环境/时序差异，不应改成固定通过值。
 
-## 与测试报告模板的关系
+## 与测试报告的关系
 
-正式测试记录使用 [../../docs/04_test_report.md](../../docs/04_test_report.md) 中的模板。本文档只说明 lab4 的测试目标和未来测试范围。
+正式测试摘要记录在 [../../docs/04_test_report.md](../../docs/04_test_report.md)。本文件只记录 lab4 的测试目标、当前验证状态和后续补充方向。

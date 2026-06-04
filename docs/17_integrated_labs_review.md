@@ -117,7 +117,7 @@ bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
 - 人工交互录屏：TODO。
 - 第二名队员独立复现：TODO。
 - lab2 仍是 process observation v0.1（只观察单进程，self 近乎恒为 RUNNING；见 [15_lab2_process_observation_review.md](15_lab2_process_observation_review.md)）。
-- lab3 / lab4 未完成；整体仍只覆盖 lab0/lab1/lab2。
+- lab3 未完成；lab4 当前完成文件表观察 v0.1，但不是完整文件系统实验。
 - `external/xv6-riscv/` 与 `logs/*.log` 不提交（已验证 `git ls-files` 为空）。
 
 ## 10. 评委复现路径
@@ -132,10 +132,12 @@ bash scripts/xv6/boot-xv6.sh
 bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"
 bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"
 bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="
-bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
+bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(RUNNING) ="
+bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
 ```
 
-预期：helper 预览模式不修改 external tree；`--make --yes` reset/clean ignored 的 `external/xv6-riscv/`、顺序应用三个 patch 并完成 `make`；输出中分别出现 `hello syscall returned 2026`、`add2(20, 6) returned 26`、`pstate(self) = 4 (RUNNING)`。
+预期：helper 预览模式不修改 external tree；`--make --yes` reset/clean ignored 的 `external/xv6-riscv/`、顺序应用 integrated `0001-0005` 并完成 `make`；输出中分别出现 `hello syscall returned 2026`、`add2(20, 6) returned 26`、`pstate(self) =`、`pcount(RUNNING) =`、`pstate(child) =` 和 `fcounttest done`。
 
 stage4e 真实 helper 验证：
 
@@ -143,7 +145,7 @@ stage4e 真实 helper 验证：
 | --- | --- |
 | `bash scripts/xv6/apply-integrated-labs.sh` | exit 0；预览模式只打印状态和将执行操作；未 reset、未 apply、未 make |
 | 预览前后 external 状态 | 一致，仍为 integrated 已应用的工作树 |
-| `bash scripts/xv6/apply-integrated-labs.sh --make --yes` | exit 0；reset/clean ignored tree，顺序 apply 三个 patch，`make` 成功 |
+| `bash scripts/xv6/apply-integrated-labs.sh --make --yes` | exit 0；reset/clean ignored tree，顺序 apply integrated patch sequence，`make` 成功 |
 | make log | `logs/integrated-make-20260604-163022.log`（ignored，不提交） |
 | 后续 boot evidence | PASS |
 | 后续 hello/add2test/pstatetest | PASS |
@@ -152,7 +154,7 @@ stage4e 真实 helper 验证：
 
 1. 把综合演示统一收口到 integrated-labs：Demo 脚本与复现包的"最终演示"段明确指向路径 C，避免再用独立 patch 拼凑。
 2. stage4e 已提供并验证 `scripts/xv6/apply-integrated-labs.sh`（预览/`--run --yes`/`--make --yes`）降低评委复现门槛；stage4f 红队对该脚本做了安全审查并加固（`--run`/`--make` 现在**始终要求 `--yes`** 才执行 reset/clean），详见 [18_integrated_helper_review.md](18_integrated_helper_review.md)；后续继续保持该脚本克制，不自动声明 boot 或用户程序成功。
-3. 第二名队员按第 10 节在另一台机器独立复现，并录一段真实人工交互演示（手敲 hello/add2test/pstatetest）。
+3. 第二名队员按第 10 节在另一台机器独立复现，并录一段真实人工交互演示（手敲 hello/add2test/pstatetest/pcounttest/pchildtest/fcounttest）。
 4. 后续若新增 lab（如 lab3/lab4），同步更新 integrated 序列与号段规划（`0004` 起、号 25+），并复跑本报告第 4-6 节。
 5. 统一处理 `user/usys.pl` 的 file mode warning（patch 记录 100755，Windows/WSL 检出 100644），避免集成时反复出现告警。
 
@@ -181,3 +183,31 @@ stage5a 在本报告审查过的 `0001-0003` 之后新增了 integrated `0004-ex
 - 原 independent patch 未被替换或重写。
 - `pchildtest` 是实际命令名；原计划 `pstatechildtest` 因 xv6 `DIRSIZ` 文件名限制导致 `mkfs` 失败，已记录为真实问题和修正。
 - 详细 v0.2 审查见 [19_lab2_v0.2_process_observation_review.md](19_lab2_v0.2_process_observation_review.md)。
+
+## stage6a 更新：integrated 0005
+
+stage6a 在本报告审查过的 `0001-0004` 之后新增 integrated `0005-add-file-table-observation.patch`，用于 lab4 文件表观察实验。
+
+更新后的综合序列：
+
+| patch | 基线 | 新增内容 | syscall 号 | 用户程序 |
+| --- | --- | --- | --- | --- |
+| `0001-add-hello-syscall.patch` | clean baseline | `hello()` | `SYS_hello 22` | `hello` |
+| `0002-add-argint-add2-syscall.patch` | `0001` 之后 | `add2(int, int)` | `SYS_add2 23` | `add2test` |
+| `0003-add-pstate-syscall.patch` | `0001`+`0002` 之后 | `pstate(int pid)` | `SYS_pstate 24` | `pstatetest` |
+| `0004-extend-process-observation.patch` | `0001`+`0002`+`0003` 之后 | `pcount(int state)`、子进程状态观察 | `SYS_pcount 25` | `pcounttest`、`pchildtest` |
+| `0005-add-file-table-observation.patch` | `0001`+`0002`+`0003`+`0004` 之后 | `fcount()` 文件表观察 | `SYS_fcount 26` | `fcounttest` |
+
+真实验证状态：
+
+- clean baseline + integrated `0001-0005`：PASS。
+- `apply-integrated-labs.sh --make --yes`：PASS。
+- boot evidence：PASS。
+- `hello`、`add2test`、`pstatetest`、`pcounttest`、`pchildtest`、`fcounttest` 均捕获到关键输出。
+
+说明：
+
+- 原 independent patch 未被替换或重写。
+- `fcount(...)` 的具体数字可能随 shell、console、init 和时序变化，验证只匹配稳定前缀。
+- stage6a 不是完整文件系统实验，不观察 inode，不修改文件系统布局。
+- 详细 lab4 审查见 [20_lab4_file_table_observation_review.md](20_lab4_file_table_observation_review.md)。

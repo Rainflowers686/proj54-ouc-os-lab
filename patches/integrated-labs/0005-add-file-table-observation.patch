@@ -1,0 +1,163 @@
+diff --git a/Makefile b/Makefile
+index 3598962..08400bf 100644
+--- a/Makefile
++++ b/Makefile
+@@ -133,6 +133,7 @@ UPROGS=\
+ 	$U/_pstatetest\
+ 	$U/_pcounttest\
+ 	$U/_pchildtest\
++	$U/_fcounttest\
+ 	$U/_forktest\
+ 	$U/_grep\
+ 	$U/_init\
+diff --git a/kernel/defs.h b/kernel/defs.h
+index ee5d495..cee70ed 100644
+--- a/kernel/defs.h
++++ b/kernel/defs.h
+@@ -29,6 +29,7 @@ int             kexec(char*, char**);
+ // file.c
+ struct file*    filealloc(void);
+ void            fileclose(struct file*);
++int             filecount(void);
+ struct file*    filedup(struct file*);
+ void            fileinit(void);
+ int             fileread(struct file*, uint64, int n);
+diff --git a/kernel/file.c b/kernel/file.c
+index 13a4e69..9857b4f 100644
+--- a/kernel/file.c
++++ b/kernel/file.c
+@@ -25,6 +25,22 @@ fileinit(void)
+   initlock(&ftable.lock, "ftable");
+ }
+ 
++int
++filecount(void)
++{
++  struct file *f;
++  int count = 0;
++
++  acquire(&ftable.lock);
++  for (f = ftable.file; f < ftable.file + NFILE; f++) {
++    if (f->ref > 0)
++      count++;
++  }
++  release(&ftable.lock);
++
++  return count;
++}
++
+ // Allocate a file structure.
+ struct file *
+ filealloc(void)
+diff --git a/kernel/syscall.c b/kernel/syscall.c
+index afb6c7d..449d2a7 100644
+--- a/kernel/syscall.c
++++ b/kernel/syscall.c
+@@ -106,6 +106,7 @@ extern uint64 sys_hello(void);
+ extern uint64 sys_add2(void);
+ extern uint64 sys_pstate(void);
+ extern uint64 sys_pcount(void);
++extern uint64 sys_fcount(void);
+ 
+ // An array mapping syscall numbers from syscall.h
+ // to the function that handles the system call.
+@@ -136,6 +137,7 @@ static uint64 (*syscalls[])(void) = {
+   [SYS_add2]    sys_add2,
+   [SYS_pstate]  sys_pstate,
+   [SYS_pcount]  sys_pcount,
++  [SYS_fcount]  sys_fcount,
+   // clang-format on
+ };
+ 
+diff --git a/kernel/syscall.h b/kernel/syscall.h
+index 5275dc7..7fa325a 100644
+--- a/kernel/syscall.h
++++ b/kernel/syscall.h
+@@ -24,3 +24,4 @@
+ #define SYS_add2   23
+ #define SYS_pstate 24
+ #define SYS_pcount 25
++#define SYS_fcount 26
+diff --git a/kernel/sysfile.c b/kernel/sysfile.c
+index a6299e9..aae9061 100644
+--- a/kernel/sysfile.c
++++ b/kernel/sysfile.c
+@@ -119,6 +119,12 @@ sys_fstat(void)
+   return filestat(f, st);
+ }
+ 
++uint64
++sys_fcount(void)
++{
++  return filecount();
++}
++
+ // Create the path new as a link to the same inode as old.
+ uint64
+ sys_link(void)
+diff --git a/user/fcounttest.c b/user/fcounttest.c
+new file mode 100644
+index 0000000..b961046
+--- /dev/null
++++ b/user/fcounttest.c
+@@ -0,0 +1,39 @@
++#include "kernel/types.h"
++#include "kernel/fcntl.h"
++#include "user/user.h"
++
++int
++main(void)
++{
++  int before;
++  int after_open;
++  int after_close;
++  int fd;
++
++  unlink("fcnttmp");
++
++  before = fcount();
++  fd = open("fcnttmp", O_CREATE | O_RDWR);
++  if (fd < 0) {
++    printf("fcounttest: open fcnttmp failed\n");
++    exit(1);
++  }
++
++  after_open = fcount();
++  if (write(fd, "x", 1) != 1) {
++    printf("fcounttest: write failed\n");
++    close(fd);
++    unlink("fcnttmp");
++    exit(1);
++  }
++
++  close(fd);
++  after_close = fcount();
++  unlink("fcnttmp");
++
++  printf("fcount(before) = %d\n", before);
++  printf("fcount(after_open) = %d\n", after_open);
++  printf("fcount(after_close) = %d\n", after_close);
++  printf("fcounttest done\n");
++  exit(0);
++}
+diff --git a/user/user.h b/user/user.h
+index 98ec435..345b78a 100644
+--- a/user/user.h
++++ b/user/user.h
+@@ -28,6 +28,7 @@ int hello(void);
+ int add2(int, int);
+ int pstate(int);
+ int pcount(int);
++int fcount(void);
+ 
+ // ulib.c
+ int stat(const char *, struct stat *);
+diff --git a/user/usys.pl b/user/usys.pl
+index 6800940..44944a4 100755
+--- a/user/usys.pl
++++ b/user/usys.pl
+@@ -46,3 +46,4 @@ entry("hello");
+ entry("add2");
+ entry("pstate");
+ entry("pcount");
++entry("fcount");

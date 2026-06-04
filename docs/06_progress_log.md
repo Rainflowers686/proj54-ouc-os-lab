@@ -441,3 +441,26 @@
   - Evidence is timeout-based capture, not long-running stability or manual interaction.
   - Manual interaction video and second-person reproduction remain TODO; lab3/lab4 not done.
   - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.
+
+## 2026-06-04: stage6a lab4 file table observation experiment
+
+- Commit hash: TODO after commit
+- Goal: add a scoped lab4 file table observation experiment with both independent patch and integrated demo patch.
+- Completed:
+  - Added `patches/lab4-file-table-observation/0001-add-fcount-syscall.patch`.
+  - Added `patches/lab4-file-table-observation/README.md`.
+  - Added integrated `patches/integrated-labs/0005-add-file-table-observation.patch`.
+  - Added `fcount()` syscall and `fcounttest` in the ignored local xv6 tree before exporting patches.
+  - Updated `scripts/xv6/apply-integrated-labs.sh` so the helper applies integrated `0001-0005`.
+  - Updated lab4 docs, lab4 tests, integrated patch docs, test report, AI record, progress log, and submission material index.
+- Real validation:
+  - independent lab4 patch from clean baseline: apply PASS, `make` PASS, `fcounttest done` captured.
+  - integrated `0001-0005` from clean baseline: helper preview PASS, `--make --yes` PASS, boot evidence PASS.
+  - regression commands captured: `hello syscall returned 2026`, `add2(20, 6) returned 26`, `pstate(self) =`, `pcount(RUNNING) =`, `pcount(99) = -1`, `pstate(child) =`.
+  - lab4 commands captured: `fcount(before) =`, `fcount(after_open) =`, `fcount(after_close) =`, `fcounttest done`.
+- Boundaries:
+  - This is file table observation, not a complete file system experiment.
+  - `fcount(...)` numeric values are not fixed; local logs showed one sample but the test only uses stable prefixes.
+  - Timeout capture is not long-running stability or manual interaction.
+  - Manual video and second teammate reproduction remain TODO.
+  - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.

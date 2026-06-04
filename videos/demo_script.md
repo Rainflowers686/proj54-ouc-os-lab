@@ -133,3 +133,24 @@ x
 - 自动脚本捕获到的 boot/hello evidence 不等同于人工交互视频。
 - 当前不声称完成长期稳定性测试。
 - 当前不声称第二名队员已独立复现。
+
+## stage6a 更新：lab4 demo 补充
+
+综合 demo 现在建议展示 integrated `0001-0005`，在原有 lab1/lab2 命令后追加：
+
+```bash
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(before) ="
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_open) ="
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_close) ="
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
+```
+
+人工交互录屏时，在 xv6 shell 中追加：
+
+```text
+fcounttest
+```
+
+讲解补充：
+
+> lab4 当前只做文件表观察，不是完整文件系统改造。`fcount()` 统计全局文件表中 `ref > 0` 的 `struct file`，用于说明 file descriptor 背后对应内核文件对象，`open/close` 会影响引用计数。具体数字受 shell、console 和时序影响，因此测试只匹配稳定前缀，不固定承诺某个数值。
