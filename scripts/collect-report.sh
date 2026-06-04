@@ -51,7 +51,7 @@ mkdir -p submissions
   status_line "docs/10_red_team_review.md" "Internal red-team review" "draft"
   status_line "docs/11_xv6_baseline_plan.md" "xv6 baseline plan" "stage1b plan"
   status_line "docs/12_lab1_patch_review.md" "lab1 patch reproducibility review" "stage2b red-team; clean-baseline apply/make/hello verified"
-  status_line "docs/14_lab1_argint_extension_review.md" "lab1 argint extension review" "stage3a clean-baseline 0001+0002 apply/make/hello/add2 verified"
+  status_line "docs/14_lab1_argint_extension_review.md" "lab1 argint extension review" "stage3b red-team: 0001+0002 reproduced (make/hello/add2); add2 call chain, argint mechanism, teaching-value assessment"
   status_line "docs/13_technical_report_v0.1.md" "Technical report v0.1" "stage2c draft; not final report"
   status_line "reproducibility/README.md" "Reproducibility package" "lab0/lab1 reproduction checklist and template"
   status_line "labs/lab0-env-setup/README.md" "lab0 environment guide" "xv6 baseline make succeeded; boot evidence found; manual interaction TODO"

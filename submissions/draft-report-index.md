@@ -23,7 +23,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 | Internal red-team review | `docs/10_red_team_review.md` | exists | draft |
 | xv6 baseline plan | `docs/11_xv6_baseline_plan.md` | exists | stage1b plan |
 | lab1 patch reproducibility review | `docs/12_lab1_patch_review.md` | exists | stage2b red-team; clean-baseline apply/make/hello verified |
-| lab1 argint extension review | `docs/14_lab1_argint_extension_review.md` | exists | stage3a clean-baseline 0001+0002 apply/make/hello/add2 verified |
+| lab1 argint extension review | `docs/14_lab1_argint_extension_review.md` | exists | stage3b red-team: 0001+0002 reproduced (make/hello/add2); add2 call chain, argint mechanism, teaching-value assessment |
 | Technical report v0.1 | `docs/13_technical_report_v0.1.md` | exists | stage2c draft; not final report |
 | Reproducibility package | `reproducibility/README.md` | exists | lab0/lab1 reproduction checklist and template |
 | lab0 environment guide | `labs/lab0-env-setup/README.md` | exists | xv6 baseline make succeeded; boot evidence found; manual interaction TODO |

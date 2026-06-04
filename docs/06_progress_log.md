@@ -191,3 +191,33 @@
 - Next:
   - Have a second team member reproduce on another machine per `docs/12` section 9.
   - Consider a lab1 extension syscall that demonstrates argument passing.
+
+## 2026-06-04: stage3b red-team lab1 argint extension and teaching value
+
+- Commit hash: TODO after commit
+- Role: strict reviewer + OS lab TA + engineering red team (Claude Code).
+- Goal: verify the `0002` add2 argint patch is reproducible on top of `0001`, and judge whether lab1 is becoming a teaching lab system rather than two demos.
+- Completed (real runs in WSL2 Ubuntu, inside the ignored `external/xv6-riscv/`):
+  - Reviewed `0002-add-argint-add2-syscall.patch`: incremental on top of `0001` (its baseline blob indexes equal `0001` output blobs), no overlap; `SYS_add2 23` has no conflict; `argint(0,&a)/argint(1,&b)` correct; `add2test` minimal.
+  - Reset the ignored tree to clean baseline `74f84181a3404d1d6a6ff98d342233979066ebb8`; applied `0001` then `0002` (both `git apply --check` exit 0).
+  - Clean `make` succeeded (exit 0); only the known `LOAD segment with RWX permissions` linker warning.
+  - Captured `hello syscall returned 2026` and `add2(20, 6) returned 26` (both COMMAND_EVIDENCE_FOUND).
+  - Strengthened `docs/14_lab1_argint_extension_review.md`: added overall conclusion, add2 call chain, an actual `argint()` mechanism explanation (registers -> trapframe -> argraw), independent reproduction results, a teaching-value assessment, and a judge reproduction path.
+  - Fixed `docs/13` section 3.4 (add2 is done, not future) and added an explicit "not all syscall mechanisms covered" note.
+  - Added a "teaching next steps (student exercises, design/TODO)" section and an "uncovered" note to `labs/lab1-system-call/README.md`.
+- Real result:
+  - clean baseline + `0001` + `0002` apply: PASS (`git apply --check` exit 0 for both)
+  - clean make: PASS (exit 0)
+  - hello output: `hello syscall returned 2026`
+  - add2test output: `add2(20, 6) returned 26`
+  - stage3b logs (ignored): `logs/xv6-make-20260604-081018.log`, `logs/xv6-command-add2test-20260604-081330.log`
+- Red-team teaching-value verdict:
+  - lab1 is now an honest, reproducible, two-tier syscall mini-lab (hello -> add2/argint), but NOT yet a full teaching lab system.
+  - Missing for a teaching system: student do-it tasks, negative/failure labs, pointer/string args (`argaddr`/`argstr`), boundary cases, and a grading rubric. These are recorded as design/TODO, not claimed done.
+- Boundaries:
+  - `external/xv6-riscv/` and `logs/*.log` remain ignored and were not committed (verified `git ls-files` empty for both).
+  - Evidence is timeout-based capture, not long-running stability or manual interaction.
+  - Single-person + AI reproduction; second-person independent reproduction remains TODO; manual demo video remains TODO; no lab2 work was done.
+- Next:
+  - Build the lab1 student-exercise version (skeleton + rubric) to move toward a teaching lab.
+  - Have a second team member reproduce on another machine.

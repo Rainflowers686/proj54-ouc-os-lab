@@ -170,3 +170,25 @@ bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"
 | 参数错误 | `sys_add2()` 未使用正确参数序号 | 使用 `argint(0, &a)` 和 `argint(1, &b)`。 |
 | xv6 shell 找不到 `add2test` | `Makefile` 未加入 `_add2test` | 将 `$U/_add2test\` 加入 `UPROGS`。 |
 | patch 无法应用 | 未先应用 `0001` 或 baseline 不一致 | 从指定 baseline 开始，按 `0001` 后 `0002` 顺序应用。 |
+
+## 当前未覆盖
+
+lab1 现阶段只覆盖 syscall 入门与**整数参数**传递，明确**未覆盖**：
+
+- 指针参数（`argaddr`）与字符串参数（`argstr`）。
+- 参数校验与错误返回（如非法参数应返回 -1 的语义）。
+- 进程/调度、内存、文件系统等 lab2-lab5 的内容。
+
+不要把 lab1 表述为"已覆盖全部 syscall 机制"。
+
+## 教学化下一步（学生练习，设计中，未计入已完成）
+
+为把 lab1 从"参考实现 demo"升级为"可布置的实验"，以下练习正在设计中（尚未提供答案与评分细则，标注为 TODO）：
+
+1. **补全式实现**：提供去掉 `sys_add2()` 实现体的骨架，让学生自己用 `argint()` 补全并通过 `add2test`。
+2. **负向实验**：故意删去 `entry("add2")` 或 dispatch 表项，让学生观察报错并定位修复（对照"常见错误"表）。
+3. **指针/字符串扩展**：新增一个 `argaddr`/`argstr` 的 syscall（如把字符串回显到内核再返回），引出地址翻译与 `copyin`。
+4. **边界用例**：为 `add2` 增加负数、0、溢出用例，讨论 `int` 语义。
+5. **评分标准**：给出"编译通过 / 输出正确 / 路径讲解清楚 / 失败定位"四档评分 rubric。
+
+上述为设计方向，本轮不声称已完成；教学价值评估见 [../../docs/14_lab1_argint_extension_review.md](../../docs/14_lab1_argint_extension_review.md)。
