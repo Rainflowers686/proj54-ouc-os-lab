@@ -1,8 +1,8 @@
 # patch 策略与综合集成计划
 
-本文件由 stage4b 红队整理，目标是说明当前 lab1/lab2 patch 的组织方式、**已实测的综合应用冲突**，以及后续要做综合演示时的集成方案。核心结论：**单个 lab 的 patch 各自可从 clean baseline 独立复现，但 lab1 与 lab2 的 patch 当前不能直接叠加；综合演示必须另做统一 patch 序列。**
+本文件由 stage4b 红队整理，并在 stage4c 更新集成结果。目标是说明当前 lab1/lab2 patch 的组织方式、**已实测的综合应用冲突**，以及综合演示时采用的统一 patch sequence。核心结论：**单个 lab 的 patch 各自可从 clean baseline 独立复现，但 lab1 与 lab2 的 independent patch 不能直接叠加；综合演示应使用 `patches/integrated-labs/` 的统一序列。**
 
-- 阶段：stage4b
+- 阶段：stage4b / stage4c
 - 日期：2026-06-04
 - baseline commit：`74f84181a3404d1d6a6ff98d342233979066ebb8`
 
@@ -13,6 +13,9 @@
 | `patches/lab1-system-call/0001-add-hello-syscall.patch` | lab1 序列第 1 个 | clean baseline | `SYS_hello 22` | `hello` |
 | `patches/lab1-system-call/0002-add-argint-add2-syscall.patch` | lab1 序列第 2 个（在 `0001` 之上） | baseline + `0001` | `SYS_add2 23` | `add2test` |
 | `patches/lab2-process-observation/0001-add-pstate-syscall.patch` | lab2 独立 patch | clean baseline | `SYS_pstate 22` | `pstatetest` |
+| `patches/integrated-labs/0001-add-hello-syscall.patch` | 综合序列第 1 个 | clean baseline | `SYS_hello 22` | `hello` |
+| `patches/integrated-labs/0002-add-argint-add2-syscall.patch` | 综合序列第 2 个 | integrated `0001` 之后 | `SYS_add2 23` | `add2test` |
+| `patches/integrated-labs/0003-add-pstate-syscall.patch` | 综合序列第 3 个 | integrated `0001`+`0002` 之后 | `SYS_pstate 24` | `pstatetest` |
 
 要点：lab1 是**有序序列**（`0001` 后 `0002`，号 22、23）；lab2 是**独立**从 clean baseline 生成（号 22）。
 
@@ -61,22 +64,56 @@ error: patch failed: user/usys.pl:42
 - final demo 若要"同时演示 hello / add2 / pstate"，必须另做**统一 patch 序列**并重排 syscall 号。
 - 还观察到 `user/usys.pl has type 100644, expected 100755` 的 file mode warning（Windows/WSL 检出与 patch 记录的可执行位不一致），不阻塞应用，但集成时应统一处理。
 
-## 4. 后续建议（Stage4C 或 Stage5A 执行，本轮不做）
+## 4. stage4c 集成执行结果
 
-1. 新建目录 `patches/integrated-labs/`，存放面向综合演示的统一序列。
-2. 从 **clean baseline** 重新生成统一 patch 序列，并**统一规划 syscall 号**（避免 22 撞号），建议：
-   - `0001-hello.patch`：`SYS_hello = 22`
-   - `0002-add2.patch`：`SYS_add2 = 23`
-   - `0003-pstate.patch`：`SYS_pstate = 24`（从 23 顺延，**不再用 22**）
-3. 统一处理 `usys.pl` 文件模式，避免 mode warning。
-4. 一次性验证：clean baseline → 顺序应用 `0001`+`0002`+`0003` → `make` → 分别捕获 `hello syscall returned 2026`、`add2(20, 6) returned 26`、`pstate(self) = 4 (RUNNING)`。
-5. 在集成文档中明确：单 lab patch（教学用）与集成 patch（演示用）是**两套**，各自有独立的 syscall 号方案，不可混用。
+stage4c 已新增目录 `patches/integrated-labs/`，存放面向综合演示的统一序列。该序列不替换原有 independent patch，只解决“同一个 xv6 构建同时演示 hello / add2 / pstate”的问题。
+
+统一 syscall 号：
+
+- `SYS_hello = 22`
+- `SYS_add2 = 23`
+- `SYS_pstate = 24`
+
+真实验证路径：
+
+```bash
+cd external/xv6-riscv
+git reset --hard 74f84181a3404d1d6a6ff98d342233979066ebb8
+git clean -fdx
+git apply ../../patches/integrated-labs/0001-add-hello-syscall.patch
+git apply ../../patches/integrated-labs/0002-add-argint-add2-syscall.patch
+git apply ../../patches/integrated-labs/0003-add-pstate-syscall.patch
+make
+cd ../..
+bash scripts/xv6/boot-xv6.sh
+bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"
+bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"
+bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="
+bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
+```
+
+真实结果：
+
+- clean baseline + integrated `0001` + `0002` + `0003` 顺序应用：PASS。
+- `make`：PASS，仍有已知 `LOAD segment with RWX permissions` linker warning。
+- boot evidence：PASS，检测到 `xv6 kernel is booting` 和 `init: starting sh`。
+- `hello`：PASS，检测到 `hello syscall returned 2026`。
+- `add2test`：PASS，检测到 `add2(20, 6) returned 26`。
+- `pstatetest`：PASS，检测到 `pstate(self) =` 和 `RUNNING`。
+
+边界：
+
+- 该验证使用 timeout 自动捕获 QEMU 输出，不等同于长期稳定性测试。
+- 人工交互录屏仍为 TODO。
+- 第二名队员独立复现仍为 TODO。
+- 原始 `logs/*.log` 不提交。
 
 ## 5. 当前结论
 
 - **lab1 序列（`0001`+`0002`）独立可复现**：stage2b/stage3b 已实测（`git apply --check` exit 0、make、hello/add2 输出捕获）。
 - **lab2 独立 patch 可复现**：stage4b 实测（clean baseline → lab2 patch → make → `pstate(self) = 4 (RUNNING)`）。
-- **lab1 与 lab2 当前不能直接叠加**：已实测 `git apply --check` exit 1，且 `SYS_hello`/`SYS_pstate` 撞号 22。
-- 综合演示需在后续阶段用 `patches/integrated-labs/` 的统一序列单独实现，**不得**在任何文档中暗示"现有 lab patch 可任意组合 / 已合并为统一实验包"。
+- **lab1 与 lab2 independent patch 当前不能直接叠加**：已实测 `git apply --check` exit 1，且 `SYS_hello`/`SYS_pstate` 撞号 22。
+- **integrated-labs 统一序列已实现并验证**：用于综合演示，采用 `SYS_hello 22`、`SYS_add2 23`、`SYS_pstate 24`。
+- 文档中必须继续区分“单 lab 教学 patch”和“综合演示 patch”，**不得**暗示原有 independent patch 可任意组合。
 
-> 诚实边界：本文件的冲突结论来自真实 `git apply --check` 输出；集成 patch 序列尚未实现，标注为后续阶段 TODO，不声称已完成。
+> 诚实边界：本文件的冲突结论和 integrated-labs 验证结果都来自真实命令输出；人工录屏、长期稳定性测试和第二名队员复现仍为 TODO。

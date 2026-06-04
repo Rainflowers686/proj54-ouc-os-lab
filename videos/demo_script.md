@@ -2,13 +2,14 @@
 
 ## Demo 目标
 
-展示当前 lab0/lab1 的最小工程闭环：
+展示当前 lab0/lab1/lab2 的最小工程闭环和 integrated-labs 综合演示路径：
 
 - 项目定位是教学型 OS 实验体系。
 - xv6-riscv baseline 被隔离在 `external/`，不提交第三方源码。
 - lab1 通过 patch 复现最小 `hello()` syscall。
 - lab1 进阶 patch 通过 `add2(int a, int b)` 演示 `argint()` 参数传递。
 - lab2 通过 `pstate(int pid)` 演示进程表查找和进程状态读取。
+- integrated-labs 解决 lab1/lab2 independent patch 不能直接叠加的问题，用同一个 xv6 构建同时运行三个用户程序。
 - 真实证据包括环境检查、boot evidence、hello/add2 输出捕获和 pstatetest 输出捕获。
 
 当前状态：
@@ -31,17 +32,24 @@
 
 1. 打开 `README.md`，说明项目定位和当前状态。
 2. 展示 `external/xv6-baseline-record.md`，说明 baseline commit 与第三方源码隔离。
-3. 展示 `patches/lab1-system-call/0001-add-hello-syscall.patch`，说明 lab1 提交的是 patch。
+3. 展示 `patches/lab1-system-call/`、`patches/lab2-process-observation/` 和 `patches/integrated-labs/`，说明独立教学 patch 与综合演示 patch 分开维护。
 4. 运行环境检查：
 
    ```bash
    bash scripts/check-env.sh
    ```
 
-5. 预览 patch 应用脚本：
+5. 展示 integrated-labs 应用顺序：
 
    ```bash
-   bash scripts/xv6/apply-lab1-patch.sh
+   cd external/xv6-riscv
+   git reset --hard 74f84181a3404d1d6a6ff98d342233979066ebb8
+   git clean -fdx
+   git apply ../../patches/integrated-labs/0001-add-hello-syscall.patch
+   git apply ../../patches/integrated-labs/0002-add-argint-add2-syscall.patch
+   git apply ../../patches/integrated-labs/0003-add-pstate-syscall.patch
+   make
+   cd ../..
    ```
 
 6. 捕获 boot evidence：
@@ -69,7 +77,8 @@
    ```
 
 10. 展示 `docs/12_lab1_patch_review.md`、`docs/14_lab1_argint_extension_review.md` 和 `docs/15_lab2_process_observation_review.md`，说明 clean baseline apply 复现已审查。
-11. 展示 `docs/04_test_report.md`，说明只记录真实执行证据。
+11. 展示 `docs/16_patch_strategy_and_integration_plan.md` 和 `patches/integrated-labs/README.md`，说明 integrated sequence 已解决综合演示冲突。
+12. 展示 `docs/04_test_report.md`，说明只记录真实执行证据。
 
 ## 可选人工交互流程
 
@@ -77,6 +86,12 @@
 
 ```bash
 cd external/xv6-riscv
+git reset --hard 74f84181a3404d1d6a6ff98d342233979066ebb8
+git clean -fdx
+git apply ../../patches/integrated-labs/0001-add-hello-syscall.patch
+git apply ../../patches/integrated-labs/0002-add-argint-add2-syscall.patch
+git apply ../../patches/integrated-labs/0003-add-pstate-syscall.patch
+make
 make qemu
 ```
 
@@ -105,7 +120,7 @@ x
 
 ## 讲解词草案
 
-> 本项目对应 proj54 教学型赛题，目标不是单纯堆内核功能，而是为低年级同学提供可以逐步复现的 OS 竞赛入门实验体系。当前 v0.1 打通了 lab0、lab1 和 lab2 的最小闭环：lab0 完成环境检查、xv6 baseline build 和 boot evidence；lab1 通过 hello 和 add2 讲解 syscall 与 argint 参数传递；lab2 通过 pstate 观察当前进程状态，讲解进程表和进程锁。第三方 xv6 源码放在 ignored 的 external 目录，原始日志也不提交，仓库只提交自有文档、脚本、patch 和证据摘要。未完成的队友复现、人工录屏和长期稳定性测试均明确标记为 TODO。
+> 本项目对应 proj54 教学型赛题，目标不是单纯堆内核功能，而是为低年级同学提供可以逐步复现的 OS 竞赛入门实验体系。当前 v0.1 打通了 lab0、lab1 和 lab2 的最小闭环：lab0 完成环境检查、xv6 baseline build 和 boot evidence；lab1 通过 hello 和 add2 讲解 syscall 与 argint 参数传递；lab2 通过 pstate 观察当前进程状态，讲解进程表和进程锁。由于 lab1 和 lab2 的独立 patch 不能直接叠加，仓库新增了 integrated-labs 序列，用统一 syscall number 在同一构建中演示 hello、add2test 和 pstatetest。第三方 xv6 源码放在 ignored 的 external 目录，原始日志也不提交，仓库只提交自有文档、脚本、patch 和证据摘要。未完成的队友复现、人工录屏和长期稳定性测试均明确标记为 TODO。
 
 ## 边界说明
 

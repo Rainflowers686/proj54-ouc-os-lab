@@ -11,6 +11,8 @@
 | `0001-add-hello-syscall.patch` | 新增无参数 `hello()` syscall，返回 `2026` | syscall 最小闭环 |
 | `0002-add-argint-add2-syscall.patch` | 新增 `add2(int a, int b)` syscall，返回 `a + b` | `argint()` 参数传递 |
 
+说明：本目录用于 lab1 单独教学与复现。若需要在同一个 xv6 构建中同时演示 lab1 与 lab2，请使用 `patches/integrated-labs/`，不要把 lab2 independent patch 直接叠加到本目录 patch 之上。
+
 ## baseline
 
 | 字段 | 内容 |

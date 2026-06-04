@@ -131,7 +131,7 @@ bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
 - timeout 自动捕获不是长期稳定性测试。
 - 人工交互录屏 TODO。
 - 第二名队员独立复现 TODO。
-- **lab2 与 lab1 patch 当前不能直接叠加（已实测）**：lab2 独立于 clean baseline 生成，`SYS_pstate = 22` 与 lab1 `SYS_hello = 22` **撞号**；且把 lab2 `git apply` 到 lab1 之上时 `git apply --check` 返回 exit 1（6 个文件 `patch does not apply`）。综合演示需另做统一 patch 序列，详见 [16_patch_strategy_and_integration_plan.md](16_patch_strategy_and_integration_plan.md)。不得声称现有 lab1/lab2 patch 已合并或可任意组合。
+- **lab2 与 lab1 independent patch 当前不能直接叠加（已实测）**：lab2 独立于 clean baseline 生成，`SYS_pstate = 22` 与 lab1 `SYS_hello = 22` **撞号**；且把 lab2 `git apply` 到 lab1 之上时 `git apply --check` 返回 exit 1（6 个文件 `patch does not apply`）。stage4c 已新增 [../patches/integrated-labs/README.md](../patches/integrated-labs/README.md) 作为综合演示序列，使用 `SYS_pstate = 24`。不得声称现有 lab1/lab2 independent patch 可任意组合。
 
 ## stage4b 独立复现结果（真实执行，未伪造）
 

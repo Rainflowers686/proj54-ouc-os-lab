@@ -17,7 +17,8 @@
 
 3. 工程治理与第三方源码隔离
    - `external/xv6-riscv/` 不提交。
-   - lab1 改动以 patch 形式提交。
+   - lab1/lab2 改动以 patch 形式提交。
+   - independent patch 与 integrated patch 分开维护。
    - `logs/*.log` 不提交，只摘录关键证据。
 
 4. lab0 环境与 baseline
@@ -46,13 +47,20 @@
    - 持有 `p->lock` 读取 `p->state`。
    - `pstate(self) = 4 (RUNNING)` 输出证据。
 
-8. 测试证据
+8. integrated-labs 综合演示
+   - stage4b 已实测 lab1/lab2 independent patch 不能直接叠加。
+   - integrated sequence 统一 syscall number：`hello=22`、`add2=23`、`pstate=24`。
+   - 从 clean baseline 顺序应用 `patches/integrated-labs/0001`、`0002`、`0003`。
+   - 同一 xv6 构建中已捕获 hello、add2test、pstatetest 输出。
+
+9. 测试证据
    - `docs/04_test_report.md`。
    - `docs/12_lab1_patch_review.md`。
    - `docs/15_lab2_process_observation_review.md`。
+   - `docs/16_patch_strategy_and_integration_plan.md`。
    - 不提交原始日志。
 
-9. 风险与后续计划
+10. 风险与后续计划
    - timeout 自动捕获不是长期稳定性测试。
    - 第二名队员复现 TODO。
    - 人工交互录屏 TODO。

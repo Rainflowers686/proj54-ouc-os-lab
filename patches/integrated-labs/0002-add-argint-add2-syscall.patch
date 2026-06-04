@@ -1,0 +1,100 @@
+diff --git a/Makefile b/Makefile
+index f2499f5..c0a01a0 100644
+--- a/Makefile
++++ b/Makefile
+@@ -129,6 +129,7 @@ UPROGS=\
+ 	$U/_cat\
+ 	$U/_echo\
+ 	$U/_hello\
++	$U/_add2test\
+ 	$U/_forktest\
+ 	$U/_grep\
+ 	$U/_init\
+diff --git a/kernel/syscall.c b/kernel/syscall.c
+index d790a71..8424e97 100644
+--- a/kernel/syscall.c
++++ b/kernel/syscall.c
+@@ -103,6 +103,7 @@ extern uint64 sys_link(void);
+ extern uint64 sys_mkdir(void);
+ extern uint64 sys_close(void);
+ extern uint64 sys_hello(void);
++extern uint64 sys_add2(void);
+ 
+ // An array mapping syscall numbers from syscall.h
+ // to the function that handles the system call.
+@@ -130,6 +131,7 @@ static uint64 (*syscalls[])(void) = {
+   [SYS_mkdir]   sys_mkdir,
+   [SYS_close]   sys_close,
+   [SYS_hello]   sys_hello,
++  [SYS_add2]    sys_add2,
+   // clang-format on
+ };
+ 
+diff --git a/kernel/syscall.h b/kernel/syscall.h
+index 57abe5b..b69fc0a 100644
+--- a/kernel/syscall.h
++++ b/kernel/syscall.h
+@@ -21,3 +21,4 @@
+ #define SYS_mkdir  20
+ #define SYS_close  21
+ #define SYS_hello  22
++#define SYS_add2   23
+diff --git a/kernel/sysproc.c b/kernel/sysproc.c
+index f76ffe1..8ac20d9 100644
+--- a/kernel/sysproc.c
++++ b/kernel/sysproc.c
+@@ -113,3 +113,14 @@ sys_hello(void)
+ {
+   return 2026;
+ }
++
++uint64
++sys_add2(void)
++{
++  int a;
++  int b;
++
++  argint(0, &a);
++  argint(1, &b);
++  return a + b;
++}
+diff --git a/user/add2test.c b/user/add2test.c
+new file mode 100644
+index 0000000..a3a2c57
+--- /dev/null
++++ b/user/add2test.c
+@@ -0,0 +1,13 @@
++#include "kernel/types.h"
++#include "user/user.h"
++
++int
++main(void)
++{
++  int a = 20;
++  int b = 6;
++  int value = add2(a, b);
++
++  printf("add2(%d, %d) returned %d\n", a, b, value);
++  exit(0);
++}
+diff --git a/user/user.h b/user/user.h
+index de76c8c..4649e0c 100644
+--- a/user/user.h
++++ b/user/user.h
+@@ -25,6 +25,7 @@ char *sys_sbrk(int, int);
+ int pause(int);
+ int uptime(void);
+ int hello(void);
++int add2(int, int);
+ 
+ // ulib.c
+ int stat(const char *, struct stat *);
+diff --git a/user/usys.pl b/user/usys.pl
+index ef380bf..8d7b68e 100755
+--- a/user/usys.pl
++++ b/user/usys.pl
+@@ -43,3 +43,4 @@ entry("sbrk");
+ entry("pause");
+ entry("uptime");
+ entry("hello");
++entry("add2");

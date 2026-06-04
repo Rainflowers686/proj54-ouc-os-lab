@@ -6,7 +6,7 @@
 
 赛题：2026 全国大学生计算机系统能力大赛 OS 功能挑战赛 `proj54：面向操作系统课程的操作系统竞赛和实验`
 
-版本说明：本文档是初赛技术报告草案 v0.1，用于整理当前 lab0/lab1 的真实工程闭环。它不是最终报告，不声称完整 OS 实验体系已经完成。
+版本说明：本文档是初赛技术报告草案 v0.1，用于整理当前 lab0/lab1/lab2 与 integrated-labs 的真实工程闭环。它不是最终报告，不声称完整 OS 实验体系已经完成。
 
 ## 1. 项目概述
 
@@ -17,6 +17,7 @@
 - lab0：环境检查、xv6-riscv baseline 获取、build 与 boot evidence。
 - lab1：`hello()` 最小 system call patch、`add2(int a, int b)` 参数传递进阶 patch、构建验证、QEMU 输出捕获、clean baseline 复现审查。
 - lab2：`pstate(int pid)` 进程状态观察 patch、进程表查找、进程锁使用说明、QEMU 输出捕获。
+- integrated-labs：面向综合演示的统一 patch sequence，在同一个 xv6 构建中同时验证 `hello`、`add2test`、`pstatetest`。
 - 工程治理：第三方源码隔离、原始日志不提交、patch 作为可提交产物、AI 使用和进度记录透明化。
 
 ## 2. 赛题理解
@@ -130,9 +131,12 @@ lab1 的源码改动不直接提交 xv6-riscv 源码，而是导出 patch：
 patches/lab1-system-call/0001-add-hello-syscall.patch
 patches/lab1-system-call/0002-add-argint-add2-syscall.patch
 patches/lab2-process-observation/0001-add-pstate-syscall.patch
+patches/integrated-labs/0001-add-hello-syscall.patch
+patches/integrated-labs/0002-add-argint-add2-syscall.patch
+patches/integrated-labs/0003-add-pstate-syscall.patch
 ```
 
-评委或队友可以从 clean baseline 应用 patch 复现。注意：lab1 序列（`0001`+`0002`）与 lab2 独立 patch **不能直接叠加**（`SYS_hello` 与 `SYS_pstate` 均为 22，已实测 `git apply --check` 冲突）；综合演示需另做统一 patch 序列，详见 `docs/16_patch_strategy_and_integration_plan.md`。
+评委或队友可以从 clean baseline 应用 patch 复现。注意：lab1 序列（`0001`+`0002`）与 lab2 独立 patch **不能直接叠加**（`SYS_hello` 与 `SYS_pstate` 均为 22，已实测 `git apply --check` 冲突）。综合演示使用 `patches/integrated-labs/`，其中 `SYS_pstate` 统一调整为 24。详见 `docs/16_patch_strategy_and_integration_plan.md`。
 
 ### 4.4 日志策略
 
@@ -161,11 +165,13 @@ logs/*.log
 | lab1 hello syscall patch | 已生成 | `patches/lab1-system-call/0001-add-hello-syscall.patch` |
 | lab1 add2 argint patch | 已生成 | `patches/lab1-system-call/0002-add-argint-add2-syscall.patch` |
 | lab2 pstate process observation patch | 已生成 | `patches/lab2-process-observation/0001-add-pstate-syscall.patch` |
+| integrated lab1+lab2 patch sequence | 已生成并验证 | `patches/integrated-labs/README.md` |
 | clean baseline apply 复现 | 已通过 stage2b 审查 | `docs/12_lab1_patch_review.md` |
 | patched make | 已成功 | 摘要见 `docs/04_test_report.md` 与 `docs/12_lab1_patch_review.md` |
 | hello 输出捕获 | 已成功 | 检测到 `hello syscall returned 2026` |
 | add2 输出捕获 | 已成功 | 检测到 `add2(20, 6) returned 26`，见 `docs/14_lab1_argint_extension_review.md` |
 | pstatetest 输出捕获 | 已成功 | 检测到 `pstate(self) = 4 (RUNNING)`，见 `docs/15_lab2_process_observation_review.md` |
+| integrated 三程序输出捕获 | 已成功 | 同一构建中检测到 hello/add2test/pstatetest 输出，见 `docs/04_test_report.md` |
 
 以上均为当前阶段的真实记录。尚未完成的内容继续标记为 TODO。
 
@@ -291,6 +297,26 @@ bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
 
 当前记录：已检测到 `pstate(self) = 4 (RUNNING)`。
 
+### 7.9 integrated-labs 综合验证
+
+```bash
+cd external/xv6-riscv
+git reset --hard 74f84181a3404d1d6a6ff98d342233979066ebb8
+git clean -fdx
+git apply ../../patches/integrated-labs/0001-add-hello-syscall.patch
+git apply ../../patches/integrated-labs/0002-add-argint-add2-syscall.patch
+git apply ../../patches/integrated-labs/0003-add-pstate-syscall.patch
+make
+cd ../..
+bash scripts/xv6/boot-xv6.sh
+bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"
+bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"
+bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="
+bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
+```
+
+当前记录：clean apply、`make`、boot evidence、hello、add2test、pstatetest 均已通过真实命令验证。该结果只代表 timeout 自动捕获到关键输出，不代表长期稳定性或人工录屏。
+
 ## 8. 风险与边界
 
 | 风险 / 边界 | 当前处理 |
@@ -301,7 +327,7 @@ bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
 | `riscv64-unknown-elf-gcc` 缺失 | 当前使用 `riscv64-linux-gnu-gcc` 构建成功，继续记录 WARN。 |
 | linker RWX warning | 已记录为风险；后续需要解释来源和影响。 |
 | patch 绑定 baseline commit | patch 目标 commit 为 `74f84181a3404d1d6a6ff98d342233979066ebb8`，baseline 变化时需重新验证。 |
-| lab1/lab2 patch 合并 | lab2 patch 独立于 lab1 patch，未来如要组合使用需要重新规划 syscall number。 |
+| lab1/lab2 patch 合并 | independent patch 仍不可直接叠加；integrated-labs 已提供统一序列，使用 `hello=22/add2=23/pstate=24`。 |
 | 第三方源码提交风险 | `external/xv6-riscv/` 被 `.gitignore` 忽略，验证 `git ls-files external/xv6-riscv` 无输出。 |
 | 原始日志提交风险 | `logs/*.log` 被 `.gitignore` 忽略，验证 `git ls-files logs/*.log` 无输出。 |
 
@@ -325,8 +351,8 @@ AI 工具不得用于：
 
 ## 10. 下一步路线
 
-1. 第二名队员独立复现 lab0/lab1/lab2，并填写复现记录。
-2. 完成人工交互 demo：手动进入 xv6 shell，输入 `hello`、`add2test`、`pstatetest`，退出 QEMU。
+1. 第二名队员独立复现 lab0/lab1/lab2/integrated-labs，并填写复现记录。
+2. 完成人工交互 demo：使用 integrated-labs 构建，手动进入 xv6 shell，输入 `hello`、`add2test`、`pstatetest`，退出 QEMU。
 3. 将 lab1 的 hello/add2 两档内容和 lab2 pstate 内容整理成更完整的 step by step 教程。
 4. 在 lab2 扩展或 lab4 中选择一个方向深化，避免同时展开过多内容。
 5. 将本文档升级为初赛技术报告 v0.2，并补充 PPT 与 Demo 结果。
@@ -341,6 +367,8 @@ AI 工具不得用于：
 - lab1 patch 说明：`patches/lab1-system-call/README.md`
 - lab2 进程观察复现审查：`docs/15_lab2_process_observation_review.md`
 - lab2 patch 说明：`patches/lab2-process-observation/README.md`
+- patch 策略与集成计划：`docs/16_patch_strategy_and_integration_plan.md`
+- integrated-labs patch 说明：`patches/integrated-labs/README.md`
 - lab1 patch 应用脚本：`scripts/xv6/apply-lab1-patch.sh`
 - 复现包：`reproducibility/README.md`
 - Demo 脚本：`videos/demo_script.md`

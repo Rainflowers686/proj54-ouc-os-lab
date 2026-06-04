@@ -277,3 +277,37 @@
 - Next:
   - Build `patches/integrated-labs/` unified sequence (hello=22, add2=23, pstate=24) and validate all three in one build.
   - Extend lab2 to observe a child/other pid to show non-RUNNING states; add negative tests.
+
+## 2026-06-04: stage4c integrated lab1 lab2 patch sequence
+
+- Commit hash: TODO after commit
+- Completed:
+  - Added `patches/integrated-labs/`.
+  - Copied lab1 `0001` and `0002` into the integrated sequence after verifying they apply from clean baseline in order.
+  - Generated `patches/integrated-labs/0003-add-pstate-syscall.patch` on top of integrated `0001` + `0002`.
+  - Unified syscall numbers for the comprehensive demo: `SYS_hello = 22`, `SYS_add2 = 23`, `SYS_pstate = 24`.
+  - Verified clean baseline + integrated `0001` + `0002` + `0003` apply.
+  - Ran `make` successfully in WSL/bash.
+  - Captured boot evidence.
+  - Captured `hello syscall returned 2026`.
+  - Captured `add2(20, 6) returned 26`.
+  - Captured `pstate(self) =` and `RUNNING`.
+  - Added `patches/integrated-labs/README.md`.
+  - Updated patch strategy, test report, technical report, README, reproducibility package, demo script, slides plan, AI record, collect-report script, and submission index.
+- Real result:
+  - clean apply: PASS
+  - make: PASS
+  - boot evidence: PASS
+  - hello output: PASS
+  - add2test output: PASS
+  - pstatetest output: PASS
+- Boundaries:
+  - integrated-labs is a separate comprehensive demo sequence; it does not replace lab1/lab2 independent patches.
+  - Timeout capture is not long-running stability testing.
+  - Manual interaction video remains TODO.
+  - Second teammate independent reproduction remains TODO.
+  - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.
+- Next:
+  - Have a second team member reproduce the integrated sequence on another machine.
+  - Record an actual manual demo only after confirming no private information is visible.
+  - Consider lab2 child-process observation or negative tests as the next teaching extension.

@@ -8,6 +8,7 @@
 - stage2b clean baseline hello patch review 已完成，见 `docs/12_lab1_patch_review.md`。
 - stage3a add2 argint extension review 已完成，见 `docs/14_lab1_argint_extension_review.md`。
 - stage4a lab2 pstate process observation review 已完成，见 `docs/15_lab2_process_observation_review.md`。
+- stage4c integrated-labs 综合 patch sequence 已完成，见 `patches/integrated-labs/README.md`。
 - 第二名队员独立复现：TODO。
 
 ## 复现目标
@@ -21,7 +22,8 @@
 7. 捕获 `hello syscall returned 2026`。
 8. 捕获 `add2(20, 6) returned 26`。
 9. 捕获 `pstate(self) = 4 (RUNNING)`。
-10. 如失败，记录真实失败原因，不伪造成功。
+10. 复现 integrated-labs，确认三个用户程序可在同一 xv6 构建中运行。
+11. 如失败，记录真实失败原因，不伪造成功。
 
 ## 复现前提
 
@@ -76,9 +78,33 @@ bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
 - `external/xv6-riscv/` 被 Git 忽略，不提交第三方源码。
 - `boot-xv6.sh` 和 `run-xv6-command.sh` 使用 timeout 捕获证据，不代表长期稳定性或人工录屏。
 
+## 复现路径 C：integrated-labs 综合演示
+
+该路径用于最终综合演示。它从 clean baseline 顺序应用 integrated `0001`、`0002`、`0003`，统一 syscall 号为 `hello=22/add2=23/pstate=24`。
+
+```bash
+bash scripts/check-env.sh
+bash scripts/xv6/fetch-xv6.sh --run
+cd external/xv6-riscv
+git reset --hard 74f84181a3404d1d6a6ff98d342233979066ebb8
+git clean -fdx
+git apply ../../patches/integrated-labs/0001-add-hello-syscall.patch
+git apply ../../patches/integrated-labs/0002-add-argint-add2-syscall.patch
+git apply ../../patches/integrated-labs/0003-add-pstate-syscall.patch
+make
+cd ../..
+bash scripts/xv6/boot-xv6.sh
+bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"
+bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"
+bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="
+bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
+```
+
+当前真实验证状态：clean apply、`make`、boot evidence、hello、add2test、pstatetest 均已通过。原始日志不提交。
+
 ## 人工复现方式
 
-重要：lab1 与 lab2 patch **不能共存于同一个 xv6 构建**（`SYS_hello` 与 `SYS_pstate` 都用 22，且 hunk 冲突，已实测，见 [../docs/16_patch_strategy_and_integration_plan.md](../docs/16_patch_strategy_and_integration_plan.md)）。因此手动复现要**分两次、各自从 clean baseline 构建**，不要期望一个构建里同时出现三者输出。
+重要：lab1 与 lab2 **independent patch** 不能直接共存于同一个 xv6 构建（`SYS_hello` 与 `SYS_pstate` 都用 22，且 hunk 冲突，已实测，见 [../docs/16_patch_strategy_and_integration_plan.md](../docs/16_patch_strategy_and_integration_plan.md)）。如果要单独复现实验，应按路径 A/B 分两次从 clean baseline 构建；如果要综合演示，应使用路径 C 的 integrated-labs。
 
 - 路径 A 的构建（lab1）：进入 xv6 shell 后运行 `hello`、`add2test`，预期：
 
@@ -102,6 +128,24 @@ Ctrl-a
 x
 ```
 
+integrated-labs 的人工演示预期是在同一个 xv6 shell 中依次运行：
+
+```text
+hello
+add2test
+pstatetest
+```
+
+预期输出：
+
+```text
+hello syscall returned 2026
+add2(20, 6) returned 26
+pstate(self) = 4 (RUNNING)
+```
+
+当前人工交互录屏仍为 TODO。
+
 ## 复现记录模板
 
 | 字段 | 内容 |
@@ -112,6 +156,7 @@ x
 | WSL/Linux 版本 | TODO |
 | 工具链状态 | TODO |
 | 复现实验 | TODO: lab1 / lab2 |
+| 是否使用 integrated-labs | TODO |
 | patch sequence | TODO |
 | 执行命令 | TODO |
 | 输出结果 | TODO |
@@ -131,4 +176,4 @@ x
 
 - TODO: 第二名队员在另一台机器独立复现 lab1/lab2。
 - TODO: 失败时补充 FAQ 和 issue 记录。
-- TODO: 如需合并 lab1/lab2 patch，重新规划 syscall number。
+- TODO: 第二名队员独立复现 integrated-labs。

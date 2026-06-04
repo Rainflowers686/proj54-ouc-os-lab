@@ -8,7 +8,7 @@
 - 原始 `logs/*.log` 默认不提交，只在文档中记录路径和关键信息。
 - 不将 `make` 成功写成 QEMU boot 成功。
 - 不将 timeout 自动捕获写成长期稳定性或人工交互测试。
-- 不伪造 lab1 syscall 输出。
+- 不伪造 lab1/lab2 syscall 输出。
 
 ## 测试记录
 
@@ -168,6 +168,44 @@ hello syscall returned 2026
 - 第二名队员独立复现仍为 TODO。
 - lab2 patch 独立于 lab1 patch；若后续合并，需要重新规划 syscall number。
 
+### integrated lab1+lab2 patch sequence test
+
+| 字段 | 内容 |
+| --- | --- |
+| 测试名称 | integrated lab1+lab2 patch sequence test |
+| 日期时间 | 2026-06-04 |
+| baseline commit | `74f84181a3404d1d6a6ff98d342233979066ebb8` |
+| patch 序列 | `patches/integrated-labs/0001-add-hello-syscall.patch` → `0002-add-argint-add2-syscall.patch` → `0003-add-pstate-syscall.patch` |
+| patch 目标 | 在同一个 xv6 构建中同时演示 `hello`、`add2test` 和 `pstatetest` |
+| syscall 号 | `SYS_hello 22`，`SYS_add2 23`，`SYS_pstate 24` |
+| clean apply | 成功 |
+| `make` 命令 | `cd external/xv6-riscv && make` |
+| `make` 结果 | 成功 |
+| boot 验证命令 | `bash scripts/xv6/boot-xv6.sh` |
+| boot 验证结果 | 成功检测到 `xv6 kernel is booting` 和 `init: starting sh` |
+| hello 验证命令 | `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"` |
+| hello 验证结果 | 成功检测到预期输出 |
+| add2 验证命令 | `bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"` |
+| add2 验证结果 | 成功检测到预期输出 |
+| pstatetest 验证命令 | `bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="` |
+| pstatetest 验证结果 | 成功检测到预期前缀 |
+| RUNNING 验证命令 | `bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"` |
+| RUNNING 验证结果 | 成功检测到 `RUNNING` |
+| 原始日志是否提交 | 否，`logs/*.log` 被 `.gitignore` 忽略 |
+
+实现范围：
+
+- integrated `0001` 与 lab1 `0001` 一致，新增 `hello()`。
+- integrated `0002` 与 lab1 `0002` 一致，新增 `add2(int, int)`。
+- integrated `0003` 在 integrated `0001`+`0002` 之上新增 `pstate(int)`，并使用 `SYS_pstate 24` 避免与 `SYS_hello 22` 冲突。
+
+边界说明：
+
+- integrated patch sequence 是综合演示路径，不替代 lab1/lab2 independent patch。
+- timeout 自动捕获不等同于长期稳定性测试。
+- 人工交互录屏和第二名队员独立复现仍为 TODO。
+- `make` 仍出现已知 `LOAD segment with RWX permissions` linker warning，但本次 `make` 退出成功。
+
 ## 当前风险与后续动作
 
 | 风险 | 状态 / 处理 |
@@ -177,7 +215,7 @@ hello syscall returned 2026
 | linker RWX warning | 当前不阻塞 build，但需要在技术报告中解释。 |
 | QEMU 只做 evidence 捕获 | 已检测到 boot 关键文本、hello 输出、add2 输出和 pstatetest 输出，但未做长期稳定性和完整人工交互测试。 |
 | patch baseline 依赖 | lab1 与 lab2 patch 均应用于 `74f84181a3404d1d6a6ff98d342233979066ebb8`；baseline 变化时需重新验证。 |
-| lab1/lab2 syscall number 合并 | lab2 patch 独立于 lab1，均从 clean baseline 取空号；未来合并时需要重新分配 syscall number。 |
+| lab1/lab2 syscall number 合并 | independent patch 仍不能直接叠加；integrated-labs 已提供统一序列，使用 `hello=22/add2=23/pstate=24` 并完成真实验证。 |
 
 ## 后续记录模板
 
