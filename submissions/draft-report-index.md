@@ -14,7 +14,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 | Requirement and scoring analysis | `docs/01_requirement_analysis.md` | exists | MVP draft |
 | Lab system design | `docs/02_lab_design.md` | exists | MVP draft |
 | Step-by-step guide outline | `docs/03_step_by_step_guide.md` | exists | outline draft |
-| Test report | `docs/04_test_report.md` | exists | includes real baseline make, boot evidence, lab1/lab2/lab4 outputs, integrated 0001-0005 evidence, and lab2 v0.2 outputs |
+| Test report | `docs/04_test_report.md` | exists | includes real baseline make, hardened boot evidence retry, lab1/lab2/lab4 outputs, integrated 0001-0005 evidence, and lab2 v0.2 outputs |
 | AI usage record | `docs/05_ai_usage_record.md` | exists | active record |
 | Progress log | `docs/06_progress_log.md` | exists | active record |
 | FAQ and issue record | `docs/07_faq_and_issues.md` | exists | template |
@@ -44,7 +44,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 | lab4 test record | `tests/lab4/README.md` | exists | records fcounttest prefix capture and non-fixed count boundary |
 | xv6 fetch script | `scripts/xv6/fetch-xv6.sh` | exists | stage1b tooling |
 | xv6 baseline check script | `scripts/xv6/check-xv6-baseline.sh` | exists | stage1b tooling; make not run by default |
-| xv6 boot evidence script | `scripts/xv6/boot-xv6.sh` | exists | captures boot keywords under timeout |
+| xv6 boot evidence script | `scripts/xv6/boot-xv6.sh` | exists | captures boot keywords under timeout; stage6c default 45s and 2 attempts with per-attempt logs |
 | xv6 command evidence script | `scripts/xv6/run-xv6-command.sh` | exists | captures user program output under timeout |
 | lab1 patch apply helper | `scripts/xv6/apply-lab1-patch.sh` | exists | preview by default; --run resets clean baseline and applies; --make optional |
 | integrated labs apply helper | `scripts/xv6/apply-integrated-labs.sh` | exists | preview by default; --run/--make always require --yes (reset/clean ignored tree); make logs ignored |
@@ -74,7 +74,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 
 - File existence is checked by this script; content quality still needs human review.
 - `external/xv6-riscv/` is intentionally not listed as a tracked submission artifact.
-- xv6 baseline make, boot evidence, lab1 patched make, hello output, add2 output, pstatetest output, pcounttest output, pchildtest output, fcounttest output, and integrated sequence evidence are summarized in docs/04_test_report.md.
+- xv6 baseline make, hardened boot evidence retry, lab1 patched make, hello output, add2 output, pstatetest output, pcounttest output, pchildtest output, fcounttest output, and integrated sequence evidence are summarized in docs/04_test_report.md.
 - lab1 now has two patch levels: 0001 hello minimal syscall and 0002 add2 argint extension.
 - lab2 has an independent pstate process observation patch from clean baseline.
 - integrated-labs provides the verified comprehensive demo sequence with hello=22, add2=23, pstate=24, pcount=25, fcount=26.
@@ -82,4 +82,4 @@ It is not the final technical report, does not generate PDF, and does not includ
 - scripts/xv6/apply-integrated-labs.sh is the recommended helper for final integrated demo reproduction and now applies integrated 0001-0005.
 - Technical report v0.1 and reproducibility package are drafts for review, not final submission files.
 - Raw logs remain ignored by Git; do not submit logs/*.log.
-- QEMU long-running stability and manual interactive shell testing remain TODO.
+- boot-xv6.sh now defaults to 45s per attempt and 2 attempts; QEMU long-running stability and manual interactive shell testing remain TODO.

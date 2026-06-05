@@ -159,6 +159,10 @@ bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
 
 复验边界记录：stage6a 最终复验中，`apply-integrated-labs.sh --make --yes` 后第一次运行 `boot-xv6.sh` 未捕获 boot evidence，日志显示 `make qemu` 在 20 秒 timeout 内仍在补建 `fs.img` 相关用户程序；第二次运行 `boot-xv6.sh` 成功捕获 boot evidence。该现象说明首次 QEMU 启动脚本可能受构建缓存状态影响，不能把第一次失败掩盖成成功。其根因很可能是 `/mnt/d`（NTFS over WSL）上的文件 mtime 偶有“未来时间”偏移（make 日志可见 `File 'Makefile' has modification time ... in the future`），导致首个 `make qemu` 误判目标过期而重建。规避手段：先单独 `make` 再 boot，或对首次 boot 容忍一次重试 / 调大 `XV6_BOOT_TIMEOUT_SECONDS`。
 
+stage6c 处理：`scripts/xv6/boot-xv6.sh` 已将默认 timeout 从 20 秒提高到 45 秒，并默认尝试 2 次。每次尝试写入独立日志 `logs/xv6-boot-YYYYMMDD-HHMMSS-attemptN.log`。可通过 `XV6_BOOT_TIMEOUT_SECONDS` 和 `XV6_BOOT_RETRIES` 覆盖。该改动不修改 xv6 patch，只降低 evidence 捕获的假失败概率；仍不代表长期稳定性测试。
+
+stage6c 真实验证：默认 `bash scripts/xv6/boot-xv6.sh` 已在第 1 次尝试捕获 boot evidence；`XV6_BOOT_TIMEOUT_SECONDS=60 XV6_BOOT_RETRIES=2 bash scripts/xv6/boot-xv6.sh` 也已确认环境变量覆盖生效并捕获 boot evidence。两次原始日志均位于 ignored 的 `logs/`。
+
 ## stage6b 红队复审重验（2026-06-05，WSL2 Ubuntu-24.04）
 
 本轮独立重新跑通两条 clean-baseline 路径，未改动任何 patch 代码：

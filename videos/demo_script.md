@@ -154,3 +154,19 @@ fcounttest
 讲解补充：
 
 > lab4 当前只做文件表观察，不是完整文件系统改造。`fcount()` 统计全局文件表中 `ref > 0` 的 `struct file`，用于说明 file descriptor 背后对应内核文件对象，`open/close` 会影响引用计数。具体数字受 shell、console 和时序影响，因此测试只匹配稳定前缀，不固定承诺某个数值。
+
+## stage6c 更新：boot evidence 录制前检查
+
+录制前建议先运行：
+
+```bash
+bash scripts/xv6/boot-xv6.sh
+```
+
+当前脚本默认 45 秒 timeout、最多 2 次尝试。clean build 后首次 boot 可能因为 `fs.img` 补建或 `/mnt/d` mtime skew 超时，脚本会自动重试。需要更保守时可运行：
+
+```bash
+XV6_BOOT_TIMEOUT_SECONDS=60 XV6_BOOT_RETRIES=2 bash scripts/xv6/boot-xv6.sh
+```
+
+Demo 讲解时只说“捕获到 boot evidence”，不要说这是长期稳定性测试，也不要说人工交互录屏或队友复现已完成。

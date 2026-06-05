@@ -220,3 +220,24 @@ bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
 ```
 
 `fcount(...)` 的具体数字不固定；复现记录应写实际观察值，不得为了匹配文档而修改输出或伪造固定数字。
+
+## stage6c 更新：boot evidence retry
+
+`scripts/xv6/boot-xv6.sh` 已加固：
+
+- 默认 timeout：45 秒/次。
+- 默认 attempts：2 次。
+- 日志格式：`logs/xv6-boot-YYYYMMDD-HHMMSS-attemptN.log`。
+- 支持环境变量覆盖：
+
+```bash
+XV6_BOOT_TIMEOUT_SECONDS=60 XV6_BOOT_RETRIES=2 bash scripts/xv6/boot-xv6.sh
+```
+
+建议复现时优先使用默认命令：
+
+```bash
+bash scripts/xv6/boot-xv6.sh
+```
+
+如果 clean build 后首次 boot 因 `fs.img` 补建或 mtime skew 超时，脚本会自动重试。若所有尝试仍未检测到 `xv6 kernel is booting` 和 `init: starting sh`，必须记录真实失败原因，不得写成成功。

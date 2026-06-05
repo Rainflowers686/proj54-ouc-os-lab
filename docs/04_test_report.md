@@ -61,6 +61,43 @@
 - 该结果只记录 boot evidence，不等同于长期稳定性测试。
 - 尚未做人工长期交互测试。
 
+### stage6c boot evidence timeout/retry hardening
+
+| 字段 | 内容 |
+| --- | --- |
+| 测试/变更名称 | stage6c boot evidence timeout/retry hardening |
+| 日期 | 2026-06-05 |
+| 脚本 | `scripts/xv6/boot-xv6.sh` |
+| 默认 timeout | 45 秒/次 |
+| 默认 attempts | 2 次 |
+| 环境变量覆盖 | `XV6_BOOT_TIMEOUT_SECONDS=<seconds>`，`XV6_BOOT_RETRIES=<attempts>` |
+| 日志命名 | `logs/xv6-boot-YYYYMMDD-HHMMSS-attemptN.log` |
+| 成功条件 | 同一次尝试日志中同时检测到 `xv6 kernel is booting` 和 `init: starting sh` |
+| 失败条件 | 所有尝试均未检测到完整 boot evidence，脚本非 0 退出 |
+
+背景：stage6a/stage6b 已真实发现 clean build 后首次 `boot-xv6.sh` 可能因 `fs.img` 补建、`/mnt/d` mtime skew 或构建耗时，在原 20 秒 timeout 内未捕获 boot evidence；第二次运行成功。stage6c 将默认 timeout 加长并增加自动 retry，以降低这种假失败风险。
+
+边界：
+
+- timeout 返回 124 不一定代表 boot 永久失败，需要结合日志关键文本判断。
+- 脚本只捕获 boot evidence，不代表长期稳定性测试。
+- 不声称人工交互录屏或第二名队员复现已完成。
+- 原始 `logs/*.log` 仍不提交。
+
+stage6c 真实验证结果（2026-06-05，WSL2 Ubuntu）：
+
+| 命令 | 结果 | 日志 |
+| --- | --- | --- |
+| `bash scripts/xv6/apply-integrated-labs.sh --make --yes` | PASS，clean baseline + integrated `0001-0005` apply 成功，`make` 成功 | `logs/integrated-make-20260605-080220.log`，ignored |
+| `bash scripts/xv6/boot-xv6.sh` | PASS，默认 45s / 2 attempts，第 1 次尝试捕获 boot evidence | `logs/xv6-boot-20260605-080231-attempt1.log`，ignored |
+| `XV6_BOOT_TIMEOUT_SECONDS=60 XV6_BOOT_RETRIES=2 bash scripts/xv6/boot-xv6.sh` | PASS，环境变量覆盖生效，显示 60s / 2 attempts，第 1 次尝试捕获 boot evidence | `logs/xv6-boot-20260605-080433-attempt1.log`，ignored |
+| `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"` | PASS | ignored log |
+| `bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"` | PASS | ignored log |
+| `bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="` | PASS | ignored log |
+| `bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(RUNNING) ="` | PASS | ignored log |
+| `bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="` | PASS | ignored log |
+| `bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"` | PASS | ignored log |
+
 ### lab1 hello syscall patch test
 
 | 字段 | 内容 |

@@ -236,3 +236,23 @@ bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
 ```
 
 说明：`fcount(...)` 的具体数字不固定，只验证稳定输出前缀和 `fcounttest done`。`external/xv6-riscv/` 和 `logs/*.log` 仍不提交。
+
+## stage6c 当前补充：boot evidence timeout 与 retry 加固
+
+`scripts/xv6/boot-xv6.sh` 已加固，用于降低 clean build 后首次 `make qemu` 因 `fs.img` 补建、`/mnt/d` mtime skew 或构建耗时导致的假失败风险。
+
+当前行为：
+
+- 默认 timeout：45 秒/次。
+- 默认尝试次数：2 次。
+- 每次尝试独立写入 ignored 日志：`logs/xv6-boot-YYYYMMDD-HHMMSS-attemptN.log`。
+- 检测到 `xv6 kernel is booting` 和 `init: starting sh` 才输出 `BOOT_EVIDENCE_FOUND` 并退出 0。
+- 所有尝试均未检测到完整关键文本时，输出 `BOOT_EVIDENCE_NOT_FOUND` 并非 0 退出。
+
+可按需覆盖：
+
+```bash
+XV6_BOOT_TIMEOUT_SECONDS=60 XV6_BOOT_RETRIES=2 bash scripts/xv6/boot-xv6.sh
+```
+
+说明：timeout 返回 124 不一定代表 boot 永久失败，可能只是 QEMU 被 timeout 停止，或首次 clean boot 仍在补建镜像。该脚本只捕获 boot evidence，不代表长期稳定性、人工交互录屏或队友独立复现。

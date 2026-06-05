@@ -489,3 +489,28 @@
   - Timeout capture is not long-running stability or manual interaction.
   - lab3 not done; manual video and second teammate reproduction remain TODO.
   - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.
+
+## 2026-06-05: stage6c boot evidence timeout and retry hardening
+
+- Commit hash: TODO after commit
+- Goal: reduce false boot evidence failures after clean build when `make qemu` spends the first timeout window rebuilding `fs.img` or reacting to `/mnt/d` mtime skew.
+- Completed:
+  - Updated `scripts/xv6/boot-xv6.sh`.
+  - Default boot timeout changed from 20 seconds to 45 seconds per attempt.
+  - Default attempts changed to 2.
+  - Added `XV6_BOOT_TIMEOUT_SECONDS` and `XV6_BOOT_RETRIES` environment variable overrides.
+  - Each attempt now writes a separate ignored log: `logs/xv6-boot-YYYYMMDD-HHMMSS-attemptN.log`.
+  - Script exits 0 only when the same attempt detects both `xv6 kernel is booting` and `init: starting sh`.
+  - Script exits non-zero if all attempts fail.
+  - Updated README, test report, technical report, lab4 review, reproducibility package, demo script, AI record, and material index.
+- Real validation:
+  - `bash scripts/xv6/apply-integrated-labs.sh --make --yes`: PASS; clean baseline + integrated `0001-0005` applied and `make` succeeded.
+  - `bash scripts/xv6/boot-xv6.sh`: PASS; default 45s / 2 attempts, attempt 1 captured `xv6 kernel is booting` and `init: starting sh`.
+  - `XV6_BOOT_TIMEOUT_SECONDS=60 XV6_BOOT_RETRIES=2 bash scripts/xv6/boot-xv6.sh`: PASS; override displayed 60s / 2 attempts, attempt 1 captured boot evidence.
+  - `hello`, `add2test`, `pstatetest`, `pcounttest`, `pchildtest`, and `fcounttest` command evidence checks all passed.
+- Boundaries:
+  - No xv6 patch or OS feature was changed.
+  - Timeout exit code 124 is documented as not automatically proving permanent boot failure.
+  - This is boot evidence capture hardening, not long-running stability testing.
+  - Manual video and second teammate reproduction remain TODO.
+  - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.
