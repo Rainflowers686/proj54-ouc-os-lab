@@ -22,7 +22,7 @@ proj54 是教学型功能挑战，不是“内核实现赛道刷 LTP”项目。
 | 赛题关注点 | 权重 | 本项目对应材料 |
 | --- | ---: | --- |
 | 文档完整度 | 50% | `docs/final/` 正式文档、各 lab 教程、常见错误、测试方法、边界说明、AI/许可证声明 |
-| 实现完整度 | 30% | lab0/lab1/lab2/lab3 independent/lab4 patch 与 integrated `0001-0005`，覆盖 syscall、进程观察、页表观察和文件表观察 |
+| 实现完整度 | 30% | lab0/lab1/lab2/lab3/lab4 与 integrated `0001-0007`，覆盖 syscall、进程观察、页表观察、file table 和 fd table 观察 |
 | 测试完整度 | 10% | `doctor.sh`、`teammate-verify.sh`、`local-verify.sh`、boot/command evidence、测试覆盖表 |
 | 创新性 | 10% | OUC 本校课程叙事、clean baseline patch workflow、队友一键复现、QEMU cleanup/timeout 体验、透明 AI 过程记录 |
 
@@ -33,12 +33,13 @@ proj54 是教学型功能挑战，不是“内核实现赛道刷 LTP”项目。
 | lab0 | 已完成 | 环境检查、baseline metadata、make、boot evidence |
 | lab1 | 已完成 | `hello()` 与 `add2(int,int)` syscall |
 | lab2 | 已完成 | `pstate`、`pcount`、`pchildtest` |
-| lab3 | independent 已完成 | `pgcount()` 页表映射数量观察；eager/lazy allocation 对比；未 integrated |
-| lab4 | 已完成 | `fcount()` 文件表引用计数观察 |
-| integrated-labs | 已完成 | `0001-0005` 可从 clean baseline 顺序应用并 make |
-| 一键验证 | 已完成 | doctor/local/teammate/cleanup 脚本 |
+| lab3 | integrated 已完成 | `pgcount()` 页表映射数量观察；eager/lazy allocation 对比；integrated `0006` |
+| lab4 | v0.2 已完成 | `fcount()` 全局 file table 观察；`fdcount()` 当前进程 fd table 观察 |
+| lab5 | capstone 已完成 | 综合复现实验文档；不新增内核机制 |
+| integrated-labs | 已完成 | `0001-0007` 可从 clean baseline 顺序应用并 make |
+| 一键验证 | 已更新 | doctor/local/teammate/cleanup 脚本；local/teammate 覆盖 pgcounttest 和 fdcounttest |
 | 视频 | 已录制 3 段 | 文件在仓库外；文件名/大小/外部位置已记录，时长和平台提交方式待补充 |
-| 队友独立复现 | 已收到 2 份 full PASS summary | 原始 logs/summary/截图不入仓；文字摘要见 `submissions/teammate_reproduction_record.md`；真实姓名/系统版本待补充 |
+| 队友独立复现 | 旧证据已记录，新 HEAD 待重跑 | 两份 full PASS summary 锚定旧 commit `1ba9db6`；不覆盖 stage9c integrated `0001-0007` |
 
 ## OUC 本校课程特色
 
@@ -68,9 +69,10 @@ proj54 是教学型功能挑战，不是“内核实现赛道刷 LTP”项目。
 
 - 不提交 `external/xv6-riscv/`。
 - 不提交 `logs/*.log`、`logs/*.summary.txt`、视频、大文件、隐私材料。
-- 不把 Lab3 independent patch 写成 integrated `0006` 或队友已复现。
+- 不把旧 commit `1ba9db6` 的队友 PASS 写成 stage9c 新 HEAD 复现。
+- 不把 Lab5 写成新的内核机制；它是 capstone 综合复现实验。
 - 不把 timeout 捕获写成长期稳定性测试。
-- 不把 lab4 `fcount()` 写成完整文件系统实验。
+- 不把 lab4 `fcount()` / `fdcount()` 写成完整文件系统实验。
 - 不把队长本机验证写成队友独立复现；队友记录只按已收到 summary/截图摘要整理，未知姓名和系统版本保持待补充。
 - 不把本项目表述为 LTP 覆盖或内核实现赛道项目。
 

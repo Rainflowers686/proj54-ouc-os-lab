@@ -21,7 +21,7 @@
 | `logs/*.log` | ignored，不被跟踪 |
 | `logs/*.summary.txt` | ignored，不被跟踪 |
 | `.claude/`、`.vscode/` | ignored，不被跟踪 |
-| integrated patches | `patches/integrated-labs/0001-0005` 不在 stage9b 修改；未新增 integrated `0006` |
+| integrated patches | 当前为 `patches/integrated-labs/0001-0007`；`0006` 为 pgcount，`0007` 为 fdcount |
 | remote | 不修改 GitLab/GitHub remote |
 
 ## 3. 工程复现
@@ -31,9 +31,10 @@
 | 环境诊断 | `bash scripts/xv6/doctor.sh` | PASS；可能有可接受 WARN |
 | clean apply + make | `bash scripts/xv6/apply-integrated-labs.sh --make --yes` | PASS |
 | boot evidence | `bash scripts/xv6/boot-xv6.sh` | PASS |
-| Lab3 independent pgcount | `bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcount eager delta = 2"` | PASS；independent patch only，未进入 teammate full |
-| 一键 full 验证 | `bash scripts/xv6/teammate-verify.sh --full` | 队长本机 PASS；已收到 2 份队友 full PASS summary |
-| 本地录屏前预检 | `bash scripts/xv6/local-verify.sh --quick` | 队长本机 PASS |
+| Lab3 integrated pgcount | `bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcounttest done"` | PASS；已进入 integrated `0006` |
+| Lab4 fdcount | `bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"` | PASS；已进入 integrated `0007` |
+| 一键 full 验证 | `bash scripts/xv6/teammate-verify.sh --full` | 队长本机通过 `local-verify --full` 完整跑通；队友新 HEAD full 仍需重新收集 |
+| 本地录屏前预检 | `bash scripts/xv6/local-verify.sh --quick` | 队长本机 `local-verify --full` PASS；录屏前仍推荐 quick |
 | QEMU cleanup | `bash scripts/xv6/cleanup-qemu.sh` | 可用 |
 
 ## 4. 文档材料
@@ -42,14 +43,14 @@
 | --- | --- | --- |
 | 评委入口 README | `README.md` | stage8a 已重构 |
 | 正式文档入口 | `docs/final/` | stage8a 已新增正式初版 |
-| 测试覆盖表 | `docs/final/06_testing_and_verification.md` | 已包含 doctor/baseline/boot/用户程序/local/teammate/manual demo |
-| Lab3 independent patch | `patches/lab3-memory-and-pagetable/0001-add-pgcount-syscall.patch` | 已生成并本机验证 |
+| 测试覆盖表 | `docs/final/06_testing_and_verification.md` | 已包含 doctor/baseline/boot/用户程序/pgcount/fdcount/local/teammate/manual demo |
+| Lab3 patch | `patches/lab3-memory-and-pagetable/0001-add-pgcount-syscall.patch` 与 integrated `0006` | 已生成并本机验证 |
 | AI 使用声明 | `docs/final/09_ai_usage_and_contribution_statement.md` | 已补充 |
 | 引用与许可证声明 | `docs/final/10_reference_and_license_statement.md` | 已补充 xv6 MIT 与参考项目待核对项 |
 | 已知限制 | `docs/final/11_known_limits_and_future_work.md` | 已补充 |
 | 材料索引 | `submissions/draft-report-index.md` | 由 `scripts/collect-report.sh` 生成 |
 | docs 导引 | `docs/README.md` | 已说明正式文档与过程文档边界 |
-| 队友复现记录 | `submissions/teammate_reproduction_record.md` | 已记录 2 份队友 full PASS summary 的文字摘要 |
+| 队友复现记录 | `submissions/teammate_reproduction_record.md` | 已记录 2 份旧 commit full PASS summary；stage9c 新 HEAD 待重跑 |
 
 ## 5. 视频记录
 
@@ -70,7 +71,7 @@
 | 检查项 | 状态 |
 | --- | --- |
 | 队友使用命令 | `bash scripts/xv6/teammate-verify.sh --full` |
-| copy-to-lead summary | 已收到 2 份 full PASS summary；原始 logs/summary/截图不入仓 |
+| copy-to-lead summary | 旧 2 份 full PASS summary 锚定 `1ba9db6`；stage9c 新 HEAD 需要重新收集 |
 | 失败时 cleanup 流程 | `bash scripts/xv6/cleanup-qemu.sh` |
 | 是否伪造队友结果 | 禁止；未知姓名/系统版本保持待补充 |
 
@@ -83,9 +84,9 @@
 - README 是否是评委入口，而不是开发流水账。
 - `docs/final/` 是否覆盖项目概述、环境、每个 lab、测试、队友复现、设计取舍、AI、许可证、限制。
 - 是否仍把 timeout 捕获夸大成长期稳定性。
-- 是否把 fcount 夸大成完整文件系统。
+- 是否把 fcount/fdcount 夸大成完整文件系统。
 - 是否把 pgcount 夸大成完整内存管理实验。
-- 是否把 Lab3 independent patch 写成 integrated 或队友已复现。
+- 是否把旧队友 summary 写成 stage9c 新 HEAD 复现。
 - 是否把本机验证写成队友复现。
 - 是否存在 external/logs/.claude/video/隐私材料入库风险。
 
@@ -121,4 +122,4 @@ bash scripts/xv6/teammate-verify.sh --full
 
 ## 10. 结论
 
-当前工程功能、验证链、两份队友 full PASS 摘要和视频元数据已经形成提交证据基础。冲奖前仍必须补齐技术报告 v1.0、PPT、视频时长/平台提交方式、引用 URL/许可证核对和最终红队审核。
+当前工程功能、验证链、stage9c 本机验证、历史队友 full PASS 摘要和视频元数据已经形成提交证据基础。冲奖前仍必须补齐新 HEAD 队友 `--full` summary、技术报告 v1.0、PPT、视频时长/平台提交方式、引用 URL/许可证核对和最终红队审核。

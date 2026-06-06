@@ -100,13 +100,13 @@ pstate(child) = <state> (<STATE_NAME>)
 | 测试项 | 结果 |
 | --- | --- |
 | pstate independent patch apply/make | PASS |
-| integrated `0001-0005` apply/make | PASS |
+| integrated `0001-0007` apply/make | PASS |
 | `pstate(self) =` | PASS |
 | `pcount(RUNNING) =` | PASS |
 | `pcount(99) = -1` | PASS |
 | `pstate(child) =` | PASS |
 | 长期稳定性测试 | 未执行 |
-| 队友独立复现 | 已覆盖在 2 份队友 `teammate-verify.sh --full` PASS summary 中；文字摘要见 `submissions/teammate_reproduction_record.md` |
+| 队友独立复现 | 旧 2 份队友 PASS summary 锚定 commit `1ba9db6`；stage9c 新 HEAD 需重新跑 `teammate-verify.sh --full` |
 
 ## 常见错误
 

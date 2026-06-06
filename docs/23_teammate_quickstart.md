@@ -28,7 +28,7 @@ bash scripts/xv6/teammate-verify.sh --full
 - `scripts/xv6/check-xv6-baseline.sh`；
 - `scripts/xv6/apply-integrated-labs.sh --make --yes`；
 - `scripts/xv6/boot-xv6.sh`；
-- hello / add2test / pstatetest / pcounttest / pchildtest / fcounttest 验证。
+- hello / add2test / pstatetest / pcounttest / pchildtest / fcounttest / pgcounttest / fdcounttest 验证。
 
 每一步都会记录 PASS/FAIL。最后会打印 `COPY THIS SUMMARY TO TEAM LEAD` 块，并写入：
 
@@ -107,6 +107,8 @@ kill %1
 - `LOAD segment with RWX permissions` 是当前 baseline/binutils 的 linker warning，不等于实验失败。
 - `pcount(RUNNING)` 的数字不固定，只验证 `pcount(RUNNING) =` 和 `pcount(99) = -1`。
 - `fcount(...)` 的数字不固定，只验证稳定输出和 `fcounttest done`。
+- `pgcounttest` 验证 eager/lazy allocation 的真实 delta，不依赖绝对页数。
+- `fdcounttest` 验证当前进程 fd table delta，不把它写成完整文件系统实验。
 - `pchildtest` 的状态受调度时序影响，可能看到 RUNNABLE、SLEEPING 等有效状态；只验证 `pstate(child) =`。
 
 ## 8. 禁止事项

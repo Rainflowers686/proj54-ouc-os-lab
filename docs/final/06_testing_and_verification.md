@@ -20,10 +20,11 @@
 | pstatetest | lab2 `pstate(int pid)` | `bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="` | 匹配前缀 | PASS | `docs/15_lab2_process_observation_review.md`，`docs/04_test_report.md` |
 | pcounttest | lab2 `pcount(int state)` 正常和负向输入 | `bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(RUNNING) ="`；`bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(99) = -1"` | 匹配前缀和 invalid state `-1` | PASS；数值不固定 | `docs/19_lab2_v0.2_process_observation_review.md` |
 | pchildtest | lab2 子进程状态观察 | `bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="` | 匹配前缀；状态不固定 | PASS | `docs/19_lab2_v0.2_process_observation_review.md` |
-| pgcounttest | lab3 页表映射数量观察；eager/lazy allocation 对比 | `bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcount eager delta = 2"`；`bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcount lazy delta before touch = 0"`；`bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcount lazy delta after two touches = 2"`；`bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcounttest done"` | 匹配真实计算出的 delta 和完成标记 | PASS；independent patch only，未 integrated，未队友复现 | `tests/lab3/README.md`，`patches/lab3-memory-and-pagetable/README.md` |
+| pgcounttest | lab3 页表映射数量观察；eager/lazy allocation 对比 | `bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcount eager delta = 2"`；`bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcount lazy delta before touch = 0"`；`bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcount lazy delta after two touches = 2"`；`bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcounttest done"` | 匹配真实计算出的 delta 和完成标记 | PASS；integrated `0006` 已验证；新 HEAD 队友复现待重跑 | `tests/lab3/README.md`，`patches/integrated-labs/README.md` |
 | fcounttest | lab4 文件表观察 | `bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"` | 匹配 `fcounttest done`；可选检查 before/open/close 前缀 | PASS；数字不固定 | `docs/20_lab4_file_table_observation_review.md` |
-| local-verify | 队长本机预检 | `bash scripts/xv6/local-verify.sh --quick` 或 `--full` | copy-to-lead summary overall PASS | 队长本机 local/full PASS；summary 在 ignored logs | `docs/06_progress_log.md`，`logs/teammate-verify-*.summary.txt` ignored |
-| teammate-verify | 队友正式复现入口 | `bash scripts/xv6/teammate-verify.sh --full` | 队友机器 summary overall PASS | 已收到 2 份队友 full verification PASS summary；原始 logs/summary/截图不入仓；真实姓名/系统版本待补充 | `submissions/teammate_reproduction_record.md`，`docs/23_teammate_quickstart.md` |
+| fdcounttest | lab4 v0.2 当前进程 fd table 观察 | `bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"` | 匹配 `fdcounttest done`；fd delta 由程序真实计算 | PASS；integrated `0007` 已验证；不依赖绝对 fcount | `patches/integrated-labs/README.md`，`docs/06_progress_log.md` |
+| local-verify | 队长本机预检 | `bash scripts/xv6/local-verify.sh --quick` 或 `--full` | copy-to-lead summary overall PASS | PASS；stage9c 队长本机 `local-verify --full` 已完成，summary 文件在 ignored `logs/` 下 | `docs/06_progress_log.md`，`logs/teammate-verify-*.summary.txt` ignored |
+| teammate-verify | 队友正式复现入口 | `bash scripts/xv6/teammate-verify.sh --full` | 队友机器 summary overall PASS | 旧 2 份 PASS summary 锚定 commit `1ba9db6`；不覆盖 stage9c integrated `0001-0007`；新 HEAD 需重跑 | `submissions/teammate_reproduction_record.md`，`docs/23_teammate_quickstart.md` |
 | manual xv6 shell demo | 人工进入 xv6 shell 运行 hello/add2/pstate/pcount/pchild/fcount | `cd external/xv6-riscv && make qemu` 后手动输入用户程序 | 真实 shell 输出，不依赖 timeout 自动捕获 | 已录制 3 段视频；文件名和约略大小已记录，时长和平台提交方式待补充 | `submissions/demo_record.md` |
 
 ## 一键验证路径
@@ -66,4 +67,4 @@ kill %1
 - `apply-integrated-labs.sh --make --yes` 打印 `[OK] make completed successfully` 才表示 make 阶段完成。
 - manual video 与 timeout evidence 分开记录。
 - 队友复现记录只保存文字摘要；原始 logs、summary 文件和截图不入仓。
-- Lab3 当前只验证 independent patch；未进入 integrated-labs，也未进入 teammate full workflow。
+- Lab3 当前已进入 integrated `0006`，Lab4 v0.2 `fdcount()` 已进入 integrated `0007`；旧队友 PASS 不覆盖新 HEAD。

@@ -20,7 +20,7 @@ bash scripts/xv6/teammate-verify.sh --full
 3. `scripts/xv6/check-xv6-baseline.sh`。
 4. `scripts/xv6/apply-integrated-labs.sh --make --yes`。
 5. `scripts/xv6/boot-xv6.sh`。
-6. hello/add2test/pstatetest/pcounttest/pchildtest/fcounttest。
+6. hello/add2test/pstatetest/pcounttest/pchildtest/fcounttest/pgcounttest/fdcounttest。
 
 ## 已经 make 成功后的重测
 
@@ -79,7 +79,7 @@ logs/teammate-verify-YYYYMMDD-HHMMSS.summary.txt
 
 ## 当前已收到的队友结果
 
-截至 2026-06-06，已收到两份队友 `--full` verification PASS summary：
+截至 2026-06-06，已收到两份队友 `--full` verification PASS summary。注意：这些 summary 锚定旧 commit `1ba9db6`，不覆盖 stage9c 新增的 integrated `0001-0007`。当前 HEAD 需要重新收集 teammate `--full` summary：
 
 | 记录 | 终端 user | repo root | commit | mode | overall |
 | --- | --- | --- | --- | --- | --- |

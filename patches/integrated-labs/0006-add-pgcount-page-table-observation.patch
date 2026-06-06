@@ -1,0 +1,231 @@
+diff --git a/Makefile b/Makefile
+index 08400bf..38d9728 100644
+--- a/Makefile
++++ b/Makefile
+@@ -134,6 +134,7 @@ UPROGS=\
+ 	$U/_pcounttest\
+ 	$U/_pchildtest\
+ 	$U/_fcounttest\
++	$U/_pgcounttest\
+ 	$U/_forktest\
+ 	$U/_grep\
+ 	$U/_init\
+diff --git a/kernel/defs.h b/kernel/defs.h
+index cee70ed..abbabbb 100644
+--- a/kernel/defs.h
++++ b/kernel/defs.h
+@@ -159,6 +159,7 @@ int             mappages(pagetable_t, uint64, uint64, uint64, int);
+ pagetable_t     uvmcreate(void);
+ uint64          uvmalloc(pagetable_t, uint64, uint64, int);
+ uint64          uvmdealloc(pagetable_t, uint64, uint64);
++int             uvmpagecount(pagetable_t, uint64);
+ int             uvmcopy(pagetable_t, pagetable_t, uint64);
+ void            uvmfree(pagetable_t, uint64);
+ void            uvmunmap(pagetable_t, uint64, uint64, int);
+diff --git a/kernel/syscall.c b/kernel/syscall.c
+index 449d2a7..85ef533 100644
+--- a/kernel/syscall.c
++++ b/kernel/syscall.c
+@@ -107,6 +107,7 @@ extern uint64 sys_add2(void);
+ extern uint64 sys_pstate(void);
+ extern uint64 sys_pcount(void);
+ extern uint64 sys_fcount(void);
++extern uint64 sys_pgcount(void);
+ 
+ // An array mapping syscall numbers from syscall.h
+ // to the function that handles the system call.
+@@ -138,6 +139,7 @@ static uint64 (*syscalls[])(void) = {
+   [SYS_pstate]  sys_pstate,
+   [SYS_pcount]  sys_pcount,
+   [SYS_fcount]  sys_fcount,
++  [SYS_pgcount] sys_pgcount,
+   // clang-format on
+ };
+ 
+diff --git a/kernel/syscall.h b/kernel/syscall.h
+index 7fa325a..2dda6d5 100644
+--- a/kernel/syscall.h
++++ b/kernel/syscall.h
+@@ -25,3 +25,4 @@
+ #define SYS_pstate 24
+ #define SYS_pcount 25
+ #define SYS_fcount 26
++#define SYS_pgcount 27
+diff --git a/kernel/sysproc.c b/kernel/sysproc.c
+index d9e896b..0e1ef1c 100644
+--- a/kernel/sysproc.c
++++ b/kernel/sysproc.c
+@@ -171,3 +171,10 @@ sys_pcount(void)
+ 
+   return count;
+ }
++
++uint64
++sys_pgcount(void)
++{
++  struct proc *p = myproc();
++  return uvmpagecount(p->pagetable, p->sz);
++}
+diff --git a/kernel/vm.c b/kernel/vm.c
+index 6bc3730..a83e258 100644
+--- a/kernel/vm.c
++++ b/kernel/vm.c
+@@ -259,6 +259,21 @@ uvmdealloc(pagetable_t pagetable, uint64 oldsz, uint64 newsz)
+   return newsz;
+ }
+ 
++// Count mapped user pages below sz without modifying the page table.
++int
++uvmpagecount(pagetable_t pagetable, uint64 sz)
++{
++  int count = 0;
++
++  for (uint64 va = 0; va < sz; va += PGSIZE) {
++    pte_t *pte = walk(pagetable, va, 0);
++    if (pte != 0 && (*pte & PTE_V) && (*pte & PTE_U))
++      count++;
++  }
++
++  return count;
++}
++
+ // Recursively free page-table pages.
+ // All leaf mappings must already have been removed.
+ void
+diff --git a/user/pgcounttest.c b/user/pgcounttest.c
+new file mode 100644
+index 0000000..bb15d67
+--- /dev/null
++++ b/user/pgcounttest.c
+@@ -0,0 +1,110 @@
++#include "kernel/types.h"
++#include "kernel/stat.h"
++#include "kernel/riscv.h"
++#include "user/user.h"
++
++static void
++fail(char *msg)
++{
++  printf("pgcounttest FAIL: %s\n", msg);
++  exit(1);
++}
++
++static void
++align_break(void)
++{
++  uint64 current = (uint64)sbrk(0);
++  uint64 aligned = PGROUNDUP(current);
++
++  if (aligned != current) {
++    if (sbrk(aligned - current) == (char *)-1)
++      fail("sbrk align failed");
++  }
++}
++
++static void
++test_eager(void)
++{
++  int before;
++  int after_alloc;
++  int after_free;
++  int delta;
++  char *base;
++
++  align_break();
++
++  before = pgcount();
++  base = sbrk(2 * PGSIZE);
++  if (base == (char *)-1)
++    fail("sbrk eager allocation failed");
++
++  after_alloc = pgcount();
++  delta = after_alloc - before;
++  printf("pgcount eager delta = %d\n", delta);
++
++  if (delta != 2)
++    fail("expected eager delta 2");
++
++  if (sbrk(-2 * PGSIZE) == (char *)-1)
++    fail("sbrk eager free failed");
++
++  after_free = pgcount();
++  printf("pgcount eager delta after free = %d\n", after_free - before);
++}
++
++static void
++test_lazy(void)
++{
++  int before;
++  int after_alloc;
++  int after_touch_one;
++  int after_touch_two;
++  int delta_before_touch;
++  int delta_after_one;
++  int delta_after_two;
++  char *base;
++
++  align_break();
++
++  before = pgcount();
++  base = sbrklazy(2 * PGSIZE);
++  if (base == (char *)-1)
++    fail("sbrklazy allocation failed");
++
++  after_alloc = pgcount();
++  delta_before_touch = after_alloc - before;
++  printf("pgcount lazy delta before touch = %d\n", delta_before_touch);
++
++  if (delta_before_touch != 0)
++    fail("expected lazy delta before touch 0");
++
++  base[0] = 1;
++  after_touch_one = pgcount();
++  delta_after_one = after_touch_one - before;
++  printf("pgcount lazy delta after one touch = %d\n", delta_after_one);
++
++  if (delta_after_one != 1)
++    fail("expected lazy delta after one touch 1");
++
++  base[PGSIZE] = 1;
++  after_touch_two = pgcount();
++  delta_after_two = after_touch_two - before;
++  printf("pgcount lazy delta after two touches = %d\n", delta_after_two);
++
++  if (delta_after_two != 2)
++    fail("expected lazy delta after two touches 2");
++
++  if (sbrk(-2 * PGSIZE) == (char *)-1)
++    fail("sbrk lazy free failed");
++
++  printf("pgcount lazy delta after free = %d\n", pgcount() - before);
++}
++
++int
++main(int argc, char *argv[])
++{
++  test_eager();
++  test_lazy();
++  printf("pgcounttest done\n");
++  exit(0);
++}
+diff --git a/user/user.h b/user/user.h
+index 345b78a..7bbb5ce 100644
+--- a/user/user.h
++++ b/user/user.h
+@@ -29,6 +29,7 @@ int add2(int, int);
+ int pstate(int);
+ int pcount(int);
+ int fcount(void);
++int pgcount(void);
+ 
+ // ulib.c
+ int stat(const char *, struct stat *);
+diff --git a/user/usys.pl b/user/usys.pl
+index 44944a4..bef2a76 100755
+--- a/user/usys.pl
++++ b/user/usys.pl
+@@ -47,3 +47,4 @@ entry("add2");
+ entry("pstate");
+ entry("pcount");
+ entry("fcount");
++entry("pgcount");

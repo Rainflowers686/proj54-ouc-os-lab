@@ -2,10 +2,12 @@
 
 ## 当前测试目标
 
-lab4 v0.1 用于验证文件表观察实验：
+lab4 v0.2 用于验证文件表与 fd 表观察实验：
 
 - `fcount()` syscall 能返回当前全局文件表中 `ref > 0` 的 `struct file` 数量。
 - `fcounttest` 能输出打开临时文件前、打开后、关闭后的观察结果。
+- `fdcount()` syscall 能返回当前进程 `ofile[]` 中非空 fd 数量。
+- `fdcounttest` 能输出 open、dup、close 后的 fd delta，并把 fcount delta 作为观察对比。
 - 测试不固定具体数值，只验证稳定输出前缀。
 
 ## 已真实执行的验证
@@ -15,8 +17,9 @@ lab4 v0.1 用于验证文件表观察实验：
 | independent lab4 patch clean apply | PASS |
 | independent lab4 patch `make` | PASS |
 | independent `fcounttest` | PASS，检测到 `fcounttest done` |
-| integrated `0001-0005` clean apply + `make` | PASS |
+| integrated `0001-0007` clean apply + `make` | PASS |
 | integrated `fcounttest` 前缀捕获 | PASS，检测到 `fcount(before) =`、`fcount(after_open) =`、`fcount(after_close) =`、`fcounttest done` |
+| integrated `fdcounttest` 捕获 | PASS，检测到 `fdcounttest done`；fd delta open=1、dup=2、close one=1、close two=0 |
 
 本地一次输出中观察到 `fcount(before) = 1`、`fcount(after_open) = 2`、`fcount(after_close) = 1`。该数值只作为一次真实样例，不作为固定测试期望。
 
@@ -28,6 +31,7 @@ bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(before) ="
 bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_open) ="
 bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_close) ="
 bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
+bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"
 ```
 
 ## 记录要求

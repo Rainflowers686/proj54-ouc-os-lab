@@ -43,4 +43,4 @@ bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcounttest done"
 
 - 原始 QEMU logs 在 `logs/` 下，Git ignored，不提交。
 - `pgcount before/after` 的绝对数值不固定，不作为验收标准。
-- 本测试只覆盖 independent Lab3 patch，不覆盖 integrated `0006`，也不代表队友已经复现 Lab3。
+- 本测试现在覆盖 independent Lab3 patch 和 integrated `0006`；旧 commit `1ba9db6` 的 teammate full summary 不覆盖 stage9c 新 HEAD。

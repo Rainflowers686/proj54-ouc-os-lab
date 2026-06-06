@@ -61,6 +61,7 @@ echo
 echo "[INFO] This is the team lead local pre-recording verification wrapper."
 echo "[INFO] Recommended before recording: bash scripts/xv6/local-verify.sh --quick"
 echo "[INFO] Reusing teammate workflow so local and teammate checks stay consistent."
+echo "[INFO] Current integrated suite includes pgcounttest and fdcounttest."
 echo
 
 exec bash scripts/xv6/teammate-verify.sh "--${MODE}"

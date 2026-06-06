@@ -4,10 +4,11 @@
 
 | 项目 | 当前状态 | 说明 |
 | --- | --- | --- |
-| lab3 memory/pagetable | independent 已完成 | `pgcount()` 页表映射数量观察已验证；尚未 integrated，尚未队友 full 复现 |
-| lab4 file system | 部分完成 | 仅做文件表引用计数观察，不是完整文件系统实验 |
+| lab3 memory/pagetable | integrated 已完成 | `pgcount()` 页表映射数量观察已进入 integrated `0006`；不是完整内存管理实验 |
+| lab4 file system | v0.2 已完成 | `fcount()` file table 与 `fdcount()` fd table 观察；不是完整文件系统实验 |
+| lab5 capstone | 已完成文档闭环 | 综合复现实验；不新增内核机制 |
 | 长期稳定性测试 | 未完成 | 当前为 timeout 自动捕获 evidence |
-| 队友独立复现 | 已收到 2 份 full PASS summary | 原始 logs/summary/截图不入仓；文字摘要已记录；真实姓名/系统版本待补充 |
+| 队友独立复现 | 新 HEAD 待重跑 | 旧 2 份 full PASS summary 锚定 commit `1ba9db6`；不覆盖 stage9c integrated `0001-0007` |
 | 视频提交信息 | 部分补充 | 已录制 3 段，文件名/外部位置/约略大小已记录；时长/平台提交方式待补充 |
 | 同类项目引用 URL | 待补充 | uCore/rCore/YatSen OS/F-Tutorials 等需最终核对 |
 | 技术报告 v1.0 | 待制作 | 可基于 `docs/final/` 整理 |
@@ -15,12 +16,13 @@
 
 ## 不能夸大的内容
 
-- `fcount()` 不能写成完整文件系统实验。
+- `fcount()` / `fdcount()` 不能写成完整文件系统实验。
 - `pcount(RUNNING)` 不能写成固定数值。
 - `pchildtest` 不能写成固定状态。
 - `pgcount()` 不能写成完整内存管理实验；只能写页表映射数量观察。
+- Lab5 不能写成新的内核机制；它是综合复现和报告实验。
 - timeout evidence 不能写成长期稳定性测试。
-- 队长本机 PASS 不能写成队友独立复现；队友 PASS 只能按已收到的 summary/截图摘要记录。
+- 队长本机 PASS 不能写成队友独立复现；旧队友 PASS 只能按旧 commit `1ba9db6` 的 summary/截图摘要记录。
 - 已录制视频不能自动等同于已完成平台提交；还需补充时长和提交方式。
 
 ## 后续可扩展实验
@@ -41,8 +43,8 @@
 
 ### lab3 后续计划
 
-- 将 independent `pgcount()` 评估是否纳入 integrated `0006`。
 - 补一篇正式 Lab3 final 文档和技术报告章节。
+- 重新收集 stage9c 新 HEAD 的 teammate `--full` summary。
 - 设计学生骨架版和扩展问题。
 - 必须先设计安全的最小实验，不应临时堆功能。
 

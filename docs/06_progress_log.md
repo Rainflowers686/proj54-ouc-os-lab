@@ -781,3 +781,44 @@
   - `external/xv6-riscv/` and raw logs remain ignored and must not be committed.
   - The two teammate full PASS summaries at commit `1ba9db6` do not cover Lab3; teammate full should be rerun only if Lab3 is later integrated into the one-shot workflow or claimed as teammate-verified.
   - Lab3 is a page-table mapping count observation, not a complete memory-management experiment.
+
+## 2026-06-06: stage9c luxury integrated lab suite
+
+- Commit hash: TODO after commit
+- Goal: build the high-end integrated lab workflow by adding Lab3 pgcount to integrated-labs, adding Lab4 v0.2 fdcount when stable, updating one-shot verification, and turning Lab5 into a capstone reproduction experiment.
+- Completed:
+  - Generated `patches/integrated-labs/0006-add-pgcount-page-table-observation.patch`.
+  - Generated `patches/integrated-labs/0007-add-fdcount-observation.patch`.
+  - `0006` uses `SYS_pgcount = 27`, counts `PTE_V && PTE_U` user mappings below `p->sz`, and keeps eager/lazy `pgcounttest`.
+  - `0007` uses `SYS_fdcount = 28`, counts current process `ofile[]` entries, and adds `fdcounttest`.
+  - Updated `scripts/xv6/apply-integrated-labs.sh` to apply integrated `0001-0007`.
+  - Updated `scripts/xv6/teammate-verify.sh` and `scripts/xv6/local-verify.sh` so full/quick summaries include `pgcounttest` and `fdcounttest`.
+  - Rewrote `labs/lab5-final-integration/README.md` as a capstone workflow. It does not introduce another kernel mechanism.
+  - Updated README, final docs, Lab3/Lab4/Lab5 docs, submission checklist, teammate/video records, AI usage record, collect-report script, and material index.
+- Checkpoint A:
+  - Clean baseline apply `0001-0006`: PASS.
+  - `make -C external/xv6-riscv`: PASS.
+  - `pgcounttest "pgcounttest done"`: PASS.
+  - Real log contained `pgcount eager delta = 2`, `pgcount lazy delta before touch = 0`, `pgcount lazy delta after one touch = 1`, `pgcount lazy delta after two touches = 2`, and `pgcounttest done`.
+- Checkpoint B:
+  - Clean baseline apply `0001-0007`: PASS.
+  - `make -C external/xv6-riscv`: PASS.
+  - Regression PASS: hello, add2test, pstatetest, pcounttest, pchildtest, fcounttest, pgcounttest, fdcounttest.
+  - `fdcounttest` real log contained fd delta open=1, dup=2, close one=1, close two=0, and `fdcounttest done`.
+- Checkpoint C:
+  - `bash -n scripts/xv6/apply-integrated-labs.sh`: PASS.
+  - `bash -n scripts/xv6/teammate-verify.sh`: PASS.
+  - `bash -n scripts/xv6/local-verify.sh`: PASS.
+- Final local full verification:
+  - `bash scripts/xv6/apply-integrated-labs.sh --make --yes`: PASS; clean baseline applied integrated `0001-0007`, and `make` completed successfully.
+  - `bash scripts/xv6/boot-xv6.sh`: PASS; boot evidence matched `xv6 kernel is booting` and `init: starting sh`.
+  - Command evidence PASS: hello, add2test, pstatetest, pcounttest, pchildtest, fcounttest, pgcounttest, fdcounttest.
+  - `bash scripts/xv6/local-verify.sh --full`: PASS; copy-to-lead summary recorded doctor/check-env/baseline/apply+make/boot/hello/add2test/pstatetest/pcounttest/pchildtest/fcounttest/pgcounttest/fdcounttest/overall as PASS.
+  - Summary file `logs/teammate-verify-20260606-225912.summary.txt` is ignored and must not be committed.
+- Boundaries:
+  - No GitLab/GitHub remote was modified.
+  - `patches/integrated-labs/0001-0005` were not modified.
+  - `external/xv6-riscv/` and raw logs remain ignored and must not be committed.
+  - `pgcount()` is page-table mapping observation only, not full memory management.
+  - `fcount()` / `fdcount()` are file table / fd table observations only, not a complete file system lab.
+  - The two teammate full PASS summaries at commit `1ba9db6` are now historical evidence only; they do not cover current integrated `0001-0007`. New teammate `--full` summaries are required before claiming new-HEAD teammate reproduction.

@@ -50,7 +50,7 @@ xv6-riscv 上游 LICENSE 为 MIT License。项目使用 xv6 作为教学 OS base
 - `patches/lab1-system-call/`：hello/add2 syscall 教学 patch。
 - `patches/lab2-process-observation/`：pstate independent patch。
 - `patches/lab4-file-table-observation/`：fcount independent patch。
-- `patches/integrated-labs/0001-0005`：统一 syscall number 的综合 patch sequence。
+- `patches/integrated-labs/0001-0007`：统一 syscall number 的综合 patch sequence。
 - `scripts/xv6/`：fetch/check/apply/boot/run/doctor/local/teammate/cleanup 工具链。
 - `docs/final/`：面向提交和评委阅读的正式文档入口。
 - OUC 本校课程叙事、一键验证、队友复现流程、测试覆盖表和诚信边界说明。

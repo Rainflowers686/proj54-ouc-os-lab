@@ -3,6 +3,8 @@
 > 维护时间：2026-06-06（stage8b）。
 > 本文件只记录队友复现 summary 的文字摘要，不提交原始 `logs/` 文件、summary 文件、截图或隐私材料。
 
+> stage9c 更新：以下两份队友 full PASS summary 均锚定旧 commit `1ba9db6 tooling: speed up verification and clean repo hygiene`。stage9c 已新增 integrated `0006`/`0007` 并更新验证脚本，因此这些记录只能作为历史复现证据，不覆盖当前 HEAD。正式提交前需要重新收集 teammate `--full` summary。
+
 ## 记录目的
 
 本记录用于证明已有队友在独立环境中运行过正式复现流程，并把 `teammate-verify.sh` 输出的 summary 反馈给队长。仓库只保留人工整理后的摘要，避免把原始日志、截图、终端历史、账号信息或机器隐私提交到 Git。

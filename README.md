@@ -21,13 +21,14 @@
 | lab0 baseline/build/boot      | 已完成                        | 环境检查、xv6 baseline metadata、make、boot evidence                                                                  |
 | lab1 hello/add2               | 已完成                        | `hello()`、`add2(int,int)` syscall 入门与参数传递                                                                 |
 | lab2 pstate/pcount/pchildtest | 已完成                        | 进程状态观察、状态计数、子进程状态观察                                                                                |
-| lab3 pgcount                  | independent 已完成            | 页表映射数量观察；eager/lazy allocation 对比；尚未进入 integrated-labs                                                |
-| lab4 fcount/fcounttest        | 已完成                        | 文件表引用计数观察；不是完整文件系统实验                                                                              |
-| integrated-labs 0001-0005     | 已完成                        | clean baseline 可顺序应用并 make；同一构建验证 6 个用户程序                                                           |
-| verification scripts          | 已完成                        | `doctor.sh`、`teammate-verify.sh`、`local-verify.sh`、`cleanup-qemu.sh`                                       |
+| lab3 pgcount                  | integrated 已完成             | 页表映射数量观察；eager/lazy allocation 对比；integrated `0006`                                                       |
+| lab4 fcount/fdcount           | v0.2 已完成                   | 全局 file table 与当前进程 fd table 观察；不是完整文件系统实验                                                        |
+| lab5 capstone                 | 已完成文档闭环                | 综合复现实验；组织 clean baseline、integrated `0001-0007`、make/boot/全部用户程序验证，不新增内核机制                 |
+| integrated-labs 0001-0007     | 已完成                        | clean baseline 可顺序应用并 make；同一构建验证 hello/add2/pstate/pcount/pchild/fcount/pgcount/fdcount                 |
+| verification scripts          | 已更新                        | `doctor.sh`、`teammate-verify.sh`、`local-verify.sh`、`cleanup-qemu.sh`；full/quick 覆盖 pgcounttest 和 fdcounttest |
 | 队长本机验证                  | 已完成                        | local/full 路径已 PASS；summary/raw logs 不入库                                                                       |
 | 视频记录                      | 已录制 3 段                   | 视频文件在仓库外，不提交 Git；文件名、大小和待补项记录见 `submissions/demo_record.md`                               |
-| 队友独立复现                  | 已收到 2 份 full PASS summary | 原始 logs/summary/截图不入仓；文字摘要见 `submissions/teammate_reproduction_record.md`；队友真实姓名/系统版本待补充 |
+| 队友独立复现                  | 旧证据已记录，新 HEAD 待重跑  | 两份 full PASS summary 锚定旧 commit `1ba9db6`；stage9c 后只作历史证据，不覆盖 integrated `0001-0007`                |
 
 ## 评委快速复现
 
@@ -69,7 +70,8 @@ bash scripts/xv6/cleanup-qemu.sh
 | `docs/final/02_lab0_baseline_build_boot.md`            | baseline build 与 boot 实验                    |
 | `docs/final/03_lab1_hello_add2.md`                     | hello/add2 系统调用实验                        |
 | `docs/final/04_lab2_process_observation.md`            | pstate/pcount/pchildtest 进程观察实验          |
-| `docs/final/05_lab4_file_table_observation.md`         | fcount 文件表观察实验                          |
+| `docs/final/04b_lab3_page_table_observation.md`        | pgcount 页表映射数量观察实验                   |
+| `docs/final/05_lab4_file_table_observation.md`         | fcount/fdcount 文件表与 fd 表观察实验          |
 | `docs/final/06_testing_and_verification.md`            | 测试覆盖总表与证据边界                         |
 | `docs/final/07_teammate_reproduction_guide.md`         | 队友复现指南                                   |
 | `docs/final/08_design_decisions_and_tradeoffs.md`      | 设计取舍与风险控制                             |
@@ -92,17 +94,18 @@ submissions/demo_record.md
 ## 诚信与边界
 
 - 不提交 `external/xv6-riscv/`、`logs/*.log`、`logs/*.summary.txt`、`.claude/`、`.vscode/`、视频、大文件或隐私材料。
-- `patches/integrated-labs/0001-0005` 是当前已验证综合序列，本轮不修改。
-- Lab3 当前只完成 independent `pgcount()` patch，尚未 integrated，也尚未由队友 `teammate-verify.sh --full` 覆盖。
+- `patches/integrated-labs/0001-0007` 是当前已验证综合序列；`0006` 为 Lab3 `pgcount()`，`0007` 为 Lab4 v0.2 `fdcount()`。
+- Lab5 是 capstone 综合复现实验，不是新的内核机制。
 - timeout 自动捕获只证明脚本在真实 QEMU 输出中匹配到预期文本，不等同于长期稳定性测试。
-- `fcount()` 只是文件表引用计数观察，不是完整文件系统实验。
+- `fcount()` / `fdcount()` 只是 file table / fd table 计数观察，不是完整文件系统实验。
 - `pcount(RUNNING)` 和 `fcount(...)` 的具体数字不固定；`pchildtest` 状态受调度时序影响。
-- 已收到两份队友 `--full` verification PASS summary；原始 logs/summary/截图不入仓，文字摘要见 `submissions/teammate_reproduction_record.md`，队友真实姓名/系统版本仍待补充。
+- 已收到两份队友 `--full` verification PASS summary，但它们锚定旧 commit `1ba9db6`；stage9c 新 HEAD 需要重新收集 teammate `--full` summary。
 - AI 可辅助规划、审查和文档/脚本落地；make/QEMU/PASS 结果必须来自真实命令。
 
 ## 已知限制与后续计划
 
-- lab3 当前完成 `pgcount()` 页表映射数量观察 independent patch；尚未进入 integrated-labs。
-- lab4 当前为文件表观察 v0.1，后续可扩展 inode、fd table、open-file summary 等内容。
+- lab3 当前已进入 integrated `0006`，但仍只是页表映射数量观察，不是完整内存管理实验。
+- lab4 当前为 file table / fd table 观察 v0.2，后续可扩展 inode、open-file summary 等内容。
+- lab5 当前是 capstone 文档和综合复现闭环，不新增内核功能。
 - 技术报告 v1.0 和 PPT 仍需基于 `docs/final/` 整理。
-- 队友真实姓名/系统版本、视频时长/平台提交方式、同类项目参考 URL 仍需最终补齐。
+- 新 HEAD 队友 full summary、队友真实姓名/系统版本、视频时长/平台提交方式、同类项目参考 URL 仍需最终补齐。

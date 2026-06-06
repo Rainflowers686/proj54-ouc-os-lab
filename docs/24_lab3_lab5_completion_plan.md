@@ -1,7 +1,7 @@
 # Lab3 and Lab5 Completion Plan
 
-> 维护时间：2026-06-06（stage9b）。
-> stage9a 为设计和风险评审；stage9b 已按推荐路线实现 independent Lab3 `pgcount()` patch。本文档仍强调：未新增 integrated `0006`，未修改 `scripts/xv6/`。
+> 维护时间：2026-06-06（stage9c）。
+> stage9a 为设计和风险评审；stage9b 实现 independent Lab3 `pgcount()` patch；stage9c 已将 Lab3 集成为 integrated `0006`，并新增 Lab4 v0.2 `fdcount()` integrated `0007` 与 Lab5 capstone 文档。旧的 stage9b 阶段结论作为历史记录保留。
 
 ## 1. 当前实验覆盖现状
 
@@ -10,14 +10,14 @@
 | lab0 baseline/build/boot | 已完成 | 覆盖环境、baseline metadata、make、boot evidence |
 | lab1 hello/add2 syscall | 已完成 | 覆盖最小 syscall 和整数参数传递 |
 | lab2 pstate/pcount/pchildtest | 已完成 | 覆盖进程表观察、状态计数、子进程状态观察 |
-| lab3 memory/pagetable | independent patch 已完成 | `pgcount()` 页表映射数量观察；已验证 eager/lazy allocation 对比；未 integrated，未队友复现 |
-| lab4 fcount/fcounttest | 已完成 v0.1 | 文件表引用计数观察，不是完整文件系统实验 |
-| lab5 final integration | 未完成 | 目前没有独立 capstone 实验文档或验收闭环 |
-| integrated-labs 0001-0005 | 已完成 | 这是综合演示 patch 序列，不等同于 lab0-lab5 全部完成 |
+| lab3 memory/pagetable | integrated 已完成 | `pgcount()` 页表映射数量观察；已验证 eager/lazy allocation 对比；integrated `0006` |
+| lab4 fcount/fdcount | v0.2 已完成 | `fcount()` 全局 file table 与 `fdcount()` 当前进程 fd table 观察，不是完整文件系统实验 |
+| lab5 final integration | capstone 已完成 | 综合复现实验文档和验收流程；不新增内核机制 |
+| integrated-labs 0001-0007 | 已完成 | 综合演示 patch 序列，覆盖 syscall、进程、页表、file table、fd table |
 
-当前仍不能写“Lab0-Lab5 全部完成”。准确说法应为：lab0/lab1/lab2/lab3 independent/lab4 已完成，独立 Lab5 仍待补全；integrated-labs `0001-0005` 已完成并验证，但 Lab3 尚未进入 integrated-labs。
+当前仍不能写“Lab0-Lab5 全部都是新内核功能”。准确说法应为：lab0/lab1/lab2/lab3/lab4 的教学功能已进入 integrated `0001-0007`，Lab5 是 capstone 综合复现实验，不新增内核机制。
 
-两位队友 full verify PASS 锚定在 commit `1ba9db6 tooling: speed up verification and clean repo hygiene`。stage9b 只新增 independent Lab3 patch，没有修改 integrated patch sequence 或 `scripts/xv6/`，因此原队友 PASS 仍只覆盖 integrated `0001-0005` 工作流，不覆盖 Lab3。
+两位队友 full verify PASS 锚定在 commit `1ba9db6 tooling: speed up verification and clean repo hygiene`。stage9c 已修改 integrated patch sequence 和 `scripts/xv6/`，因此旧队友 PASS 只能作为历史证据，不覆盖当前 integrated `0001-0007` 工作流。正式提交前需要重新收集 teammate `--full` summary。
 
 ## 2. 命名澄清：integrated 0005 != Lab5
 
@@ -375,3 +375,35 @@ bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcounttest done"
 - 没有修改 `scripts/xv6/`。
 - 没有把 Lab3 加入 `teammate-verify.sh --full`。
 - 两位队友在 commit `1ba9db6` 的 full PASS 不覆盖 Lab3。
+
+## 13. stage9c integrated suite 实施结果
+
+stage9c 已完成豪华 integrated 闭环：
+
+- 新增 `patches/integrated-labs/0006-add-pgcount-page-table-observation.patch`。
+- 新增 `patches/integrated-labs/0007-add-fdcount-observation.patch`。
+- `apply-integrated-labs.sh` 当前顺序应用 integrated `0001-0007`。
+- `teammate-verify.sh` / `local-verify.sh` 已纳入 `pgcounttest` 和 `fdcounttest`。
+- `labs/lab5-final-integration/README.md` 已改为 capstone 综合复现实验，不新增内核机制。
+
+stage9c 本机验证已覆盖：
+
+```bash
+bash scripts/xv6/apply-integrated-labs.sh --make --yes
+bash scripts/xv6/boot-xv6.sh
+bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"
+bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"
+bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="
+bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(RUNNING) ="
+bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
+bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcounttest done"
+bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"
+```
+
+新的边界：
+
+- 旧 teammate full PASS summary 锚定 `1ba9db6`，不覆盖当前 HEAD。
+- `pgcount()` 仍只是页表映射数量观察，不是完整内存管理实验。
+- `fcount()` / `fdcount()` 仍只是 file table / fd table 观察，不是完整文件系统实验。
+- 如果最终材料声称 stage9c HEAD 已由队友复现，必须先重新收集 teammate `--full` summary。

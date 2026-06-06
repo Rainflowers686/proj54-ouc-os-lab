@@ -89,8 +89,8 @@ pgcounttest done
 | `pgcount lazy delta before touch = 0` | PASS |
 | `pgcount lazy delta after two touches = 2` | PASS |
 | `pgcounttest done` | PASS |
-| integrated `0006` | 未做 |
-| teammate full verification | 未覆盖 Lab3 |
+| integrated `0006` | PASS；已进入 `patches/integrated-labs/0006-add-pgcount-page-table-observation.patch` |
+| teammate full verification | 旧 `1ba9db6` summary 不覆盖；stage9c 新 HEAD 待重跑 |
 
 ## 常见错误
 
@@ -98,7 +98,7 @@ pgcounttest done
 - 在 helper 中调用 `walk(..., 1)`，导致观察函数意外分配页表页。
 - 依赖 `pgcount before = <n>` 的绝对值；不同程序大小或构建状态会影响它。
 - 把 `pgcount()` 说成完整内存管理实验。
-- 把 independent Lab3 patch 写成 integrated-labs 已完成。
+- 把旧队友 summary 写成 stage9c 新 HEAD 复现。
 
 ## 扩展问题
 

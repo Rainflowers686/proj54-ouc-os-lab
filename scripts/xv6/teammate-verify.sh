@@ -21,6 +21,7 @@ Usage:
 Plain-language notes:
   - First time: use --full.
   - Already saw "[OK] make completed successfully": use --quick.
+  - Current integrated suite runs hello/add2/pstate/pcount/pchild/fcount/pgcount/fdcount.
   - Each user-program check now exits quickly once expected output is detected
     (no more waiting for full timeout after match).
   - If it gets stuck: press Ctrl+C, then run bash scripts/xv6/cleanup-qemu.sh.
@@ -65,6 +66,8 @@ pcount_running_status="NOT_RUN"
 pcount_invalid_status="NOT_RUN"
 pchildtest_status="NOT_RUN"
 fcounttest_status="NOT_RUN"
+pgcounttest_status="NOT_RUN"
+fdcounttest_status="NOT_RUN"
 overall_status="FAIL"
 interrupted_status="NO"
 
@@ -84,6 +87,8 @@ set_status() {
     pcount_invalid) pcount_invalid_status="$value" ;;
     pchildtest) pchildtest_status="$value" ;;
     fcounttest) fcounttest_status="$value" ;;
+    pgcounttest) pgcounttest_status="$value" ;;
+    fdcounttest) fdcounttest_status="$value" ;;
     *) echo "[WARN] unknown status key: ${key}" ;;
   esac
 }
@@ -127,7 +132,7 @@ calculate_overall() {
     return
   fi
 
-  for status in "$boot_status" "$hello_status" "$add2test_status" "$pstatetest_status" "$pcount_status" "$pchildtest_status" "$fcounttest_status"; do
+  for status in "$boot_status" "$hello_status" "$add2test_status" "$pstatetest_status" "$pcount_status" "$pchildtest_status" "$fcounttest_status" "$pgcounttest_status" "$fdcounttest_status"; do
     if [ "$status" != "PASS" ]; then
       echo "FAIL"
       return
@@ -198,6 +203,8 @@ write_summary() {
     echo "pcounttest: ${pcounttest_status}"
     echo "pchildtest: ${pchildtest_status}"
     echo "fcounttest: ${fcounttest_status}"
+    echo "pgcounttest: ${pgcounttest_status}"
+    echo "fdcounttest: ${fdcounttest_status}"
     echo "overall: ${overall_status}"
     echo "summary file: ${SUMMARY_FILE}"
     echo "END SUMMARY"
@@ -218,6 +225,8 @@ write_summary() {
     echo "| pcounttest: pcount(99) | ${pcount_invalid_status} |"
     echo "| pchildtest | ${pchildtest_status} |"
     echo "| fcounttest | ${fcounttest_status} |"
+    echo "| pgcounttest | ${pgcounttest_status} |"
+    echo "| fdcounttest | ${fdcounttest_status} |"
     echo "| overall | ${overall_status} |"
     echo
     echo "timeout overrides:"
@@ -318,6 +327,8 @@ run_step "pcounttest RUNNING output" pcount_running bash scripts/xv6/run-xv6-com
 run_step "pcounttest invalid-state output" pcount_invalid bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(99) = -1" || overall=1
 run_step "pchildtest output" pchildtest bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) =" || overall=1
 run_step "fcounttest output" fcounttest bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done" || overall=1
+run_step "pgcounttest output" pgcounttest bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcounttest done" || overall=1
+run_step "fdcounttest output" fdcounttest bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done" || overall=1
 
 echo
 write_summary

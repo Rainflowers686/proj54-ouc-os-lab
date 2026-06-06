@@ -2,9 +2,9 @@
 
 ## 实验目标
 
-本实验通过新增 `fcount()` syscall 和用户程序 `fcounttest`，观察 xv6 全局文件表中正在被引用的 `struct file` 数量。目标是让低年级同学理解 file descriptor、`struct file`、全局 file table、引用计数 `ref`、`open/close` 对内核对象的影响，以及为什么读取共享内核数据结构时需要锁保护。
+本实验通过新增 `fcount()` / `fdcount()` syscall 和用户程序 `fcounttest` / `fdcounttest`，观察 xv6 全局文件表中正在被引用的 `struct file` 数量，以及当前进程 fd table 中非空 fd 数量。目标是让低年级同学理解 file descriptor、`struct file`、全局 file table、当前进程 `ofile[]`、引用计数 `ref`、`open/dup/close` 对内核对象的影响，以及为什么读取共享内核数据结构时需要锁保护。
 
-本实验是文件系统观察 v0.1，不是完整文件系统改造。
+本实验是文件系统观察 v0.2，不是完整文件系统改造。
 
 ## 前置知识
 
@@ -20,8 +20,9 @@
 
 1. 新增 `fcount()` syscall。
 2. 在内核中实现 `filecount()`，统计全局文件表中 `ref > 0` 的 `struct file` 数量。
-3. 新增用户程序 `fcounttest`。
-4. 在 `fcounttest` 中观察临时文件打开前、打开后、关闭后的文件表引用数量。
+3. 新增 `fdcount()` syscall。
+4. 新增用户程序 `fcounttest` 和 `fdcounttest`。
+5. 在用户程序中观察临时文件打开、dup、关闭前后的 file table / fd table 变化。
 5. 记录真实构建命令、运行命令、输出前缀和风险边界。
 
 ## 修改文件说明
@@ -37,6 +38,11 @@
 | `user/usys.pl` | 新增 `entry("fcount");` 生成用户态 syscall stub。 |
 | `Makefile` | 将 `_fcounttest` 加入 `UPROGS`。 |
 | `user/fcounttest.c` | 新增用户态测试程序。 |
+| `kernel/sysfile.c` | stage9c 新增 `sys_fdcount()`，统计当前进程 `ofile[]`。 |
+| `user/user.h` | stage9c 新增 `int fdcount(void);`。 |
+| `user/usys.pl` | stage9c 新增 `entry("fdcount");`。 |
+| `Makefile` | stage9c 将 `_fdcounttest` 加入 `UPROGS`。 |
+| `user/fdcounttest.c` | stage9c 新增 fd table 对比测试程序。 |
 
 ## 调用链
 
@@ -84,6 +90,7 @@ bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(before) ="
 bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_open) ="
 bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_close) ="
 bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
+bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"
 ```
 
 自动验证只匹配稳定前缀，不固定具体数字。
@@ -105,8 +112,9 @@ bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
 - independent lab4 patch 已生成：`patches/lab4-file-table-observation/0001-add-fcount-syscall.patch`。
 - independent patch 已从 clean baseline 应用并 `make` 成功。
 - integrated `0005-add-file-table-observation.patch` 已生成，基于 integrated `0001-0004`。
-- integrated `0001-0005` 已通过 helper 从 clean baseline 应用并 `make` 成功。
+- integrated `0001-0007` 已通过 helper 从 clean baseline 应用并 `make` 成功。
 - 已真实捕获 `fcount(before) =`、`fcount(after_open) =`、`fcount(after_close) =` 和 `fcounttest done`。
+- stage9c 已真实捕获 `fdcounttest done`，并观察到 fd delta open=1、dup=2、close one=1、close two=0。
 - 本地一次日志中观察到 `before=1`、`after_open=2`、`after_close=1`，但该数字不作为固定验收标准。
 
 ## 当前边界

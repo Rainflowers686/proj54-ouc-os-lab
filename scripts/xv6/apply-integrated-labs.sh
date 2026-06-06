@@ -19,6 +19,8 @@ patches/integrated-labs/0002-add-argint-add2-syscall.patch
 patches/integrated-labs/0003-add-pstate-syscall.patch
 patches/integrated-labs/0004-extend-process-observation.patch
 patches/integrated-labs/0005-add-file-table-observation.patch
+patches/integrated-labs/0006-add-pgcount-page-table-observation.patch
+patches/integrated-labs/0007-add-fdcount-observation.patch
 "
 
 is_positive_int() {
@@ -159,7 +161,8 @@ if [ "$DO_RUN" -eq 0 ]; then
       echo "[INFO] current tree does not accept now: ${patch}"
       echo "       Normal if patches are already applied, the tree is not clean baseline, or this"
       echo "       patch needs predecessors (0002 needs 0001; 0003 needs 0001+0002;"
-      echo "       0004 needs 0001+0002+0003; 0005 needs 0001+0002+0003+0004,"
+      echo "       0004 needs 0001+0002+0003; 0005 needs 0001+0002+0003+0004;"
+      echo "       0006 needs 0001-0005; 0007 needs 0001-0006,"
       echo "       applied in --run)."
     fi
   done

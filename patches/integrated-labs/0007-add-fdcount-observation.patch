@@ -1,0 +1,178 @@
+diff --git a/Makefile b/Makefile
+index 38d9728..55de0ac 100644
+--- a/Makefile
++++ b/Makefile
+@@ -135,6 +135,7 @@ UPROGS=\
+ 	$U/_pchildtest\
+ 	$U/_fcounttest\
+ 	$U/_pgcounttest\
++	$U/_fdcounttest\
+ 	$U/_forktest\
+ 	$U/_grep\
+ 	$U/_init\
+diff --git a/kernel/syscall.c b/kernel/syscall.c
+index 85ef533..e6b6f22 100644
+--- a/kernel/syscall.c
++++ b/kernel/syscall.c
+@@ -108,6 +108,7 @@ extern uint64 sys_pstate(void);
+ extern uint64 sys_pcount(void);
+ extern uint64 sys_fcount(void);
+ extern uint64 sys_pgcount(void);
++extern uint64 sys_fdcount(void);
+ 
+ // An array mapping syscall numbers from syscall.h
+ // to the function that handles the system call.
+@@ -140,6 +141,7 @@ static uint64 (*syscalls[])(void) = {
+   [SYS_pcount]  sys_pcount,
+   [SYS_fcount]  sys_fcount,
+   [SYS_pgcount] sys_pgcount,
++  [SYS_fdcount] sys_fdcount,
+   // clang-format on
+ };
+ 
+diff --git a/kernel/syscall.h b/kernel/syscall.h
+index 2dda6d5..32ab378 100644
+--- a/kernel/syscall.h
++++ b/kernel/syscall.h
+@@ -26,3 +26,4 @@
+ #define SYS_pcount 25
+ #define SYS_fcount 26
+ #define SYS_pgcount 27
++#define SYS_fdcount 28
+diff --git a/kernel/sysfile.c b/kernel/sysfile.c
+index aae9061..4341784 100644
+--- a/kernel/sysfile.c
++++ b/kernel/sysfile.c
+@@ -125,6 +125,20 @@ sys_fcount(void)
+   return filecount();
+ }
+ 
++uint64
++sys_fdcount(void)
++{
++  struct proc *p = myproc();
++  int count = 0;
++
++  for (int fd = 0; fd < NOFILE; fd++) {
++    if (p->ofile[fd] != 0)
++      count++;
++  }
++
++  return count;
++}
++
+ // Create the path new as a link to the same inode as old.
+ uint64
+ sys_link(void)
+diff --git a/user/fdcounttest.c b/user/fdcounttest.c
+new file mode 100644
+index 0000000..30b35a6
+--- /dev/null
++++ b/user/fdcounttest.c
+@@ -0,0 +1,85 @@
++#include "kernel/types.h"
++#include "kernel/fcntl.h"
++#include "user/user.h"
++
++static void
++fail(char *msg)
++{
++  printf("fdcounttest FAIL: %s\n", msg);
++  exit(1);
++}
++
++int
++main(void)
++{
++  int before_fd;
++  int before_file;
++  int after_open_fd;
++  int after_open_file;
++  int after_dup_fd;
++  int after_dup_file;
++  int after_close_one_fd;
++  int after_close_one_file;
++  int after_close_two_fd;
++  int after_close_two_file;
++  int fd;
++  int dupfd;
++
++  unlink("fdcnttmp");
++
++  before_fd = fdcount();
++  before_file = fcount();
++
++  fd = open("fdcnttmp", O_CREATE | O_RDWR);
++  if (fd < 0)
++    fail("open fdcnttmp failed");
++
++  after_open_fd = fdcount();
++  after_open_file = fcount();
++
++  if (write(fd, "x", 1) != 1) {
++    close(fd);
++    unlink("fdcnttmp");
++    fail("write failed");
++  }
++
++  dupfd = dup(fd);
++  if (dupfd < 0) {
++    close(fd);
++    unlink("fdcnttmp");
++    fail("dup failed");
++  }
++
++  after_dup_fd = fdcount();
++  after_dup_file = fcount();
++
++  close(fd);
++  after_close_one_fd = fdcount();
++  after_close_one_file = fcount();
++
++  close(dupfd);
++  after_close_two_fd = fdcount();
++  after_close_two_file = fcount();
++  unlink("fdcnttmp");
++
++  printf("fdcount delta after open = %d\n", after_open_fd - before_fd);
++  printf("fdcount delta after dup = %d\n", after_dup_fd - before_fd);
++  printf("fdcount delta after close one = %d\n", after_close_one_fd - before_fd);
++  printf("fdcount delta after close two = %d\n", after_close_two_fd - before_fd);
++  printf("fcount delta after open = %d\n", after_open_file - before_file);
++  printf("fcount delta after dup = %d\n", after_dup_file - before_file);
++  printf("fcount delta after close one = %d\n", after_close_one_file - before_file);
++  printf("fcount delta after close two = %d\n", after_close_two_file - before_file);
++
++  if (after_open_fd - before_fd != 1)
++    fail("expected fd delta after open 1");
++  if (after_dup_fd - before_fd != 2)
++    fail("expected fd delta after dup 2");
++  if (after_close_one_fd - before_fd != 1)
++    fail("expected fd delta after close one 1");
++  if (after_close_two_fd - before_fd != 0)
++    fail("expected fd delta after close two 0");
++
++  printf("fdcounttest done\n");
++  exit(0);
++}
+diff --git a/user/user.h b/user/user.h
+index 7bbb5ce..ab935d1 100644
+--- a/user/user.h
++++ b/user/user.h
+@@ -30,6 +30,7 @@ int pstate(int);
+ int pcount(int);
+ int fcount(void);
+ int pgcount(void);
++int fdcount(void);
+ 
+ // ulib.c
+ int stat(const char *, struct stat *);
+diff --git a/user/usys.pl b/user/usys.pl
+index bef2a76..79375da 100755
+--- a/user/usys.pl
++++ b/user/usys.pl
+@@ -48,3 +48,4 @@ entry("pstate");
+ entry("pcount");
+ entry("fcount");
+ entry("pgcount");
++entry("fdcount");

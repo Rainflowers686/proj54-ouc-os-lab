@@ -2,9 +2,9 @@
 
 ## 实验目标
 
-通过 `fcount()` syscall 和 `fcounttest`，让学生理解用户态 file descriptor 与内核 `struct file`、全局 file table、引用计数和锁之间的关系。
+通过 `fcount()` / `fdcount()` syscall 和 `fcounttest` / `fdcounttest`，让学生理解用户态 file descriptor 与内核 `struct file`、全局 file table、当前进程 fd table、引用计数和锁之间的关系。
 
-本实验是文件表观察 v0.1，不是完整文件系统实验。
+本实验是文件表观察 v0.2，不是完整文件系统实验。
 
 ## 前置知识
 
@@ -23,12 +23,15 @@
 | `kernel/file.c` | 新增 `filecount()` |
 | `kernel/defs.h` | 声明 `filecount()` |
 | `kernel/sysfile.c` | 实现 `sys_fcount()` |
+| `kernel/sysfile.c` | stage9c 实现 `sys_fdcount()` |
 | `kernel/syscall.h` | 分配 `SYS_fcount` |
 | `kernel/syscall.c` | 注册 `sys_fcount` |
 | `user/user.h` | 声明 `fcount()` |
+| `user/user.h` | stage9c 声明 `fdcount()` |
 | `user/usys.pl` | 生成用户态 stub |
-| `Makefile` | 加入 `_fcounttest` |
+| `Makefile` | 加入 `_fcounttest` 和 `_fdcounttest` |
 | `user/fcounttest.c` | 用户态测试程序 |
+| `user/fdcounttest.c` | stage9c 用户态 fd table 对比测试程序 |
 | `patches/lab4-file-table-observation/` | independent patch |
 | `patches/integrated-labs/0005-add-file-table-observation.patch` | integrated patch |
 
@@ -36,7 +39,7 @@
 
 1. 在 `kernel/file.c` 中实现 `filecount()`。
 2. 在 `defs.h` 中声明 `filecount()`。
-3. 在 `sysfile.c` 中实现 `sys_fcount()`。
+3. 在 `sysfile.c` 中实现 `sys_fcount()` 与 `sys_fdcount()`。
 4. 注册 syscall 并生成用户态 stub。
 5. 新增 `fcounttest`。
 6. 通过 open 前、open 后、close 后的输出观察引用数量变化。
@@ -75,6 +78,7 @@ bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(before) ="
 bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_open) ="
 bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_close) ="
 bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
+bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"
 ```
 
 ## 预期输出
@@ -93,13 +97,14 @@ fcounttest done
 | 测试项 | 结果 |
 | --- | --- |
 | independent lab4 patch apply/make | PASS |
-| integrated `0001-0005` apply/make | PASS |
+| integrated `0001-0007` apply/make | PASS |
 | `fcount(before) =` | PASS |
 | `fcount(after_open) =` | PASS |
 | `fcount(after_close) =` | PASS |
 | `fcounttest done` | PASS |
+| `fdcounttest done` | PASS |
 | 长期稳定性测试 | 未执行 |
-| 队友独立复现 | 已覆盖在 2 份队友 `teammate-verify.sh --full` PASS summary 中；文字摘要见 `submissions/teammate_reproduction_record.md` |
+| 队友独立复现 | 旧 2 份队友 PASS summary 锚定 commit `1ba9db6`；stage9c 新 HEAD 需重新跑 `teammate-verify.sh --full` |
 
 ## 常见错误
 
@@ -107,8 +112,8 @@ fcounttest done
 | --- | --- | --- |
 | 固定承诺 fcount 数字 | 忽略 shell/console/init 等引用 | 只验证稳定前缀 |
 | 忘记 `ftable.lock` | 并发读写风险 | 遍历时持有 lock |
-| syscall 放错文件 | 文件相关 syscall 写到 `sysproc.c` | `sys_fcount()` 放在 `sysfile.c` |
-| syscall number 冲突 | independent/integrated 编号不同 | independent 用 22；integrated 用 26 |
+| syscall 放错文件 | 文件相关 syscall 写到 `sysproc.c` | `sys_fcount()` / `sys_fdcount()` 放在 `sysfile.c` |
+| syscall number 冲突 | independent/integrated 编号不同 | fcount independent 用 22；integrated fcount=26，fdcount=28 |
 | 漏 `usys.pl` entry | 用户态无法调用 | 添加 `entry("fcount")` |
 | 把 lab4 写成完整文件系统 | 实验范围被夸大 | 明确只是文件表观察 |
 

@@ -26,7 +26,7 @@
 7. 捕获 `hello syscall returned 2026`。
 8. 捕获 `add2(20, 6) returned 26`。
 9. 捕获 `pstate(self) = 4 (RUNNING)`。
-10. 复现 integrated-labs，确认 hello、add2test、pstatetest、pcounttest、pchildtest、fcounttest 可在同一 xv6 构建中运行。
+10. 复现 integrated-labs，确认 hello、add2test、pstatetest、pcounttest、pchildtest、fcounttest、pgcounttest、fdcounttest 可在同一 xv6 构建中运行。
 11. 如失败，记录真实失败原因，不伪造成功。
 
 ## 复现前提
@@ -100,6 +100,21 @@ bash scripts/xv6/teammate-verify.sh --full
 bash scripts/xv6/teammate-verify.sh --quick
 ```
 
+## stage9c 更新：integrated 0001-0007
+
+当前 integrated-labs 已扩展到 `0001-0007`：
+
+- `0006-add-pgcount-page-table-observation.patch`：Lab3 `pgcount()`，`SYS_pgcount = 27`。
+- `0007-add-fdcount-observation.patch`：Lab4 v0.2 `fdcount()`，`SYS_fdcount = 28`。
+
+当前一键复现入口：
+
+```bash
+bash scripts/xv6/teammate-verify.sh --full
+```
+
+该流程会覆盖 hello、add2test、pstatetest、pcounttest、pchildtest、fcounttest、pgcounttest 和 fdcounttest。两份旧队友 full PASS summary 锚定 commit `1ba9db6`，不覆盖 stage9c 新 HEAD；正式提交前需要重新收集 teammate full summary。
+
 队长录屏前本地预检使用：
 
 ```bash
@@ -124,7 +139,7 @@ bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="
 bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
 ```
 
-`apply-integrated-labs.sh` 默认预览，不修改 `external/xv6-riscv/`。`--make --yes` 会 reset/clean ignored 的 `external/xv6-riscv/` 并应用 integrated patch sequence，然后运行 `make`。安全提示（stage4f 加固）：`--run`/`--make` **始终要求 `--yes`** 才执行 reset/clean，否则拒绝并退出；安全审查见 [../docs/18_integrated_helper_review.md](../docs/18_integrated_helper_review.md)。当前真实验证状态：helper 预览安全；`--make --yes` 成功；boot evidence、hello、add2test、pstatetest、pcounttest、pchildtest、fcounttest 均已通过。原始日志不提交。
+`apply-integrated-labs.sh` 默认预览，不修改 `external/xv6-riscv/`。`--make --yes` 会 reset/clean ignored 的 `external/xv6-riscv/` 并应用 integrated patch sequence，然后运行 `make`。安全提示（stage4f 加固）：`--run`/`--make` **始终要求 `--yes`** 才执行 reset/clean，否则拒绝并退出；安全审查见 [../docs/18_integrated_helper_review.md](../docs/18_integrated_helper_review.md)。当前真实验证状态：helper 预览安全；`--make --yes` 成功；boot evidence、hello、add2test、pstatetest、pcounttest、pchildtest、fcounttest、pgcounttest、fdcounttest 均已通过。原始日志不提交。
 
 说明：子进程观察程序实际命令名为 `pchildtest`。原计划名 `pstatechildtest` 因 xv6 `DIRSIZ` 文件名限制导致真实 `mkfs` 失败，已改为短命名并记录。
 
@@ -209,11 +224,11 @@ pstate(child) = <state> (<STATE_NAME>)
 
 - TODO: 第二名队员在另一台机器独立复现 lab1/lab2。
 - TODO: 失败时补充 FAQ 和 issue 记录。
-- TODO: 第二名队员独立复现 integrated-labs `0001-0005`。
+- TODO: stage9c 后重新收集队友独立复现 integrated-labs `0001-0007`。
 
-## stage6a 更新：lab4 与 integrated 0001-0005
+## stage6a 更新：lab4 与 integrated 0001-0005（历史记录）
 
-当前 integrated-labs 已扩展到 `0001-0005`，新增 lab4 文件表观察实验：
+stage6a 时 integrated-labs 扩展到 `0001-0005`，新增 lab4 文件表观察实验。stage9c 当前版本已进一步扩展到 `0001-0007`：
 
 - `0005-add-file-table-observation.patch`
 - `fcount()` syscall
@@ -294,7 +309,7 @@ bash scripts/xv6/teammate-verify.sh --full
 - `bash scripts/xv6/check-xv6-baseline.sh`
 - `bash scripts/xv6/apply-integrated-labs.sh --make --yes`
 - `bash scripts/xv6/boot-xv6.sh`
-- hello / add2test / pstatetest / pcounttest / pchildtest / fcounttest 输出验证
+- hello / add2test / pstatetest / pcounttest / pchildtest / fcounttest / pgcounttest / fdcounttest 输出验证
 
 每一步都会记录 PASS/FAIL。关键失败会停止后续 QEMU 测试，但仍输出 summary。summary 同时写入 ignored 文件：
 
