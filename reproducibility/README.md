@@ -10,6 +10,7 @@
 - stage4a lab2 pstate process observation review 已完成，见 `docs/15_lab2_process_observation_review.md`。
 - stage4c integrated-labs 综合 patch sequence 已完成，见 `patches/integrated-labs/README.md`。
 - stage5a lab2 v0.2 已新增 integrated `0004`，包含 `pcount(int state)`、`pcounttest` 和 `pchildtest`，见 `docs/19_lab2_v0.2_process_observation_review.md`。
+- stage7a0 已加固 QEMU timeout/cleanup，队友卡住排查见 `docs/22_teammate_reproduction_troubleshooting.md`。
 - 第二名队员独立复现：TODO。
 
 ## 复现目标
@@ -23,7 +24,7 @@
 7. 捕获 `hello syscall returned 2026`。
 8. 捕获 `add2(20, 6) returned 26`。
 9. 捕获 `pstate(self) = 4 (RUNNING)`。
-10. 复现 integrated-labs，确认 hello、add2test、pstatetest、pcounttest、pchildtest 可在同一 xv6 构建中运行。
+10. 复现 integrated-labs，确认 hello、add2test、pstatetest、pcounttest、pchildtest、fcounttest 可在同一 xv6 构建中运行。
 11. 如失败，记录真实失败原因，不伪造成功。
 
 ## 复现前提
@@ -96,9 +97,10 @@ bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
 bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(RUNNING) ="
 bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(99) = -1"
 bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="
+bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
 ```
 
-`apply-integrated-labs.sh` 默认预览，不修改 `external/xv6-riscv/`。`--make --yes` 会 reset/clean ignored 的 `external/xv6-riscv/` 并应用 integrated patch sequence，然后运行 `make`。安全提示（stage4f 加固）：`--run`/`--make` **始终要求 `--yes`** 才执行 reset/clean，否则拒绝并退出；安全审查见 [../docs/18_integrated_helper_review.md](../docs/18_integrated_helper_review.md)。当前真实验证状态：helper 预览安全；`--make --yes` 成功；boot evidence、hello、add2test、pstatetest、pcounttest、pchildtest 均已通过。原始日志不提交。
+`apply-integrated-labs.sh` 默认预览，不修改 `external/xv6-riscv/`。`--make --yes` 会 reset/clean ignored 的 `external/xv6-riscv/` 并应用 integrated patch sequence，然后运行 `make`。安全提示（stage4f 加固）：`--run`/`--make` **始终要求 `--yes`** 才执行 reset/clean，否则拒绝并退出；安全审查见 [../docs/18_integrated_helper_review.md](../docs/18_integrated_helper_review.md)。当前真实验证状态：helper 预览安全；`--make --yes` 成功；boot evidence、hello、add2test、pstatetest、pcounttest、pchildtest、fcounttest 均已通过。原始日志不提交。
 
 说明：子进程观察程序实际命令名为 `pchildtest`。原计划名 `pstatechildtest` 因 xv6 `DIRSIZ` 文件名限制导致真实 `mkfs` 失败，已改为短命名并记录。
 
@@ -226,12 +228,14 @@ bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
 `scripts/xv6/boot-xv6.sh` 已加固：
 
 - 默认 timeout：45 秒/次。
+- 默认 hard timeout：`max(timeout + 15, 75)` 秒/次，可用 `XV6_BOOT_HARD_TIMEOUT_SECONDS` 覆盖。
 - 默认 attempts：2 次。
 - 日志格式：`logs/xv6-boot-YYYYMMDD-HHMMSS-attemptN.log`。
+- 退出、中断或 `Ctrl+Z/SIGTSTP` 时尝试清理当前项目相关 QEMU/make。
 - 支持环境变量覆盖：
 
 ```bash
-XV6_BOOT_TIMEOUT_SECONDS=60 XV6_BOOT_RETRIES=2 bash scripts/xv6/boot-xv6.sh
+XV6_BOOT_TIMEOUT_SECONDS=60 XV6_BOOT_RETRIES=2 XV6_BOOT_HARD_TIMEOUT_SECONDS=90 bash scripts/xv6/boot-xv6.sh
 ```
 
 建议复现时优先使用默认命令：
@@ -241,3 +245,13 @@ bash scripts/xv6/boot-xv6.sh
 ```
 
 如果 clean build 后首次 boot 因 `fs.img` 补建或 mtime skew 超时，脚本会自动重试。若所有尝试仍未检测到 `xv6 kernel is booting` 和 `init: starting sh`，必须记录真实失败原因，不得写成成功。
+
+## stage7a0 更新：队友卡住排查
+
+`scripts/xv6/boot-xv6.sh` 和 `scripts/xv6/run-xv6-command.sh` 都已增加外层硬 timeout、trap cleanup 和失败日志路径提示。`run-xv6-command.sh` 默认 `XV6_COMMAND_TIMEOUT_SECONDS=60`、`XV6_COMMAND_RETRIES=2`，hard timeout 默认为 `max(timeout + 15, 75)` 秒，也可显式覆盖：
+
+```bash
+XV6_COMMAND_TIMEOUT_SECONDS=75 XV6_COMMAND_RETRIES=2 XV6_COMMAND_HARD_TIMEOUT_SECONDS=90 bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
+```
+
+队友复现时如果卡在 `[STEP] attempt 1/2`，先看脚本输出的 `log path`，再按 `docs/22_teammate_reproduction_troubleshooting.md` 清理残留进程。看到 `apply-integrated-labs.sh --make --yes` 输出 `[OK] make completed successfully` 后就说明 apply+make 已完成，不要继续等待该命令。

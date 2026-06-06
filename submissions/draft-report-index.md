@@ -31,6 +31,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 | lab2 v0.2 process observation review | `docs/19_lab2_v0.2_process_observation_review.md` | exists | stage5a + stage5b red-team: pcount/pcounttest/pchildtest and negative input; integrated 0001-0004 re-reproduced from clean baseline; 0004 patch unchanged; lock/snapshot analysis and benign usys.pl mode warning documented |
 | lab4 file table observation review | `docs/20_lab4_file_table_observation_review.md` | exists | stage6a + stage6b red-team: fcount/fcounttest; independent lab4 patch and integrated 0005 re-reproduced from clean baseline; both patches unchanged; filecount lock/deadlock/no-leak analysis; sys_fcount in sysfile.c; open/close +1/-1 delta; fcount numbers non-fixed |
 | submission readiness review | `docs/21_submission_readiness_review.md` | exists | stage6d red-team: full integrated 0001-0005 reproduced from clean baseline (make/boot x2/hello/add2test/pstatetest/pcounttest+negative/pchildtest/fcounttest); doc consistency audit; risk list and pre-submission must-do (teammate reproduction + manual recording still TODO) |
+| teammate reproduction troubleshooting | `docs/22_teammate_reproduction_troubleshooting.md` | exists | stage7a0: explains apply/make completion, boot normal duration, Ctrl+Z risk, qemu/make cleanup, continuation steps, feedback format, and no-log/no-secret boundaries |
 | submission checklist | `submissions/submission_checklist.md` | exists | stage6e pre-submission checklist: completion status, must-fill items, forbidden items, pre-submit commands, and honest-MVP conclusion |
 | Technical report v0.1 | `docs/13_technical_report_v0.1.md` | exists | stage2c draft; not final report |
 | Reproducibility package | `reproducibility/README.md` | exists | lab0/lab1/lab2/integrated-labs reproduction checklist and template |
@@ -46,8 +47,8 @@ It is not the final technical report, does not generate PDF, and does not includ
 | lab4 test record | `tests/lab4/README.md` | exists | records fcounttest prefix capture and non-fixed count boundary |
 | xv6 fetch script | `scripts/xv6/fetch-xv6.sh` | exists | stage1b tooling |
 | xv6 baseline check script | `scripts/xv6/check-xv6-baseline.sh` | exists | stage1b tooling; make not run by default |
-| xv6 boot evidence script | `scripts/xv6/boot-xv6.sh` | exists | captures boot keywords under timeout; stage6c default 45s and 2 attempts with per-attempt logs |
-| xv6 command evidence script | `scripts/xv6/run-xv6-command.sh` | exists | captures user program output under timeout |
+| xv6 boot evidence script | `scripts/xv6/boot-xv6.sh` | exists | captures boot keywords under soft+hard timeout; default 45s soft, max(timeout+15,75)s hard, 2 attempts, per-attempt logs, trap cleanup |
+| xv6 command evidence script | `scripts/xv6/run-xv6-command.sh` | exists | captures user program output under soft+hard timeout; default 60s soft, max(timeout+15,75)s hard, 2 attempts, fs.img prebuild, trap cleanup |
 | lab1 patch apply helper | `scripts/xv6/apply-lab1-patch.sh` | exists | preview by default; --run resets clean baseline and applies; --make optional |
 | integrated labs apply helper | `scripts/xv6/apply-integrated-labs.sh` | exists | preview by default; --run/--make always require --yes (reset/clean ignored tree); make logs ignored |
 | lab1 hello syscall patch | `patches/lab1-system-call/0001-add-hello-syscall.patch` | exists | tracked patch; third-party source not submitted |
@@ -84,4 +85,6 @@ It is not the final technical report, does not generate PDF, and does not includ
 - scripts/xv6/apply-integrated-labs.sh is the recommended helper for final integrated demo reproduction and now applies integrated 0001-0005.
 - Technical report v0.1 and reproducibility package are drafts for review, not final submission files.
 - Raw logs remain ignored by Git; do not submit logs/*.log.
-- boot-xv6.sh now defaults to 45s per attempt and 2 attempts; QEMU long-running stability and manual interactive shell testing remain TODO.
+- boot-xv6.sh now defaults to 45s soft timeout, hard timeout max(timeout+15,75), and 2 attempts; QEMU long-running stability and manual interactive shell testing remain TODO.
+- run-xv6-command.sh now defaults to 60s soft timeout, hard timeout max(timeout+15,75), and 2 attempts; success is still based only on real log matching.
+- Teammate QEMU cleanup troubleshooting is documented in docs/22_teammate_reproduction_troubleshooting.md.

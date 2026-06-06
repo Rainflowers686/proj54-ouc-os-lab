@@ -540,3 +540,35 @@
 - Boundaries:
   - All PASS is timeout-captured text only; not long-running stability, manual recording, or teammate reproduction.
   - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.
+
+## 2026-06-06: stage7a0 qemu cleanup and outer timeout hardening
+
+- Commit hash: TODO after commit
+- Goal: fix teammate reproduction getting stuck at `[STEP] attempt 1/2`, especially when `make qemu`, QEMU, `timeout`, `Ctrl+C`, `Ctrl+Z`, or `/mnt/d` mtime skew leaves a long-running or suspended process.
+- Completed:
+  - Updated `scripts/xv6/boot-xv6.sh`.
+  - Added default boot hard timeout: `max(XV6_BOOT_TIMEOUT_SECONDS + 15, 75)`, overrideable with `XV6_BOOT_HARD_TIMEOUT_SECONDS`.
+  - Added `EXIT` / `INT` / `TERM` / `TSTP` cleanup traps.
+  - Added current-project process cleanup for matching `qemu-system-riscv64` and `make qemu` processes, plus manual cleanup hints.
+  - Kept boot success criteria unchanged: the same log attempt must contain both `xv6 kernel is booting` and `init: starting sh`.
+  - Updated `scripts/xv6/run-xv6-command.sh`.
+  - Changed command default timeout to 60s, default retries to 2, and added `XV6_COMMAND_HARD_TIMEOUT_SECONDS`.
+  - Wrapped both `fs.img` build and command QEMU run with hard timeout and cleanup.
+  - Fixed a false-positive risk found during validation: the script no longer writes `EXPECTED_TEXT` into the log before grepping that same log.
+  - Added `docs/22_teammate_reproduction_troubleshooting.md`.
+  - Updated README, reproducibility package, submission checklist, AI record, report index script, and generated material index.
+- Real validation (WSL2 Ubuntu-24.04):
+  - `bash -n scripts/xv6/boot-xv6.sh`: PASS.
+  - `bash -n scripts/xv6/run-xv6-command.sh`: PASS.
+  - `bash scripts/xv6/apply-integrated-labs.sh --make --yes`: PASS; `make` exit 0; log `logs/integrated-make-20260606-154044.log` ignored by Git.
+  - `bash scripts/xv6/boot-xv6.sh`: PASS; attempt 1 `BOOT_EVIDENCE_FOUND`; 45s soft timeout / 75s hard timeout displayed.
+  - `XV6_BOOT_TIMEOUT_SECONDS=10 XV6_BOOT_RETRIES=1 XV6_BOOT_HARD_TIMEOUT_SECONDS=20 bash scripts/xv6/boot-xv6.sh`: PASS; attempt 1 `BOOT_EVIDENCE_FOUND`.
+  - `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"`: PASS after the expected-text header fix; log grep showed the expected text in QEMU output lines.
+  - `XV6_COMMAND_TIMEOUT_SECONDS=30 XV6_COMMAND_RETRIES=1 XV6_COMMAND_HARD_TIMEOUT_SECONDS=45 bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"`: PASS.
+  - `bash scripts/collect-report.sh`: PASS.
+- Boundaries:
+  - No OS feature was added.
+  - No GitLab/GitHub remote was modified.
+  - `patches/integrated-labs/0001-0005` were not modified.
+  - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.
+  - Evidence remains timeout-captured log matching, not long-running stability testing, manual recording, or teammate independent reproduction.

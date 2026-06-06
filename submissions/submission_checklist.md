@@ -1,6 +1,6 @@
 # 初赛提交材料 Checklist
 
-> 维护时间：2026-06-05（stage6e 提交材料整理）。
+> 维护时间：2026-06-06（stage7a0 QEMU timeout/cleanup 加固）。
 > 这不是最终提交材料，不包含报名信息、个人隐私、账号密码、token 或大型二进制文件。
 
 ## 1. 当前提交状态总览
@@ -67,7 +67,13 @@
 
 ### 3.7 boot retry
 
-- `scripts/xv6/boot-xv6.sh` 已加固：默认 45s × 2 次尝试，支持环境变量覆盖（`2e0048f`）
+- `scripts/xv6/boot-xv6.sh` 已加固：默认 45s × 2 次尝试，默认 hard timeout 为 `max(timeout + 15, 75)`，支持 `XV6_BOOT_TIMEOUT_SECONDS` / `XV6_BOOT_RETRIES` / `XV6_BOOT_HARD_TIMEOUT_SECONDS` 覆盖（`2e0048f` + stage7a0）
+
+### 3.8 command timeout / cleanup
+
+- `scripts/xv6/run-xv6-command.sh` 已加固：默认 60s × 2 次尝试，默认 hard timeout 为 `max(timeout + 15, 75)`，支持 `XV6_COMMAND_TIMEOUT_SECONDS` / `XV6_COMMAND_RETRIES` / `XV6_COMMAND_HARD_TIMEOUT_SECONDS` 覆盖
+- `boot-xv6.sh` 与 `run-xv6-command.sh` 均在 `EXIT` / `INT` / `TERM` / `TSTP` 时尝试清理当前项目相关 `qemu-system-riscv64` 与 `make qemu`
+- 队友卡住排查文档：`docs/22_teammate_reproduction_troubleshooting.md`
 
 ## 4. 当前已完成文档/证据
 
@@ -83,6 +89,7 @@
 | 进度日志 | `docs/06_progress_log.md` | hash 已填充到 stage6d |
 | 审查文档 | `docs/12/14/15/16/17/18/19/20/21` | 全部完成 |
 | 提交就绪度审查 | `docs/21_submission_readiness_review.md` | stage6d 总审查 |
+| 队友故障排查 | `docs/22_teammate_reproduction_troubleshooting.md` | stage7a0 QEMU 卡住、Ctrl+Z、清理和反馈说明 |
 | 材料索引 | `submissions/draft-report-index.md` | 自动生成 |
 | 提交 Checklist | `submissions/submission_checklist.md` | 本文档 |
 
@@ -130,8 +137,9 @@ bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(RUNNING) ="
 bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="
 bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
 
-# 6. 可选：boot 环境变量覆盖
-XV6_BOOT_TIMEOUT_SECONDS=60 XV6_BOOT_RETRIES=2 bash scripts/xv6/boot-xv6.sh
+# 6. 可选：boot / command 环境变量覆盖
+XV6_BOOT_TIMEOUT_SECONDS=60 XV6_BOOT_RETRIES=2 XV6_BOOT_HARD_TIMEOUT_SECONDS=90 bash scripts/xv6/boot-xv6.sh
+XV6_COMMAND_TIMEOUT_SECONDS=75 XV6_COMMAND_RETRIES=2 XV6_COMMAND_HARD_TIMEOUT_SECONDS=90 bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
 
 # 7. 材料索引更新
 bash scripts/collect-report.sh
@@ -154,3 +162,4 @@ grep -R "TODO after commit" -n README.md docs labs tests patches reproducibility
 | 日期 | 变更 | 作者 |
 | --- | --- | --- |
 | 2026-06-05 | 初始版本，stage6e 提交材料整理 | 蓝色系统队 |
+| 2026-06-06 | stage7a0：加固 boot/run QEMU hard timeout、cleanup 与队友故障排查文档 | 蓝色系统队 |
