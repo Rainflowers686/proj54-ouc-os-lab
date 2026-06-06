@@ -12,7 +12,7 @@
 
 | Name | URL | License | Local path | Metadata record | Current status |
 | --- | --- | --- | --- | --- | --- |
-| xv6-riscv | `https://github.com/mit-pdos/xv6-riscv.git` | TODO: confirm from upstream `LICENSE` | `external/xv6-riscv/` | `external/xv6-baseline-record.md` | metadata generated; source tree ignored |
+| xv6-riscv | `https://github.com/mit-pdos/xv6-riscv.git` | MIT License, confirmed from local upstream `LICENSE` on 2026-06-06 | `external/xv6-riscv/` | `external/xv6-baseline-record.md` | metadata generated; source tree ignored |
 
 `external/xv6-baseline-record.md` is the canonical project record for the local baseline commit, branch, remote URL, LICENSE presence, generation time, and build status. Current recorded commit: `74f84181a3404d1d6a6ff98d342233979066ebb8`.
 
@@ -29,12 +29,12 @@ Do not copy the full upstream LICENSE text into this document. Keep the upstream
 
 ## License Checklist for xv6-riscv
 
-- TODO: confirm the exact upstream repository URL in a browser or through Git metadata.
-- TODO: record the fetched commit hash in `external/xv6-baseline-record.md`.
-- TODO: confirm the upstream LICENSE type.
-- TODO: preserve upstream copyright notices in the local ignored source tree.
-- TODO: document any future modifications separately from pristine baseline metadata.
-- TODO: ensure `external/xv6-riscv/` is not staged or committed.
+- Upstream repository URL is recorded in `external/xv6-baseline-record.md`.
+- Fetched commit hash is recorded in `external/xv6-baseline-record.md`.
+- Upstream LICENSE type is MIT License, confirmed from `external/xv6-riscv/LICENSE`.
+- Preserve upstream copyright notices in the local ignored source tree.
+- Document any future modifications separately from pristine baseline metadata.
+- Ensure `external/xv6-riscv/` is not staged or committed.
 
 ## Current Repository Status
 

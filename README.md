@@ -1,125 +1,107 @@
-# proj54-ouc-os-lab
+# OUC xv6 Lab Kit
 
-**xv6-riscv 教学实验体系** — 面向中国海洋大学低年级计算机学生的 OS 竞赛入门实验。
+面向中国海洋大学操作系统课程的 xv6-riscv 分阶段实验指导、参考实现与可复现验证体系。
 
-> 🏆 2026 全国大学生计算机系统能力大赛 · OS 功能挑战赛 · proj54（教学型）
-> 👥 中国海洋大学「蓝色系统队」 · 初赛 MVP
+## 赛事与赛题
 
----
+| 项目 | 内容 |
+| --- | --- |
+| 比赛 | 2026 全国大学生计算机系统能力大赛 - 操作系统设计赛（全国） |
+| 赛道 | OS 功能挑战赛道 |
+| 赛题 | proj54：面向操作系统课程的操作系统竞赛和实验 |
+| 队伍 | 中国海洋大学“蓝色系统队” |
+| 项目定位 | 教学型实验包，不是刷 LTP 的内核实现赛道项目 |
+
+本项目围绕“课程实验可教、可复现、可验证、可扩展”推进。当前不盲目新增内核功能，而是把 lab0/lab1/lab2/lab4、综合 patch、验证脚本、队友复现和提交文档整理成评委可快速理解的材料体系。
 
 ## 完成状态
 
-| 模块 | 状态 | 说明 |
+| 模块 | 当前状态 | 说明 |
 | --- | --- | --- |
-| lab0 baseline/build/boot | ✅ 已完成 | 工具链检查、baseline make、boot evidence |
-| lab1 hello/add2 | ✅ 已完成 | `hello()` 和 `add2(int,int)` 系统调用 |
-| lab2 pstate/pcount/pchildtest | ✅ 已完成 | 进程状态观察、状态计数、子进程观察 |
-| lab4 fcount/fcounttest | ✅ 已完成 | 文件表引用计数观察（非完整文件系统） |
-| integrated 0001–0005 | ✅ 已完成 | 综合演示 patch 序列，同一构建中 6 个用户程序全部验证 |
-| teammate/local verify | ✅ 已完成 | 队友一键复现、队长录屏前自检、QEMU 快速退出 |
-| lab3 memory/pagetable | 🔲 计划中 | 未完成 |
-| lab5 final integration | 🔲 计划中 | 最终集成与报告 |
-| 队友独立复现 | 🔲 TODO | 待第二名队员在其他机器执行 |
-| 人工交互录屏 | 🔲 TODO | 待录制真实 boot+6 命令操作 |
-
-**当前阶段：初赛 MVP v0.1，可诚实提交；冲奖仍需补齐队友复现 + 录屏 + 技术报告 v0.2。**
-
----
+| lab0 baseline/build/boot | 已完成 | 环境检查、xv6 baseline metadata、make、boot evidence |
+| lab1 hello/add2 | 已完成 | `hello()`、`add2(int,int)` syscall 入门与参数传递 |
+| lab2 pstate/pcount/pchildtest | 已完成 | 进程状态观察、状态计数、子进程状态观察 |
+| lab4 fcount/fcounttest | 已完成 | 文件表引用计数观察；不是完整文件系统实验 |
+| integrated-labs 0001-0005 | 已完成 | clean baseline 可顺序应用并 make；同一构建验证 6 个用户程序 |
+| verification scripts | 已完成 | `doctor.sh`、`teammate-verify.sh`、`local-verify.sh`、`cleanup-qemu.sh` |
+| 队长本机验证 | 已完成 | local/full 路径已 PASS；summary/raw logs 不入库 |
+| 视频记录 | 已录制 3 段，待补充提交信息 | 视频文件在仓库外，不提交 Git；记录见 `submissions/demo_record.md` |
+| 队友独立复现 | 待补充 | 不伪造；等待队友 summary |
+| lab3 memory/pagetable | 未完成 | 后续扩展方向 |
 
 ## 评委快速复现
 
-> 所有真实 `make` / `qemu` / boot / 命令验证都必须在 **WSL2 Ubuntu**（或等价原生 Linux）中执行。Windows Git Bash / MINGW64 / PowerShell 无 RISC-V 工具链，不能在此伪报成功。
+所有真实 `make` / QEMU / boot / 命令验证必须在 WSL2 Ubuntu 或等价 Linux 中执行。
 
 ```bash
-# 1. 只读环境诊断（不运行 make/QEMU，不修改仓库）
 bash scripts/xv6/doctor.sh
-
-# 2. 队友正式复现（第一次用 --full，自动 apply+make+boot+6 命令验证）
 bash scripts/xv6/teammate-verify.sh --full
+```
 
-# 3. 二次重测（已 make 成功后，跳过 apply+make）
+如果已经看到过 `[OK] make completed successfully`，二次重测可用：
+
+```bash
 bash scripts/xv6/teammate-verify.sh --quick
 ```
 
-如果卡住超过 5 分钟：`Ctrl+C`（不要 `Ctrl+Z`），然后运行：
-
-```bash
-bash scripts/xv6/cleanup-qemu.sh
-```
-
-队长录屏前本地自检：
+队长录屏前本地预检：
 
 ```bash
 bash scripts/xv6/local-verify.sh --quick
 ```
 
----
+卡住或误按 `Ctrl+Z` 后：
 
-## 仓库目录
-
-```text
-docs/              项目计划、赛题拆解、实验设计、测试报告、审查报告、FAQ
-labs/              各 lab 教程（lab0–lab5）
-patches/           独立 patch 与 integrated-labs 综合 patch 序列（0001–0005）
-scripts/           环境检查、baseline、boot、命令验证、一键复现、cleanup
-reproducibility/   队友与评委复现包
-submissions/       初赛材料索引与提交 Checklist
-external/          第三方 xv6-riscv 源码 metadata（源码被 .gitignore 忽略）
-logs/              原始日志说明（logs/*.log 被 .gitignore 忽略）
-references/        参考资料与许可证
-slides/            PPT 结构计划（成品 TODO）
-videos/            Demo 脚本与视频说明（录屏 TODO）
+```bash
+bash scripts/xv6/cleanup-qemu.sh
 ```
 
----
+`teammate-verify.sh` 会输出 `COPY THIS SUMMARY TO TEAM LEAD` 块，并把 summary 写入 ignored 的 `logs/teammate-verify-*.summary.txt`。
 
-## 关键文档入口
+## 正式文档导航
 
-| 文档 | 路径 |
+正式提交/评委入口位于 `docs/final/`：
+
+| 文档 | 内容 |
 | --- | --- |
-| 提交就绪度总审查 | `docs/21_submission_readiness_review.md` |
-| 队友一键复现 Quickstart | `docs/23_teammate_quickstart.md` |
-| 队友故障排查 | `docs/22_teammate_reproduction_troubleshooting.md` |
-| lab4 文件表观察审查 | `docs/20_lab4_file_table_observation_review.md` |
-| 提交 Checklist | `submissions/submission_checklist.md` |
+| `docs/final/00_project_overview.md` | 项目定位、评分权重对应、完成状态、同类项目对比 |
+| `docs/final/01_environment_setup.md` | WSL2/xv6 环境搭建与仓库卫生 |
+| `docs/final/02_lab0_baseline_build_boot.md` | baseline build 与 boot 实验 |
+| `docs/final/03_lab1_hello_add2.md` | hello/add2 系统调用实验 |
+| `docs/final/04_lab2_process_observation.md` | pstate/pcount/pchildtest 进程观察实验 |
+| `docs/final/05_lab4_file_table_observation.md` | fcount 文件表观察实验 |
+| `docs/final/06_testing_and_verification.md` | 测试覆盖总表与证据边界 |
+| `docs/final/07_teammate_reproduction_guide.md` | 队友复现指南 |
+| `docs/final/08_design_decisions_and_tradeoffs.md` | 设计取舍与风险控制 |
+| `docs/final/09_ai_usage_and_contribution_statement.md` | AI 使用与贡献说明 |
+| `docs/final/10_reference_and_license_statement.md` | 引用与许可证说明 |
+| `docs/final/11_known_limits_and_future_work.md` | 已知限制与后续计划 |
 
-完整文档索引见 `submissions/draft-report-index.md`（运行 `bash scripts/collect-report.sh` 自动生成）。
+提交材料索引见 `submissions/draft-report-index.md`；运行 `bash scripts/collect-report.sh` 可重新生成。
 
----
+## 视频说明
+
+已录制 3 段视频，视频文件保存在仓库外，不提交 Git。当前仓库只记录视频状态、用途和待补充信息：
+
+```text
+submissions/demo_record.md
+```
+
+视频不得包含 token、密码、个人隐私、报名材料或未公开账号信息。
 
 ## 诚信与边界
 
-- `external/xv6-riscv/` 是第三方源码，**不入库**（`.gitignore` 已忽略）。
-- `logs/*.log` 是原始日志，**不入库**（`.gitignore` 已忽略）。
-- 所有用户程序验证均为 **timeout 自动捕获证据**，不等同于长期稳定性测试或人工交互录屏。
-- `pcount(RUNNING)` 和 `fcount(...)` 的具体数字**不固定**，只验证稳定输出前缀。
-- `pchildtest` 输出状态**受调度时序影响**（可能看到 RUNNABLE、SLEEPING 等），只验证 `pstate(child) =` 前缀。
-- `run-xv6-command.sh` 捕获 expected output 后会**尽快终止 QEMU**，不等完整 timeout。
-- `.claude/` 等本地 AI/IDE 工具目录**不入库**。
-- 未完成内容均标注 🔲 TODO 或计划中，不将 TODO 写成已完成。
+- 不提交 `external/xv6-riscv/`、`logs/*.log`、`logs/*.summary.txt`、`.claude/`、`.vscode/`、视频、大文件或隐私材料。
+- `patches/integrated-labs/0001-0005` 是当前已验证综合序列，本轮不修改。
+- timeout 自动捕获只证明脚本在真实 QEMU 输出中匹配到预期文本，不等同于长期稳定性测试。
+- `fcount()` 只是文件表引用计数观察，不是完整文件系统实验。
+- `pcount(RUNNING)` 和 `fcount(...)` 的具体数字不固定；`pchildtest` 状态受调度时序影响。
+- 队友独立复现若未收到 summary，必须写“待补充”，不能把队长本机验证写成队友验证。
+- AI 可辅助规划、审查和文档/脚本落地；make/QEMU/PASS 结果必须来自真实命令。
 
----
-
-## 已知限制
+## 已知限制与后续计划
 
 - lab3（内存与页表）未完成。
-- lab4 仅是文件表引用计数观察，不是完整文件系统实验。
-- 第二名队友独立复现待真实执行；所有当前证据均为单机 timeout 捕获。
-- 人工交互录屏待完成。
-
----
-
-## 协作规范
-
-- 小步提交，优先提交可复核的文档、脚本、patch 和真实验证记录。
-- commit message 建议 `type: summary`（如 `docs: add technical report`）。
-- 不上传报名材料、个人隐私、账号密码、token、截图原件或大型二进制文件。
-- 不伪造实验结果、运行截图、commit hash、视频或评审意见。
-- 修改 xv6 时导出 patch，不提交 `external/xv6-riscv/`。
-- AI 使用记录见 `docs/05_ai_usage_record.md`。
-
----
-
-## 引用与许可证
-
-参考资料与许可证记录见 `docs/08_reference_and_license.md`。第三方 xv6-riscv 源码仅保存在 ignored 的 `external/xv6-riscv/`，不作为本仓库源码提交。
+- lab4 当前为文件表观察 v0.1，后续可扩展 inode、fd table、open-file summary 等内容。
+- 技术报告 v1.0 和 PPT 仍需基于 `docs/final/` 整理。
+- 队友独立复现 summary、视频文件名/平台提交方式、同类项目参考 URL 仍需最终补齐。

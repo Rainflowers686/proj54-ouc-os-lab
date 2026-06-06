@@ -641,6 +641,48 @@
   - Summary files under `logs/` are for feedback only and must not be tracked.
   - The workflow remains timeout-captured evidence, not long-running stability, manual recording, or a second teammate's independent reproduction.
 
+## 2026-06-06: stage8a build submission documentation portal
+
+- Commit hash: TODO after commit
+- Goal: shift from MVP engineering notes to judge-facing submission documentation, aligned with proj54 teaching-oriented scoring: documentation 50%, implementation 30%, testing 10%, innovation 10%.
+- Completed:
+  - Rewrote root `README.md` as a concise judge-facing portal for OUC xv6 Lab Kit.
+  - Added `submissions/demo_record.md` to record that 3 videos exist outside Git, with file names/platform submission details pending.
+  - Added formal documentation directory `docs/final/`.
+  - Added `docs/final/00_project_overview.md`: positioning, scoring-weight mapping, OUC course value, status, same-project comparison, boundaries.
+  - Added `docs/final/01_environment_setup.md`: WSL2/Linux setup, baseline, Git hygiene, cleanup.
+  - Added `docs/final/02_lab0_baseline_build_boot.md`: lab0 formal guide.
+  - Added `docs/final/03_lab1_hello_add2.md`: lab1 formal guide.
+  - Added `docs/final/04_lab2_process_observation.md`: lab2 formal guide.
+  - Added `docs/final/05_lab4_file_table_observation.md`: lab4 formal guide, explicitly not a full file-system lab.
+  - Added `docs/final/06_testing_and_verification.md`: test coverage table, evidence boundaries, manual demo row.
+  - Added `docs/final/07_teammate_reproduction_guide.md`: teammate full/quick flow and feedback template.
+  - Added `docs/final/08_design_decisions_and_tradeoffs.md`: patch strategy, timeout/cleanup, lab3/lab4 tradeoffs, same-project positioning.
+  - Added `docs/final/09_ai_usage_and_contribution_statement.md`: AI tool roles and non-fabrication rules.
+  - Added `docs/final/10_reference_and_license_statement.md`: xv6-riscv upstream, baseline commit, MIT license boundary, reference-project TODOs.
+  - Added `docs/final/11_known_limits_and_future_work.md`: remaining risks and next steps.
+  - Updated `docs/08_reference_and_license.md` to confirm xv6-riscv MIT License from local upstream LICENSE.
+  - Rewrote `submissions/submission_checklist.md` around platform compliance, Git hygiene, reproducibility, docs, video, teammate reproduction, red-team review, and final commands.
+  - Updated `scripts/collect-report.sh`, `docs/05_ai_usage_record.md`, and this progress log.
+- Real validation:
+  - `bash scripts/collect-report.sh`: PASS; regenerated `submissions/draft-report-index.md`.
+  - `git diff --check`: PASS.
+  - `git status --short`: showed only intended docs/index changes and new `docs/final/` plus `submissions/demo_record.md`.
+  - `git status --ignored --short external logs .claude`: showed `external/xv6-riscv/`, `.claude/`, and logs as ignored.
+  - `git ls-files external/xv6-riscv`: empty.
+  - `git ls-files logs/*.log`: empty.
+  - `git ls-files logs/*.summary.txt`: empty.
+  - `git ls-files logs/*.console.txt`: empty.
+  - `git ls-files .claude`: empty.
+  - `git ls-files | grep -Ei '\.(mp4|mov|avi|mkv|zip|7z|rar)$' || true`: no tracked video/archive files.
+  - `git diff -- patches/integrated-labs/0001-add-hello-syscall.patch ... 0005-add-file-table-observation.patch`: empty; integrated patches unchanged.
+- Boundaries:
+  - No OS feature was added.
+  - No GitLab/GitHub remote was modified.
+  - `patches/integrated-labs/0001-0005` were not modified.
+  - No teammate independent reproduction was fabricated; missing teammate summary remains pending.
+  - No video file, external source, raw log, summary, `.claude/`, `.vscode/`, large binary, or privacy material should be tracked.
+
 ## 2026-06-06: stage7a3 speed up verification and clean repository hygiene
 
 - Commit hash: TODO after commit

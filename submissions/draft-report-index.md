@@ -33,7 +33,20 @@ It is not the final technical report, does not generate PDF, and does not includ
 | submission readiness review | `docs/21_submission_readiness_review.md` | exists | stage6d red-team: full integrated 0001-0005 reproduced from clean baseline (make/boot x2/hello/add2test/pstatetest/pcounttest+negative/pchildtest/fcounttest); doc consistency audit; risk list and pre-submission must-do (teammate reproduction + manual recording still TODO) |
 | teammate reproduction troubleshooting | `docs/22_teammate_reproduction_troubleshooting.md` | exists | stage7a0: explains apply/make completion, boot normal duration, Ctrl+Z risk, qemu/make cleanup, continuation steps, feedback format, and no-log/no-secret boundaries |
 | teammate quickstart | `docs/23_teammate_quickstart.md` | exists | stage7a2: official teammate testing entry; --full first run, --quick retest after make, local-verify before recording, cleanup-qemu after stuck/Ctrl+Z, summary feedback, no external/logs/secrets |
-| submission checklist | `submissions/submission_checklist.md` | exists | stage7a2 pre-submission checklist: completion status, must-fill items, doctor/full/quick/local workflows, forbidden items, pre-submit commands, and honest-MVP conclusion |
+| final project overview | `docs/final/00_project_overview.md` | exists | stage8a formal portal: OUC xv6 Lab Kit positioning, scoring weights, status, OUC teaching value, reference-project comparison, boundaries |
+| final environment setup | `docs/final/01_environment_setup.md` | exists | stage8a formal environment and repository hygiene guide |
+| final lab0 guide | `docs/final/02_lab0_baseline_build_boot.md` | exists | stage8a formal lab0 baseline/build/boot guide |
+| final lab1 guide | `docs/final/03_lab1_hello_add2.md` | exists | stage8a formal hello/add2 syscall lab guide |
+| final lab2 guide | `docs/final/04_lab2_process_observation.md` | exists | stage8a formal pstate/pcount/pchild process observation lab guide |
+| final lab4 guide | `docs/final/05_lab4_file_table_observation.md` | exists | stage8a formal fcount file table observation lab guide |
+| final testing and verification | `docs/final/06_testing_and_verification.md` | exists | stage8a formal testing coverage table with real-result boundaries |
+| final teammate reproduction guide | `docs/final/07_teammate_reproduction_guide.md` | exists | stage8a formal teammate reproduction and feedback guide |
+| final design decisions | `docs/final/08_design_decisions_and_tradeoffs.md` | exists | stage8a formal design tradeoffs and scope control |
+| final AI usage statement | `docs/final/09_ai_usage_and_contribution_statement.md` | exists | stage8a formal AI usage and contribution statement |
+| final reference and license statement | `docs/final/10_reference_and_license_statement.md` | exists | stage8a formal xv6 MIT license boundary and reference-project notes |
+| final limits and future work | `docs/final/11_known_limits_and_future_work.md` | exists | stage8a formal known limits and follow-up plan |
+| submission checklist | `submissions/submission_checklist.md` | exists | stage8a submission checklist: platform compliance, Git hygiene, reproducibility, docs, videos, teammate summary, red-team review, final commands |
+| demo video record | `submissions/demo_record.md` | exists | stage8a records 3 videos outside Git, with file names/platform submission details pending |
 | Technical report v0.1 | `docs/13_technical_report_v0.1.md` | exists | stage2c draft; not final report |
 | Reproducibility package | `reproducibility/README.md` | exists | lab0/lab1/lab2/integrated-labs reproduction checklist and template |
 | lab0 environment guide | `labs/lab0-env-setup/README.md` | exists | xv6 baseline make succeeded; boot evidence found; manual interaction TODO |
@@ -92,6 +105,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 - scripts/xv6/teammate-verify.sh --full is the recommended first teammate workflow; --quick is for retesting after make already succeeded.
 - scripts/xv6/local-verify.sh --quick is recommended for team-lead pre-recording checks.
 - scripts/xv6/cleanup-qemu.sh is the rescue command when QEMU is stuck or Ctrl+Z suspended a job.
+- docs/final/ is the formal submission documentation portal for stage8a and should be the basis for technical report v1.0 and PPT.
 - Technical report v0.1 and reproducibility package are drafts for review, not final submission files.
 - Raw logs remain ignored by Git; do not submit logs/*.log.
 - boot-xv6.sh now defaults to 45s soft timeout, hard timeout max(timeout+15,75), and 2 attempts; QEMU long-running stability and manual interactive shell testing remain TODO.
@@ -99,3 +113,4 @@ It is not the final technical report, does not generate PDF, and does not includ
 - apply-integrated-labs.sh --make --yes uses XV6_MAKE_TIMEOUT_SECONDS, default 600 seconds; make success is never fabricated.
 - Teammate QEMU cleanup troubleshooting is documented in docs/22_teammate_reproduction_troubleshooting.md.
 - Plain-language teammate quickstart is documented in docs/23_teammate_quickstart.md; teammates should copy the COPY THIS SUMMARY TO TEAM LEAD block to the team lead.
+- Video files are not committed; stage8a video status is recorded in submissions/demo_record.md.
