@@ -21,6 +21,8 @@ Usage:
 Plain-language notes:
   - First time: use --full.
   - Already saw "[OK] make completed successfully": use --quick.
+  - Each user-program check now exits quickly once expected output is detected
+    (no more waiting for full timeout after match).
   - If it gets stuck: press Ctrl+C, then run bash scripts/xv6/cleanup-qemu.sh.
   - Do not press Ctrl+Z as an exit; Ctrl+Z suspends QEMU/make.
 EOF
@@ -262,6 +264,7 @@ echo
 echo "[INFO] First reproduction: bash scripts/xv6/teammate-verify.sh --full"
 echo "[INFO] Re-test after make succeeded: bash scripts/xv6/teammate-verify.sh --quick"
 echo "[INFO] Ctrl+C interrupts. Ctrl+Z suspends and is not an exit."
+echo "[INFO] User-program checks terminate QEMU as soon as expected output is detected."
 echo "[INFO] If QEMU gets stuck, run: bash scripts/xv6/cleanup-qemu.sh"
 
 overall=0

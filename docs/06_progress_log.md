@@ -640,3 +640,39 @@
   - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.
   - Summary files under `logs/` are for feedback only and must not be tracked.
   - The workflow remains timeout-captured evidence, not long-running stability, manual recording, or a second teammate's independent reproduction.
+
+## 2026-06-06: stage7a3 speed up verification and clean repository hygiene
+
+- Commit hash: TODO after commit
+- Goal: speed up QEMU command verification by terminating QEMU as soon as expected output is detected (instead of waiting for full timeout), clean `.claude/` from git tracking, harden `.gitignore`, and rewrite root README to be judge-friendly.
+- Completed:
+  - **Optimized `scripts/xv6/run-xv6-command.sh`**: replaced the outer `timeout` wrapper with a background log watcher that monitors the QEMU output log file. Once `EXPECTED_TEXT` is found, QEMU is terminated immediately via `cleanup_project_processes`, and the script declares success without waiting for the full soft/hard timeout. The watcher uses flag files (`*.found` / `*.timedout`) to avoid race conditions. The hard timeout is still enforced by the watcher itself; if the expected text is not found by the hard deadline, the watcher signals timeout and the script falls through to existing retry/failure logic. All existing trap/cleanup handlers still work correctly — `stop_current_attempt` also cleans up the watcher PID and flag files.
+  - **Removed `.claude/` from git tracking**: `git rm -r --cached .claude` removed `.claude/settings.local.json` from the index; the local file is preserved on disk.
+  - **Enhanced `.gitignore`**: added `.claude/`, `.cursor/`, `*.code-workspace`, `.DS_Store`, `Thumbs.db`, `logs/*.summary.txt`, `logs/*.console.txt`, `screenshots/`, `submission_assets/`, `proj54_submission_assets/`, `*.env`, `*.token`, `*_token_*`, `*_secret_*`, `*password*`, `local.properties`. Preserved all existing ignore rules including `external/xv6-riscv/` and log patterns.
+  - **Rewrote root `README.md`**: condensed from ~370 lines to ~120 lines; added completion status table, judge quick-reproduction section (doctor + teammate-verify), directory overview, key doc links, integrity/boundary section, known limitations, and collaboration rules. Removed stage-by-stage accumulation in favor of a single judge-friendly page.
+  - Updated `scripts/xv6/teammate-verify.sh` help text to mention fast QEMU exit.
+  - Updated `docs/23_teammate_quickstart.md` section 5 (timing expectations: "30 秒内返回").
+  - Updated `docs/22_teammate_reproduction_troubleshooting.md` section 2 (timing + fast exit mechanism).
+  - Updated `docs/05_ai_usage_record.md`, `docs/06_progress_log.md`, `scripts/collect-report.sh`, `submissions/draft-report-index.md`, `submissions/submission_checklist.md`, `reproducibility/README.md`.
+- Real validation (WSL2 Ubuntu-24.04):
+  - `bash -n scripts/xv6/run-xv6-command.sh`: PASS.
+  - `bash -n scripts/xv6/teammate-verify.sh`: PASS.
+  - `bash -n scripts/xv6/local-verify.sh`: PASS.
+  - `bash -n scripts/xv6/doctor.sh`: PASS.
+  - `bash scripts/xv6/doctor.sh`: PASS with expected warnings.
+  - `bash scripts/xv6/local-verify.sh --quick`: PASS; apply+make SKIPPED, boot and all user-program checks PASS with fast exit.
+  - `bash scripts/xv6/teammate-verify.sh --quick`: PASS.
+  - `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"`: PASS with fast exit (QEMU terminated early after expected output captured).
+  - `bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"`: PASS with fast exit.
+  - `bash scripts/collect-report.sh`: PASS.
+  - `git diff --check`: PASS.
+  - `git ls-files .claude`: empty (was `git rm --cached` in this stage).
+  - `git ls-files external/xv6-riscv`: empty.
+  - `git ls-files logs/*.log logs/*.summary.txt logs/*.console.txt`: empty.
+- Boundaries:
+  - No OS feature was added.
+  - No GitLab/GitHub remote was modified.
+  - `patches/integrated-labs/0001-0005` were not modified.
+  - `.claude/` local files were preserved; only git tracking was removed.
+  - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.
+  - Evidence remains timeout-captured log matching with early QEMU termination, not long-running stability, manual recording, or a second teammate's independent reproduction.

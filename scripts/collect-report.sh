@@ -77,7 +77,7 @@ mkdir -p submissions
   status_line "scripts/xv6/fetch-xv6.sh" "xv6 fetch script" "stage1b tooling"
   status_line "scripts/xv6/check-xv6-baseline.sh" "xv6 baseline check script" "stage1b tooling; make not run by default"
   status_line "scripts/xv6/boot-xv6.sh" "xv6 boot evidence script" "captures boot keywords under soft+hard timeout; default 45s soft, max(timeout+15,75)s hard, 2 attempts, per-attempt logs, trap cleanup"
-  status_line "scripts/xv6/run-xv6-command.sh" "xv6 command evidence script" "captures user program output under soft+hard timeout; default 60s soft, max(timeout+15,75)s hard, 2 attempts, fs.img prebuild, trap cleanup"
+  status_line "scripts/xv6/run-xv6-command.sh" "xv6 command evidence script" "captures user program output under soft+hard timeout; default 60s soft, max(timeout+15,75)s hard, 2 attempts, fs.img prebuild, trap cleanup, fast QEMU exit on expected output match (stage7a3)"
   status_line "scripts/xv6/apply-lab1-patch.sh" "lab1 patch apply helper" "preview by default; --run resets clean baseline and applies; --make optional"
   status_line "scripts/xv6/apply-integrated-labs.sh" "integrated labs apply helper" "preview by default; --run/--make always require --yes (reset/clean ignored tree); make has XV6_MAKE_TIMEOUT_SECONDS; make logs ignored"
   status_line "scripts/xv6/doctor.sh" "xv6 doctor script" "stage7a2 read-only environment diagnosis: time/cwd/uname/commit, Git repo, tools, baseline files, logs ignored, QEMU leftovers, /mnt warning; no make or QEMU run"

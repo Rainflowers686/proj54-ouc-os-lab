@@ -71,7 +71,7 @@
 
 ### 3.8 command timeout / cleanup
 
-- `scripts/xv6/run-xv6-command.sh` 已加固：默认 60s × 2 次尝试，默认 hard timeout 为 `max(timeout + 15, 75)`，支持 `XV6_COMMAND_TIMEOUT_SECONDS` / `XV6_COMMAND_RETRIES` / `XV6_COMMAND_HARD_TIMEOUT_SECONDS` 覆盖
+- `scripts/xv6/run-xv6-command.sh` 已加固并支持快速退出：默认 60s × 2 次尝试，默认 hard timeout 为 `max(timeout + 15, 75)`，支持 `XV6_COMMAND_TIMEOUT_SECONDS` / `XV6_COMMAND_RETRIES` / `XV6_COMMAND_HARD_TIMEOUT_SECONDS` 覆盖；**捕获 expected output 后尽快终止 QEMU**，不再等待完整 timeout（stage7a3）
 - `boot-xv6.sh` 与 `run-xv6-command.sh` 均在 `EXIT` / `INT` / `TERM` / `TSTP` 时尝试清理当前项目相关 `qemu-system-riscv64` 与 `make qemu`
 - 队友卡住排查文档：`docs/22_teammate_reproduction_troubleshooting.md`
 
@@ -189,3 +189,4 @@ grep -R "TODO after commit" -n README.md docs labs tests patches reproducibility
 | 2026-06-06 | stage7a0：加固 boot/run QEMU hard timeout、cleanup 与队友故障排查文档 | 蓝色系统队 |
 | 2026-06-06 | stage7a1：新增 teammate-verify 一键复现、cleanup-qemu 救援脚本、make timeout 和队友 quickstart | 蓝色系统队 |
 | 2026-06-06 | stage7a2：新增 doctor/local-verify，增强 teammate-verify full/quick/help 和 copy-to-lead summary，优化 cleanup 与队友 quickstart | 蓝色系统队 |
+| 2026-06-06 | stage7a3：优化 run-xv6-command 快速退出、移除 .claude/ git tracking、加固 .gitignore、重写评委友好 README | 蓝色系统队 |

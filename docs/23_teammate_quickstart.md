@@ -66,7 +66,7 @@ bash scripts/xv6/local-verify.sh --quick
 
 ## 5. 卡住或误按 Ctrl+Z
 
-正常情况下 `boot-xv6.sh` 和每个命令验证应在 1-2 分钟内返回。超过 5 分钟先按：
+正常情况下 `boot-xv6.sh` 应在 1-2 分钟内返回；每个用户程序命令验证应在 30 秒内返回（一旦捕获到 expected output 就会快速终止 QEMU）。超过 5 分钟先按：
 
 ```text
 Ctrl+C

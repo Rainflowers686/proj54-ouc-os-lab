@@ -8,7 +8,10 @@ COMMAND_TEXT="${1:-hello}"
 EXPECTED_TEXT="${2:-hello syscall returned 2026}"
 TARGET_ABS=""
 current_attempt_pid=""
+current_watcher_pid=""
 current_log=""
+found_flag=""
+timeout_flag=""
 
 safe_name="$(printf '%s' "$COMMAND_TEXT" | tr -c 'A-Za-z0-9_' '_')"
 ts="$(date +%Y%m%d-%H%M%S)"
@@ -87,17 +90,30 @@ cleanup_project_processes() {
 
 stop_current_attempt() {
   reason="$1"
+
+  # Kill the background log watcher first
+  if [ -n "${current_watcher_pid:-}" ] && kill -0 "$current_watcher_pid" 2>/dev/null; then
+    kill -TERM "$current_watcher_pid" 2>/dev/null || true
+    current_watcher_pid=""
+  fi
+
   if [ -n "${current_attempt_pid:-}" ] && kill -0 "$current_attempt_pid" 2>/dev/null; then
-    log_msg "[INFO] cleanup (${reason}): terminating current timeout wrapper pid ${current_attempt_pid}"
+    log_msg "[INFO] cleanup (${reason}): terminating current QEMU pipeline pid ${current_attempt_pid}"
     kill -TERM "$current_attempt_pid" 2>/dev/null || true
     sleep 1
     if kill -0 "$current_attempt_pid" 2>/dev/null; then
-      log_msg "[WARN] cleanup (${reason}): force killing current timeout wrapper pid ${current_attempt_pid}"
+      log_msg "[WARN] cleanup (${reason}): force killing current QEMU pipeline pid ${current_attempt_pid}"
       kill -KILL "$current_attempt_pid" 2>/dev/null || true
     fi
   fi
   current_attempt_pid=""
+
   cleanup_project_processes "$reason"
+
+  # Remove flag files if set
+  if [ -n "${found_flag:-}" ]; then
+    rm -f "$found_flag" "$timeout_flag" 2>/dev/null || true
+  fi
 }
 
 cleanup() {
@@ -165,9 +181,10 @@ echo "xv6-riscv command evidence check"
 echo "target  : ${TARGET_DIR}"
 echo "command : ${COMMAND_TEXT}"
 echo "expect  : ${EXPECTED_TEXT}"
-echo "timeout : ${TIMEOUT_SECONDS}s soft per attempt"
+echo "timeout : ${TIMEOUT_SECONDS}s soft per attempt (max command feed duration)"
 echo "hard cap: ${HARD_TIMEOUT_SECONDS}s per QEMU attempt"
 echo "attempts: ${MAX_ATTEMPTS}"
+echo "fast exit: QEMU will be terminated as soon as expected output is detected"
 echo
 
 if [ ! -d "$TARGET_DIR" ]; then
@@ -190,6 +207,9 @@ attempt=1
 while [ "$attempt" -le "$MAX_ATTEMPTS" ]; do
   log="logs/xv6-command-${safe_name}-${ts}-attempt${attempt}.log"
   current_log="$log"
+  found_flag="${log}.found"
+  timeout_flag="${log}.timedout"
+  rm -f "$found_flag" "$timeout_flag"
 
   echo "[STEP] attempt ${attempt}/${MAX_ATTEMPTS}"
   echo "log     : ${log}"
@@ -200,7 +220,7 @@ while [ "$attempt" -le "$MAX_ATTEMPTS" ]; do
     echo "attempt: ${attempt}/${MAX_ATTEMPTS}"
     echo "soft timeout seconds: ${TIMEOUT_SECONDS}"
     echo "hard timeout seconds: ${HARD_TIMEOUT_SECONDS}"
-    echo "note: timeout exit 124 can be expected because QEMU normally keeps running."
+    echo "note: QEMU will be terminated as soon as expected output is detected (no full-timeout wait)."
     echo "note: fs.img is built before starting QEMU so command input is not consumed by make."
     echo "note: outer hard timeout prevents make/qemu from waiting forever."
     echo
@@ -232,52 +252,101 @@ while [ "$attempt" -le "$MAX_ATTEMPTS" ]; do
   fi
 
   start_epoch="$(date +%s)"
-  timeout --kill-after=5s "${HARD_TIMEOUT_SECONDS}s" bash -c '
-    set -u
-    command_text="$1"
-    timeout_seconds="$2"
-    target_dir="$3"
-    (
-      i=0
-      while [ "$i" -lt "$timeout_seconds" ]; do
-        sleep 1
-        printf "%s\n" "$command_text"
-        i=$((i + 1))
-      done
-    ) | timeout "${timeout_seconds}s" make -C "$target_dir" qemu
-  ' command-attempt "$COMMAND_TEXT" "$TIMEOUT_SECONDS" "$TARGET_DIR" >>"$log" 2>&1 &
-  current_attempt_pid="$!"
-  wait "$current_attempt_pid"
+
+  # ------------------------------------------------------------------
+  # Launch QEMU with command feeding in background (NO outer timeout —
+  # the background watcher and the hard-timeout flag file replace it).
+  # ------------------------------------------------------------------
+  (
+    i=0
+    while [ "$i" -lt "$TIMEOUT_SECONDS" ]; do
+      sleep 1
+      printf "%s\n" "$COMMAND_TEXT"
+      i=$((i + 1))
+    done
+  ) | make -C "$TARGET_DIR" qemu >>"$log" 2>&1 &
+  qemu_pid="$!"
+  current_attempt_pid="$qemu_pid"
+
+  # ------------------------------------------------------------------
+  # Background log watcher: polls the log file for EXPECTED_TEXT.
+  # Once found → writes found_flag and exits.
+  # If hard timeout expires → writes timeout_flag and exits.
+  # ------------------------------------------------------------------
+  (
+    watcher_start="$(date +%s)"
+    while true; do
+      if grep -qF -- "$EXPECTED_TEXT" "$log" 2>/dev/null; then
+        touch "$found_flag"
+        exit 0
+      fi
+      now="$(date +%s)"
+      if [ "$(( now - watcher_start ))" -ge "$HARD_TIMEOUT_SECONDS" ]; then
+        touch "$timeout_flag"
+        exit 0
+      fi
+      sleep 0.5
+    done
+  ) &
+  watcher_pid="$!"
+  current_watcher_pid="$watcher_pid"
+
+  # ------------------------------------------------------------------
+  # Poll loop: wait until QEMU exits OR watcher finds the text OR
+  # watcher reaches hard timeout.
+  # ------------------------------------------------------------------
+  while kill -0 "$qemu_pid" 2>/dev/null; do
+    if [ -f "$found_flag" ]; then
+      log_msg "[INFO] expected output detected; terminating QEMU early."
+      cleanup_project_processes "expected output detected"
+      break
+    fi
+    if [ -f "$timeout_flag" ]; then
+      log_msg "[INFO] hard timeout reached while waiting for expected output."
+      break
+    fi
+    sleep 0.5
+  done
+
+  # Reap children
+  wait "$qemu_pid" 2>/dev/null || true
   code="$?"
+  kill "$watcher_pid" 2>/dev/null || true
+  wait "$watcher_pid" 2>/dev/null || true
   current_attempt_pid=""
+  current_watcher_pid=""
+
   elapsed=$(( $(date +%s) - start_epoch ))
 
   cleanup_project_processes "after command attempt ${attempt}"
 
   {
     echo
-    echo "timeout/make exit code: ${code}"
+    echo "QEMU pipeline exit code: ${code}"
     echo "elapsed seconds: ${elapsed}"
   } >>"$log"
 
   if grep -qF -- "$EXPECTED_TEXT" "$log"; then
     echo "COMMAND_EVIDENCE_FOUND" | tee -a "$log"
     echo "[OK] attempt ${attempt}: detected expected output: ${EXPECTED_TEXT}"
-    if [ "$code" -eq 124 ] || [ "$elapsed" -ge "$HARD_TIMEOUT_SECONDS" ]; then
-      echo "[INFO] attempt ${attempt}: timeout hit after ${elapsed}s, after expected output was captured."
+    if [ "$elapsed" -lt "$TIMEOUT_SECONDS" ]; then
+      echo "[INFO] QEMU terminated early after expected output was captured (elapsed ${elapsed}s, soft timeout ${TIMEOUT_SECONDS}s)."
     fi
     echo "[INFO] QEMU cleanup has been attempted; this is not a long-running stability test."
+    rm -f "$found_flag" "$timeout_flag"
     exit 0
   fi
 
   echo "COMMAND_EVIDENCE_NOT_FOUND" | tee -a "$log"
-  if [ "$code" -eq 124 ] || [ "$elapsed" -ge "$HARD_TIMEOUT_SECONDS" ]; then
-    echo "[WARN] attempt ${attempt}: timeout hit before expected output was captured (exit ${code}, elapsed ${elapsed}s; soft ${TIMEOUT_SECONDS}s, hard ${HARD_TIMEOUT_SECONDS}s)."
+  if [ -f "$timeout_flag" ] || [ "$elapsed" -ge "$HARD_TIMEOUT_SECONDS" ]; then
+    echo "[WARN] attempt ${attempt}: timeout hit before expected output was captured (elapsed ${elapsed}s; soft ${TIMEOUT_SECONDS}s, hard ${HARD_TIMEOUT_SECONDS}s)."
   else
     echo "[WARN] attempt ${attempt}: make/qemu exited with code ${code} before expected output was captured."
   fi
   echo "[WARN] expected output not found: ${EXPECTED_TEXT}"
   echo "[WARN] log path: ${log}"
+
+  rm -f "$found_flag" "$timeout_flag"
 
   attempt=$((attempt + 1))
   if [ "$attempt" -le "$MAX_ATTEMPTS" ]; then

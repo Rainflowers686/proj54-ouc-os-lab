@@ -25,13 +25,13 @@ bash scripts/xv6/teammate-verify.sh --quick
 
 ## 2. boot 和命令验证正常耗时
 
-`boot-xv6.sh` 正常应在 1-2 分钟内返回；超过 5 分钟应按：
+`boot-xv6.sh` 正常应在 1-2 分钟内返回；`run-xv6-command.sh` 每个用户程序验证通常应在 30 秒内返回（一旦捕获到 expected output 就会尽快终止 QEMU，不再等待完整 timeout）。超过 5 分钟应按：
 
 ```text
 Ctrl+C
 ```
 
-不要用 `Ctrl+Z` 当退出方式。`boot-xv6.sh` 和 `run-xv6-command.sh` 都有 soft timeout、hard timeout 和 cleanup trap；如果仍卡住，按本文清理残留进程。
+不要用 `Ctrl+Z` 当退出方式。`boot-xv6.sh` 和 `run-xv6-command.sh` 都有 soft timeout、hard timeout、cleanup trap 和 **快速退出机制**；如果仍卡住，按本文清理残留进程。
 
 ## 3. Ctrl+Z 不是退出
 

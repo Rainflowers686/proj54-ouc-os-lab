@@ -12,6 +12,7 @@
 - stage5a lab2 v0.2 已新增 integrated `0004`，包含 `pcount(int state)`、`pcounttest` 和 `pchildtest`，见 `docs/19_lab2_v0.2_process_observation_review.md`。
 - stage7a0 已加固 QEMU timeout/cleanup，队友卡住排查见 `docs/22_teammate_reproduction_troubleshooting.md`。
 - stage7a2 已优化队友一键复现脚本，见 `scripts/xv6/doctor.sh`、`scripts/xv6/teammate-verify.sh --full/--quick`、`scripts/xv6/local-verify.sh` 和 `docs/23_teammate_quickstart.md`。
+- stage7a3 已优化 QEMU 命令验证快速退出（捕获 expected output 后尽快终止 QEMU）、仓库卫生（`.claude/` 从 git tracking 移除、`.gitignore` 加固）和评委友好 README。
 - 第二名队员独立复现：TODO。
 
 ## 复现目标
@@ -271,7 +272,7 @@ bash scripts/xv6/boot-xv6.sh
 
 ## stage7a0 更新：队友卡住排查
 
-`scripts/xv6/boot-xv6.sh` 和 `scripts/xv6/run-xv6-command.sh` 都已增加外层硬 timeout、trap cleanup 和失败日志路径提示。`run-xv6-command.sh` 默认 `XV6_COMMAND_TIMEOUT_SECONDS=60`、`XV6_COMMAND_RETRIES=2`，hard timeout 默认为 `max(timeout + 15, 75)` 秒，也可显式覆盖：
+`scripts/xv6/boot-xv6.sh` 和 `scripts/xv6/run-xv6-command.sh` 都已增加外层硬 timeout、trap cleanup 和失败日志路径提示。`run-xv6-command.sh` 默认 `XV6_COMMAND_TIMEOUT_SECONDS=60`、`XV6_COMMAND_RETRIES=2`，hard timeout 默认为 `max(timeout + 15, 75)` 秒，也可显式覆盖。**重要：一旦捕获到 expected output，QEMU 会尽快终止，不再等待完整 timeout（stage7a3 快速退出优化）。**
 
 ```bash
 XV6_COMMAND_TIMEOUT_SECONDS=75 XV6_COMMAND_RETRIES=2 XV6_COMMAND_HARD_TIMEOUT_SECONDS=90 bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
