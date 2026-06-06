@@ -572,3 +572,33 @@
   - `patches/integrated-labs/0001-0005` were not modified.
   - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.
   - Evidence remains timeout-captured log matching, not long-running stability testing, manual recording, or teammate independent reproduction.
+
+## 2026-06-06: stage7a1 teammate one-shot verification workflow
+
+- Commit hash: TODO after commit
+- Goal: make teammate reproduction a one-command workflow so teammates do not need to remember every xv6/QEMU command or diagnose Ctrl+Z/QEMU cleanup from scratch.
+- Completed:
+  - Added `scripts/xv6/cleanup-qemu.sh`.
+  - The cleanup helper lists possible `qemu-system-riscv64` / `make qemu` processes, explains `Ctrl+C` vs `Ctrl+Z`, prints `jobs -l` / `kill %1` guidance, runs `pkill -f qemu-system-riscv64 || true` and `pkill -f "make qemu" || true`, and exits 0.
+  - Added `scripts/xv6/teammate-verify.sh`.
+  - The one-shot verifier prints project/time/cwd/uname/commit/user, runs environment + baseline checks, runs integrated apply+make, boot evidence, and hello/add2test/pstatetest/pcounttest/pchildtest/fcounttest checks.
+  - The verifier records PASS/FAIL per step, stops after critical failures, and always writes a summary under ignored `logs/teammate-verify-YYYYMMDD-HHMMSS.summary.txt`.
+  - Added make timeout to `scripts/xv6/apply-integrated-labs.sh`: `XV6_MAKE_TIMEOUT_SECONDS`, default 600 seconds, with timeout-hit output and cleanup hint.
+  - Added `docs/23_teammate_quickstart.md`.
+  - Updated `.gitignore` so teammate summary and console output under `logs/` remain ignored.
+  - Updated README, reproducibility package, submission checklist, AI record, report index script, and generated material index.
+- Real validation (WSL2 Ubuntu-24.04):
+  - `bash -n scripts/xv6/cleanup-qemu.sh`: PASS.
+  - `bash -n scripts/xv6/teammate-verify.sh`: PASS.
+  - `bash -n scripts/xv6/apply-integrated-labs.sh`: PASS.
+  - `bash scripts/xv6/cleanup-qemu.sh`: PASS; no QEMU/make qemu process found; exit 0.
+  - `bash scripts/xv6/teammate-verify.sh`: PASS end-to-end with default timeouts.
+  - One-shot summary file: `logs/teammate-verify-20260606-160351.summary.txt` (ignored).
+  - Summary result: environment PASS, check-env PASS, baseline PASS, apply+make PASS, boot PASS, hello PASS, add2test PASS, pstatetest PASS, pcounttest PASS, pchildtest PASS, fcounttest PASS.
+  - `apply-integrated-labs.sh --make --yes` inside the one-shot run used the new make timeout display (`make timeout : 600s`) and make completed successfully.
+- Boundaries:
+  - No OS feature was added.
+  - No GitLab/GitHub remote was modified.
+  - `patches/integrated-labs/0001-0005` were not modified.
+  - `external/xv6-riscv/` and `logs/*.log` remain ignored and must not be committed.
+  - The one-shot run is still timeout-captured evidence, not long-running stability, manual recording, or a second teammate's independent reproduction.

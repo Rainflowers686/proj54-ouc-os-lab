@@ -12,6 +12,7 @@ set -u
 
 TARGET_DIR="${XV6_TARGET_DIR:-external/xv6-riscv}"
 BASELINE_COMMIT="${XV6_BASELINE_COMMIT:-74f84181a3404d1d6a6ff98d342233979066ebb8}"
+MAKE_TIMEOUT_SECONDS="${XV6_MAKE_TIMEOUT_SECONDS:-600}"
 PATCHES="
 patches/integrated-labs/0001-add-hello-syscall.patch
 patches/integrated-labs/0002-add-argint-add2-syscall.patch
@@ -19,6 +20,13 @@ patches/integrated-labs/0003-add-pstate-syscall.patch
 patches/integrated-labs/0004-extend-process-observation.patch
 patches/integrated-labs/0005-add-file-table-observation.patch
 "
+
+is_positive_int() {
+  case "$1" in
+    ''|*[!0-9]*) return 1 ;;
+    *) [ "$1" -gt 0 ] ;;
+  esac
+}
 
 usage() {
   cat <<EOF
@@ -35,6 +43,7 @@ Usage:
 Notes:
   - Target tree: ${TARGET_DIR}
   - Baseline commit: ${BASELINE_COMMIT}
+  - Make timeout: ${MAKE_TIMEOUT_SECONDS}s (override with XV6_MAKE_TIMEOUT_SECONDS)
   - This script never commits external/xv6-riscv/ or logs/*.log.
   - --make implies --run.
 EOF
@@ -58,6 +67,18 @@ if [ "$DO_MAKE" -eq 1 ]; then
   DO_RUN=1
 fi
 
+if [ "$DO_MAKE" -eq 1 ]; then
+  if ! is_positive_int "$MAKE_TIMEOUT_SECONDS"; then
+    echo "[ERROR] XV6_MAKE_TIMEOUT_SECONDS must be a positive integer, got: ${MAKE_TIMEOUT_SECONDS}"
+    exit 2
+  fi
+
+  if ! command -v timeout >/dev/null 2>&1; then
+    echo "[ERROR] missing required command for --make: timeout"
+    exit 2
+  fi
+fi
+
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "$REPO_ROOT" || {
   echo "[ERROR] failed to enter repo root: ${REPO_ROOT}"
@@ -69,6 +90,9 @@ echo "repo root       : ${REPO_ROOT}"
 echo "target dir      : ${TARGET_DIR} (ignored third-party tree; not committed)"
 echo "baseline commit : ${BASELINE_COMMIT}"
 echo "mode            : $(if [ "$DO_RUN" -eq 0 ]; then echo preview; elif [ "$DO_MAKE" -eq 1 ]; then echo make; else echo run; fi)"
+if [ "$DO_MAKE" -eq 1 ]; then
+  echo "make timeout    : ${MAKE_TIMEOUT_SECONDS}s"
+fi
 echo
 
 if [ ! -d "$TARGET_DIR" ]; then
@@ -124,7 +148,7 @@ if [ "$DO_RUN" -eq 0 ]; then
     echo "  ${i}. git -C ${TARGET_DIR} apply ${patch}"
     i=$((i + 1))
   done
-  echo "  (with --make --yes) run make and write logs/integrated-make-YYYYMMDD-HHMMSS.log"
+  echo "  (with --make --yes) run make under timeout and write logs/integrated-make-YYYYMMDD-HHMMSS.log"
   echo
   echo "Dry-run apply check against CURRENT tree state:"
   for patch in $PATCHES; do
@@ -208,22 +232,27 @@ ts="$(date +%Y%m%d-%H%M%S)"
 log="logs/integrated-make-${ts}.log"
 
 echo
-echo "[STEP] make -C ${TARGET_DIR}"
+echo "[STEP] make -C ${TARGET_DIR} (timeout ${MAKE_TIMEOUT_SECONDS}s)"
 {
-  echo "command: make -C ${TARGET_DIR} (after apply-integrated-labs.sh --make --yes)"
+  echo "command: timeout --kill-after=5s ${MAKE_TIMEOUT_SECONDS}s make -C ${TARGET_DIR} (after apply-integrated-labs.sh --make --yes)"
   echo "date: $(date -Iseconds)"
   echo "baseline commit: ${BASELINE_COMMIT}"
+  echo "make timeout seconds: ${MAKE_TIMEOUT_SECONDS}"
   echo "patch sequence:"
   for patch in $PATCHES; do
     echo "  - ${patch}"
   done
   echo
-  make -C "$TARGET_DIR"
+  timeout --kill-after=5s "${MAKE_TIMEOUT_SECONDS}s" make -C "$TARGET_DIR"
 } >"$log" 2>&1
 code="$?"
 
 if [ "$code" -eq 0 ]; then
   echo "[OK] make completed successfully. Log: ${log} (ignored by Git)"
+elif [ "$code" -eq 124 ] || [ "$code" -eq 137 ]; then
+  echo "[ERROR] make timeout hit after ${MAKE_TIMEOUT_SECONDS}s. Log: ${log} (ignored by Git)"
+  echo "[ERROR] cleanup may help if QEMU/make processes are still present:"
+  echo "        bash scripts/xv6/cleanup-qemu.sh"
 else
   echo "[ERROR] make failed with exit code ${code}. Log: ${log} (ignored by Git)"
 fi

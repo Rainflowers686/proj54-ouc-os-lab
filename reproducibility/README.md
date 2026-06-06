@@ -11,6 +11,7 @@
 - stage4c integrated-labs 综合 patch sequence 已完成，见 `patches/integrated-labs/README.md`。
 - stage5a lab2 v0.2 已新增 integrated `0004`，包含 `pcount(int state)`、`pcounttest` 和 `pchildtest`，见 `docs/19_lab2_v0.2_process_observation_review.md`。
 - stage7a0 已加固 QEMU timeout/cleanup，队友卡住排查见 `docs/22_teammate_reproduction_troubleshooting.md`。
+- stage7a1 已新增队友一键复现脚本，见 `scripts/xv6/teammate-verify.sh` 和 `docs/23_teammate_quickstart.md`。
 - 第二名队员独立复现：TODO。
 
 ## 复现目标
@@ -83,6 +84,14 @@ bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
 ## 复现路径 C：integrated-labs 综合演示
 
 该路径用于最终综合演示。它从 clean baseline 顺序应用 integrated `0001`、`0002`、`0003`、`0004`，统一 syscall 号为 `hello=22/add2=23/pstate=24/pcount=25`。
+
+队友优先使用一键脚本：
+
+```bash
+bash scripts/xv6/teammate-verify.sh
+```
+
+该脚本会自动执行环境检查、baseline 检查、apply+make、boot 和全部用户程序验证，并把 summary 写入 ignored 的 `logs/teammate-verify-*.summary.txt`。如果需要手动分步复现，再使用下面命令。
 
 ```bash
 bash scripts/check-env.sh
@@ -255,3 +264,33 @@ XV6_COMMAND_TIMEOUT_SECONDS=75 XV6_COMMAND_RETRIES=2 XV6_COMMAND_HARD_TIMEOUT_SE
 ```
 
 队友复现时如果卡在 `[STEP] attempt 1/2`，先看脚本输出的 `log path`，再按 `docs/22_teammate_reproduction_troubleshooting.md` 清理残留进程。看到 `apply-integrated-labs.sh --make --yes` 输出 `[OK] make completed successfully` 后就说明 apply+make 已完成，不要继续等待该命令。
+
+## stage7a1 更新：一键验证 workflow
+
+新增脚本：
+
+```bash
+bash scripts/xv6/teammate-verify.sh
+```
+
+它会自动运行：
+
+- `bash scripts/check-env.sh`
+- `bash scripts/xv6/check-xv6-baseline.sh`
+- `bash scripts/xv6/apply-integrated-labs.sh --make --yes`
+- `bash scripts/xv6/boot-xv6.sh`
+- hello / add2test / pstatetest / pcounttest / pchildtest / fcounttest 输出验证
+
+每一步都会记录 PASS/FAIL。关键失败会停止后续 QEMU 测试，但仍输出 summary。summary 同时写入 ignored 文件：
+
+```text
+logs/teammate-verify-YYYYMMDD-HHMMSS.summary.txt
+```
+
+如果失败或卡住，运行：
+
+```bash
+bash scripts/xv6/cleanup-qemu.sh
+```
+
+`apply-integrated-labs.sh --make --yes` 的 make 阶段现在也有 timeout：默认 `XV6_MAKE_TIMEOUT_SECONDS=600`，可按需覆盖。队友大白话说明见 `docs/23_teammate_quickstart.md`。

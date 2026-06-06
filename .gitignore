@@ -214,4 +214,7 @@ external/xv6-riscv/
 
 # Build logs are generated from real local commands and are not committed by default.
 logs/*.log
+logs/teammate-verify-*.summary.txt
+logs/teammate-verify-console-*.out
+logs/teammate-verify-console-*.err
 !logs/README.md
