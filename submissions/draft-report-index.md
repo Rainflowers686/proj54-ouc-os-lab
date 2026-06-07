@@ -96,8 +96,11 @@ It is not the final technical report, does not generate PDF, and does not includ
 | xv6 baseline metadata | `external/xv6-baseline-record.md` | exists | metadata generated; records make success and boot evidence; manual interaction TODO |
 | logs directory guide | `logs/README.md` | exists | raw logs ignored by default; current make log is not tracked |
 | reference directory guide | `references/README.md` | exists | placeholder |
-| PPT structure plan | `slides/README.md` | exists | stage6a outline includes lab2 v0.2 and lab4 file table observation; actual PPT TODO |
+| PPT directory guide | `slides/README.md` | exists | stage10c guide for final PPT source, generator, PPTX output, and no-media boundary |
 | final PPT outline | `slides/final_ppt_outline.md` | exists | stage10b 15-slide final defense outline with key message, bullets, visual suggestion, and speaker notes |
+| final PPT source | `slides/final_ppt.md` | exists | stage10c 16-slide final defense source with title, key message, bullets, suggested visual, and speaker notes |
+| final PPT generator | `slides/generate_final_ppt.py` | exists | stage10c standard-library OpenXML generator; reads slides/final_ppt.md and writes slides/final_defense_ppt.pptx without embedded media |
+| final PPTX | `slides/final_defense_ppt.pptx` | exists | stage10c generated 16:9 defense deck; 16 slides, speaker notes, no embedded video/screenshot media |
 | Demo video notes | `videos/README.md` | exists | records video policy and no-video-in-Git boundary |
 | Demo script draft | `videos/demo_script.md` | exists | historical 2-3 minute demo flow; final recorded video metadata is tracked in submissions/demo_record.md |
 | Final submission | `submissions/` | - | TODO: organize against official requirements |
@@ -120,7 +123,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 - docs/final/ is the formal submission documentation portal for stage8a and should be the basis for technical report v1.0 and PPT.
 - docs/README.md explains the boundary between formal docs/final documentation and historical process records.
 - Technical report v1.0 draft is docs/final/technical_report_v1.0.md; technical report v0.1 is historical only.
-- Final PPT outline is slides/final_ppt_outline.md; PPT binary/export is not committed.
+- Final PPT source is slides/final_ppt.md and current PPTX output is slides/final_defense_ppt.pptx; final human review and rehearsal are still required.
 - docs/13_technical_report_v0.1.md is explicitly marked as a historical draft superseded by docs/final and a future technical report v1.0.
 - Raw logs remain ignored by Git; do not submit logs/*.log.
 - boot-xv6.sh now defaults to 45s soft timeout, hard timeout max(timeout+15,75), and 2 attempts; QEMU long-running stability and manual interactive shell testing remain TODO.

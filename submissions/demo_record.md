@@ -46,6 +46,7 @@
 
 - 视频文件位于仓库外：`D:\Edge Download\CSCC\proj54_submission_assets\videos`。
 - 本仓库只记录视频文件名、用途、大小、时长、分辨率、帧率、外部位置和 SHA256，不提交 `.mp4` 本体。
+- `slides/final_defense_ppt.pptx` 不嵌入视频本体；答辩时如需播放视频，应从外部提交材料或平台附件中使用 `20260606_final_integrated_0001_0007_demo.mp4`。
 - 平台提交方式仍需按比赛官方要求确认。
 - raw video files are stored outside Git and should be reviewed before platform upload.
 - 最终上传前必须人工检查视频画面中没有 token、password、cookie、报名材料、私人聊天、未公开账号或其他隐私信息。

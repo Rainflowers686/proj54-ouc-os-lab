@@ -51,6 +51,21 @@ doctor/check-env/baseline/apply+make/boot/hello/add2test/pstatetest/pcounttest/p
 | SHA256 | `0FF2D3581552B3FD3A2630E827251CF46C36BC3BE8F8B9D9DDB691FC0668A93B` |
 | scope | final integrated `0001-0007` verification demo for commit `e8e2fb9` |
 
+## Final Presentation Deliverable
+
+| 字段 | 内容 |
+| --- | --- |
+| PPT source | `slides/final_ppt.md` |
+| PPT generator | `slides/generate_final_ppt.py` |
+| PPTX file | `slides/final_defense_ppt.pptx` |
+| PPTX size | `63,695 bytes` |
+| slide count | 16 |
+| notes count | 16 speaker notes |
+| media embedding | none detected in `ppt/media/` after generation |
+| review status | requires final human review and rehearsal before defense |
+
+PPTX 是提交展示材料，不是 raw verification evidence。它不嵌入视频、截图、summary 原件、console log 或隐私材料；最终视频仍按外部文件和 SHA256 管理。
+
 ## Historical Evidence
 
 | 证据 | 范围 | 状态 |
@@ -85,6 +100,7 @@ doctor/check-env/baseline/apply+make/boot/hello/add2test/pstatetest/pcounttest/p
 - No token/password/cookie should be included in final evidence files.
 - Platform upload method still needs final confirmation.
 - Privacy review status for videos/screenshots remains `pending final manual review` unless manually confirmed later.
+- Final PPTX has been generated from a tracked Markdown source, but still requires final human review and rehearsal.
 - timeout capture is evidence of expected-output matching, not long-running stability testing.
 - `fcount()` / `fdcount()` are file table / fd table observation experiments, not a complete file system.
 - Lab5 is a capstone reproduction experiment, not a new kernel mechanism.

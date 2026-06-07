@@ -12,7 +12,7 @@
 
 ## 正式文档与过程文档
 
-`docs/final/` 是面向正式提交和评委阅读的文档体系。`docs/final/technical_report_v1.0.md` 是正式技术报告草案，`slides/final_ppt_outline.md` 是答辩 PPT 大纲。
+`docs/final/` 是面向正式提交和评委阅读的文档体系。`docs/final/technical_report_v1.0.md` 是正式技术报告草案，`slides/final_ppt_outline.md` 是答辩 PPT 大纲，`slides/final_ppt.md` 是可追踪 PPT 源稿，`slides/final_defense_ppt.pptx` 是当前 PPTX 成稿。
 
 `docs/00` 到 `docs/23` 是开发过程、阶段审查、红队记录、测试摘要和问题记录。这些文档保留了真实演进过程，适合追溯为什么做某个设计选择，但不应当直接当作最终技术报告。
 

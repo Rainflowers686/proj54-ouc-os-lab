@@ -883,3 +883,25 @@
   - `git ls-files external/xv6-riscv`, `git ls-files logs/*.log`, `git ls-files logs/*.summary.txt`, `git ls-files logs/*.console.txt`, and `git ls-files .claude`: no tracked files.
   - `git ls-files | grep -Ei '\.(mp4|mov|avi|mkv|zip|7z|rar|png|jpg|jpeg)$' || true`: no tracked video, archive, screenshot, or image evidence files.
   - `git diff --name-only -- patches/integrated-labs scripts/xv6 external`: no output.
+
+## 2026-06-07: stage10c final defense PPT and pre-submission materials
+
+- Commit hash: TODO after commit
+- Goal: finalize the defense PPT and close final submission-facing materials without modifying OS code, integrated patches, or xv6 verification scripts.
+- Completed:
+  - Added `slides/final_ppt.md` as the tracked 16-slide final defense source.
+  - Added `slides/generate_final_ppt.py`, a Python standard-library OpenXML generator that reads `slides/final_ppt.md` and writes `slides/final_defense_ppt.pptx`.
+  - Generated `slides/final_defense_ppt.pptx`; package inspection found 16 slides, 16 speaker notes, `63,695 bytes`, and no `ppt/media/` files.
+  - Rewrote `slides/README.md` so the slide directory records current source/generator/PPTX status instead of the old TODO plan.
+  - Lightly enhanced `docs/final/technical_report_v1.0.md` with an explicit Lab0-Lab4/Lab5 boundary, architecture and syscall diagrams, pgcount/fdcount pseudocode, and same-type project differentiation.
+  - Updated `docs/final/09_ai_usage_and_contribution_statement.md` and the report AI section to match the team's actual tool configuration.
+  - Updated `docs/final/10_reference_and_license_statement.md` to keep only xv6-riscv as confirmed URL/license and leave uCore/rCore/YatSen/F-Tutorials/winning-project references as pending checks.
+  - Updated README, docs guide, submission checklist, demo record, evidence manifest, AI usage record, and collect-report indexing.
+- Boundaries:
+  - No `patches/integrated-labs/` file was modified.
+  - No `scripts/xv6/` file was modified.
+  - No OS implementation code was modified.
+  - No engineering verification result, platform submission method, privacy review, teammate real name, OS version, URL, or license was fabricated.
+  - No external source tree, raw logs, summary files, screenshots, videos, archives, `.claude/`, `.vscode/`, or private material was added.
+- Validation:
+  - Final validation commands are run at the end of stage10c; results are reported in the final assistant response.

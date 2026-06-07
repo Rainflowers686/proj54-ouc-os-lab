@@ -1,97 +1,27 @@
-# slides
+# Slides
 
-本目录用于存放或说明初赛 PPT / 展示材料。当前不生成 PPT 文件，只维护结构计划。
+本目录存放答辩展示材料。PPT 内容必须可追踪到 Markdown 源稿，不能只在 PowerPoint 中无记录手改。
 
-当前状态：PPT 结构计划初版，实际 PPT 文件 TODO。
+## Final Defense PPT
 
-## 初赛 PPT 建议结构
+| 文件 | 状态 | 说明 |
+| --- | --- | --- |
+| `slides/final_ppt_outline.md` | 已完成 | stage10b 答辩大纲，保留为结构草案 |
+| `slides/final_ppt.md` | 已完成 | stage10c 正式 PPT 源稿，16 页，每页包含标题、核心信息、bullet、视觉建议和讲稿备注 |
+| `slides/generate_final_ppt.py` | 已完成 | 使用 Python 标准库从 `slides/final_ppt.md` 生成 PPTX，不嵌入图片、视频、截图或 raw logs |
+| `slides/final_defense_ppt.pptx` | 已生成 | 当前答辩 PPTX 成稿；16:9；含 16 张 slide 和 16 份 speaker notes；无 `ppt/media/` 文件 |
 
-1. 项目背景与赛题理解
-   - proj54 是教学型赛题。
-   - 项目目标是建设适合中国海洋大学低年级学生的 OS 竞赛入门实验体系。
+生成命令：
 
-2. 总体设计
-   - 主线暂定 xv6-riscv。
-   - lab0-lab5 的渐进式实验路线。
-   - 当前 v0.1 聚焦 lab0/lab1 最小闭环。
+```bash
+python slides/generate_final_ppt.py
+```
 
-3. 工程治理与第三方源码隔离
-   - `external/xv6-riscv/` 不提交。
-   - lab1/lab2 改动以 patch 形式提交。
-   - independent patch 与 integrated patch 分开维护。
-   - `logs/*.log` 不提交，只摘录关键证据。
+在 Codex desktop 环境中使用 bundled Python 生成过一次；普通环境使用系统 Python 3 也应可运行，因为生成器只依赖标准库。
 
-4. lab0 环境与 baseline
-   - WSL2 Ubuntu 工具链检查。
-   - baseline commit。
-   - baseline make 成功。
-   - boot evidence 捕获。
+## Compliance Boundary
 
-5. lab1 hello / add2 syscall
-   - 修改文件列表。
-   - 用户态到内核态调用链。
-   - `hello syscall returned 2026` 输出证据。
-   - `add2(int a, int b)` 通过 `argint()` 获取参数。
-   - `add2(20, 6) returned 26` 输出证据。
-
-6. clean patch 复现
-   - 从 clean baseline reset。
-   - 依次应用 `0001` 和 `0002`。
-   - `make`。
-   - hello 与 add2 输出捕获。
-
-7. lab2 pstate/pcount 进程观察
-   - `pstate(int pid)` syscall。
-   - `pcount(int state)` syscall。
-   - `pcounttest` 负向输入：`pcount(99) = -1`。
-   - `pchildtest` 子进程状态观察。
-   - `struct proc` 和 `enum procstate`。
-   - 遍历 `proc[]`。
-   - 持有 `p->lock` 读取 `p->state`。
-   - `pstate(self) = 4 (RUNNING)` 输出证据。
-   - `pcount(RUNNING) =`、`pstate(child) =` 输出证据。
-
-8. integrated-labs 综合演示
-   - stage4b 已实测 lab1/lab2 independent patch 不能直接叠加。
-   - integrated sequence 统一 syscall number：`hello=22`、`add2=23`、`pstate=24`、`pcount=25`。
-   - 从 clean baseline 顺序应用 `patches/integrated-labs/0001`、`0002`、`0003`、`0004`。
-   - 同一 xv6 构建中已捕获 hello、add2test、pstatetest、pcounttest、pchildtest 输出。
-
-9. 测试证据
-   - `docs/04_test_report.md`。
-   - `docs/12_lab1_patch_review.md`。
-   - `docs/15_lab2_process_observation_review.md`。
-   - `docs/16_patch_strategy_and_integration_plan.md`。
-   - 不提交原始日志。
-
-10. 风险与后续计划
-   - timeout 自动捕获不是长期稳定性测试。
-   - 第二名队员复现 TODO。
-   - 人工交互录屏 TODO。
-   - lab2 扩展或 lab4 二选一深化。
-
-## 注意事项
-
-- TODO: 不加入报名材料或个人隐私。
-- TODO: 不使用未经记录来源和许可证的外部图片。
-- TODO: 不把未完成工作写成已完成。
-- TODO: 生成 PPT 前先确认比赛平台格式和大小要求。
-
-## stage6a 更新：lab4 slide 补充
-
-PPT 结构建议新增一页或一组小页：
-
-11. lab4 文件表观察
-   - `fcount()` syscall。
-   - `fcounttest` 用户程序。
-   - 从 file descriptor 过渡到 `struct file`。
-   - `ref` 引用计数与 `open/close` 的关系。
-   - `ftable.lock` 的锁保护说明。
-   - `fcount(before) =`、`fcount(after_open) =`、`fcount(after_close) =`、`fcounttest done` 输出证据。
-   - 说明具体数字不固定，当前只验证稳定前缀。
-
-integrated-labs 综合演示页同步更新：
-
-- syscall number：`hello=22`、`add2=23`、`pstate=24`、`pcount=25`、`fcount=26`。
-- patch sequence：`0001-0005`。
-- 当前仍不声称人工录屏、长期稳定性测试或队友二次复现已完成。
+- PPTX 可以作为提交材料，但仍需人工最终审阅和排练。
+- PPTX 不嵌入视频、截图、队友原始 evidence、token、密码或隐私材料。
+- final video 只在 `submissions/demo_record.md` 和 `submissions/evidence_manifest.md` 中记录元数据与 SHA256；视频本体不进入 Git。
+- 如果后续用 PowerPoint 精修，必须先同步回 `slides/final_ppt.md` 或在提交记录中说明改动，不要产生不可追踪内容。

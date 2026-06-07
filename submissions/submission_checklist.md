@@ -1,6 +1,6 @@
 # Submission Checklist
 
-> 维护时间：2026-06-07（stage10a final evidence manifest）。
+> 维护时间：2026-06-07（stage10c final defense PPT and pre-submission materials）。
 > 本 checklist 面向最终提交前自查，不包含报名信息、个人隐私、token、视频文件或大文件。
 
 ## 1. 平台提交合规
@@ -49,7 +49,10 @@
 | 引用与许可证声明 | `docs/final/10_reference_and_license_statement.md` | 已补充 xv6 MIT 与参考项目待核对项 |
 | 已知限制 | `docs/final/11_known_limits_and_future_work.md` | 已补充 |
 | 技术报告 v1.0 | `docs/final/technical_report_v1.0.md` | 已形成 judge-facing 草案 |
-| PPT 大纲 | `slides/final_ppt_outline.md` | 已形成 15 页答辩结构；PPT 成稿待制作 |
+| PPT 大纲 | `slides/final_ppt_outline.md` | 已形成 15 页答辩结构草案 |
+| PPT 源稿 | `slides/final_ppt.md` | 已形成 16 页正式答辩源稿 |
+| PPT 生成器 | `slides/generate_final_ppt.py` | 使用 Python 标准库生成 PPTX；不嵌入视频、截图或 raw logs |
+| PPT 成稿 | `slides/final_defense_ppt.pptx` | 已生成；16:9；16 张 slide 与 16 份 speaker notes；`63,695 bytes`；无 `ppt/media/` 文件；仍需人工最终审阅和排练 |
 | 材料索引 | `submissions/draft-report-index.md` | 由 `scripts/collect-report.sh` 生成 |
 | 最终证据 manifest | `submissions/evidence_manifest.md` | 已记录 final commit、final verification、final video、historical evidence、外部目录和 non-committed evidence policy |
 | docs 导引 | `docs/README.md` | 已说明正式文档与过程文档边界 |
@@ -120,9 +123,9 @@ bash scripts/xv6/teammate-verify.sh --full
 
 - 队友真实姓名和系统版本（如最终材料需要）。
 - 平台提交方式和最终隐私复核结论。
-- PPT 成稿。
+- PPT 人工最终审阅和答辩排练。
 - uCore/rCore/YatSen OS/F-Tutorials/往届资料的最终 URL 与许可证核对。
 
 ## 10. 结论
 
-当前工程功能、验证链、final `e8e2fb9` lead/root/z2996 full PASS 摘要、final 视频元数据和 SHA256、技术报告 v1.0 草案、PPT 大纲已经形成提交证据基础。冲奖前仍必须补齐 PPT 成稿、平台提交方式、最终隐私复核、引用 URL/许可证核对和最终红队审核。
+当前工程功能、验证链、final `e8e2fb9` lead/root/z2996 full PASS 摘要、final 视频元数据和 SHA256、技术报告 v1.0、PPT 源稿和 PPTX 成稿已经形成提交证据基础。冲奖前仍必须完成 PPT 人工最终审阅/排练、平台提交方式确认、最终隐私复核、引用 URL/许可证核对和最终红队审核。

@@ -56,6 +56,8 @@ xv6-riscv 上游 LICENSE 为 MIT License。项目使用 xv6 作为教学 OS base
 
 当前已确认项：xv6-riscv 是本项目上游 baseline，baseline commit 为 `74f84181a3404d1d6a6ff98d342233979066ebb8`，LICENSE 为 MIT License，`external/xv6-riscv/` 不入仓。
 
+stage10c final check 结论：当前仓库内只确认了 xv6-riscv 的上游 URL、baseline commit 和 MIT License。uCore、rCore、YatSen OS、F-Tutorials、往届作品仍只作为同类项目对比候选；在未完成 URL/license 核对前，技术报告和 PPT 只使用概括性定位对比，不把它们写成直接来源。
+
 ## 本队增量贡献
 
 - `patches/lab1-system-call/`：hello/add2 syscall 教学 patch。
