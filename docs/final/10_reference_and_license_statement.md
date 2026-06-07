@@ -32,6 +32,17 @@ xv6-riscv 上游 LICENSE 为 MIT License。项目使用 xv6 作为教学 OS base
 
 当前 `docs/final/` 中只做定位性对比，不复制上述项目的大段文本、代码或图片。
 
+## Final-Check Table
+
+| 项目 | 类型 | URL 状态 | License 状态 | 是否作为直接来源 | 当前处理 |
+| --- | --- | --- | --- | --- | --- |
+| xv6-riscv | baseline / teaching OS | 已记录：`https://github.com/mit-pdos/xv6-riscv.git` | 已核对：MIT License，本地 `external/xv6-riscv/LICENSE` | 是，作为 baseline；本仓库提交 patch 增量 | 记录 baseline commit、MIT License 和 external 不入仓边界 |
+| uCore Tutorial / uCore OS Lab | reference candidate | 待核对 | 待核对 | 否；仅作为课程实验组织对比候选 | 最终报告/PPT 如引用需补 URL/license，不复制代码或大段文本 |
+| rCore Tutorial | reference candidate | 待核对 | 待核对 | 否；仅作为教程结构对比候选 | 最终报告/PPT 如引用需补 URL/license，不复制代码或大段文本 |
+| YatSen OS | reference candidate | 待核对 | 待核对 | 否；仅作为同类课程/竞赛材料展示参考 | 最终报告/PPT 如引用需补 URL/license，不复制代码或图片 |
+| F-Tutorials | reference candidate | 待核对 | 待核对 | 否；仅作为 tutorial 组织参考候选 | 最终报告/PPT 如引用需补 URL/license，不复制代码或大段文本 |
+| 往届 OS 竞赛作品 | reference candidate | 待核对 | 待核对 | 否；仅作为提交材料结构和评审关注点参考 | 最终报告/PPT 如引用需补 URL/license，不复制私有材料 |
+
 ## 待核对清单
 
 最终技术报告/PPT 引用前必须逐项核对 URL、许可证和引用位置，不要在未核对时补造链接：

@@ -78,6 +78,8 @@ bash scripts/xv6/cleanup-qemu.sh
 | `docs/final/09_ai_usage_and_contribution_statement.md` | AI 使用与贡献说明                              |
 | `docs/final/10_reference_and_license_statement.md`     | 引用与许可证说明                               |
 | `docs/final/11_known_limits_and_future_work.md`        | 已知限制与后续计划                             |
+| `docs/final/technical_report_v1.0.md`                  | 正式技术报告 v1.0 草案                         |
+| `slides/final_ppt_outline.md`                          | 最终答辩 PPT 大纲                              |
 
 提交材料索引见 `submissions/draft-report-index.md`；运行 `bash scripts/collect-report.sh` 可重新生成。
 
@@ -109,5 +111,5 @@ submissions/evidence_manifest.md
 - lab3 当前已进入 integrated `0006`，但仍只是页表映射数量观察，不是完整内存管理实验。
 - lab4 当前为 file table / fd table 观察 v0.2，后续可扩展 inode、open-file summary 等内容。
 - lab5 当前是 capstone 文档和综合复现闭环，不新增内核功能。
-- 技术报告 v1.0 和 PPT 仍需基于 `docs/final/` 整理。
+- 技术报告 v1.0 草案和 PPT 大纲已基于 `docs/final/` 整理；PPT 成稿仍需制作。
 - 队友真实姓名/系统版本、平台提交方式、视频/截图最终隐私复核、同类项目参考 URL 仍需最终补齐或人工确认。

@@ -853,3 +853,33 @@
   - `git ls-files external/xv6-riscv`, `git ls-files logs/*.log`, `git ls-files logs/*.summary.txt`, `git ls-files logs/*.console.txt`, and `git ls-files .claude`: no tracked files.
   - `git ls-files | grep -Ei '\.(mp4|mov|avi|mkv|zip|7z|rar|png|jpg|jpeg)$' || true`: no tracked video, archive, screenshot, or image evidence files.
   - `git diff --name-only -- patches/integrated-labs scripts/xv6`: no output; stage10a did not modify integrated patches or xv6 verification scripts.
+
+## 2026-06-07: stage10b technical report v1.0 and PPT outline
+
+- Commit hash: TODO after commit
+- Goal: draft a judge-facing technical report v1.0 and final defense PPT outline using final evidence as source of truth, without modifying OS code, integrated patches, or xv6 verification scripts.
+- Completed:
+  - Added `docs/final/technical_report_v1.0.md`.
+  - Added `slides/final_ppt_outline.md`.
+  - Updated `docs/final/10_reference_and_license_statement.md` with a final-check table for xv6-riscv, uCore, rCore, YatSen OS, F-Tutorials, and winning-project references.
+  - Updated README and `docs/README.md` so report v1.0 and PPT outline are discoverable from the formal reading path.
+  - Updated `submissions/submission_checklist.md`, AI usage record, progress log, and `scripts/collect-report.sh`.
+  - Marked `docs/21_submission_readiness_review.md` as a stage6d historical snapshot in the generated material index to avoid confusing it with final `e8e2fb9` evidence.
+- Report structure:
+  - 摘要、赛题理解、总体设计、Lab0-Lab5、integrated `0001-0007`、自动化验证、演示视频与证据链、创新点、引用许可证、AI 使用、已知限制与后续工作。
+- PPT outline:
+  - 15 slides covering title, scoring understanding, pain points, project positioning, Lab0-Lab5, integrated workflow, three-party evidence, video/evidence manifest, innovation, boundaries and future work.
+- Boundaries:
+  - No `patches/integrated-labs/` file was modified.
+  - No `scripts/xv6/` file was modified.
+  - No OS implementation code was modified.
+  - No platform submission method, teammate real names, OS versions, privacy review, URL, or license was fabricated.
+  - No raw logs, summary files, screenshots, videos, archives, `.claude/`, `.vscode/`, or private materials were added.
+- Validation:
+  - `bash scripts/collect-report.sh`: PASS; regenerated `submissions/draft-report-index.md`.
+  - `git diff --check`: PASS.
+  - `git status --short`: showed intended documentation/index changes and new `docs/final/technical_report_v1.0.md`, `slides/final_ppt_outline.md`.
+  - `git status --ignored --short external logs .claude`: showed `external/xv6-riscv/`, `.claude/`, and logs as ignored.
+  - `git ls-files external/xv6-riscv`, `git ls-files logs/*.log`, `git ls-files logs/*.summary.txt`, `git ls-files logs/*.console.txt`, and `git ls-files .claude`: no tracked files.
+  - `git ls-files | grep -Ei '\.(mp4|mov|avi|mkv|zip|7z|rar|png|jpg|jpeg)$' || true`: no tracked video, archive, screenshot, or image evidence files.
+  - `git diff --name-only -- patches/integrated-labs scripts/xv6 external`: no output.

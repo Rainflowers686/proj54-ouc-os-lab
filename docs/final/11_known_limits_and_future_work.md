@@ -11,8 +11,8 @@
 | 队友独立复现 | final full PASS 已记录 | root 与 z2996 两份 `e8e2fb9` / integrated `0001-0007` full PASS 已记录；旧 `1ba9db6` 只作 historical evidence |
 | 视频提交信息 | final metadata 已记录 | final integrated `0001-0007` 视频已记录大小、时长、SHA256；平台提交方式和最终隐私复核待确认 |
 | 同类项目引用 URL | 待补充 | uCore/rCore/YatSen OS/F-Tutorials 等需最终核对 |
-| 技术报告 v1.0 | 待制作 | 可基于 `docs/final/` 整理 |
-| PPT | 待制作 | 可基于 README、overview、testing、tradeoffs 整理 |
+| 技术报告 v1.0 | 草案已完成 | `docs/final/technical_report_v1.0.md` |
+| PPT | 大纲已完成，成稿待制作 | `slides/final_ppt_outline.md` 已给出 15 页结构 |
 
 ## 不能夸大的内容
 
@@ -59,13 +59,13 @@
 
 1. 队友真实姓名、系统版本（如最终材料需要）。
 2. 视频/截图最终隐私复核和平台提交方式。
-3. 技术报告 v1.0。
-4. PPT。
+3. PPT 成稿。
+4. 技术报告 v1.0 最终人工校对。
 5. 参考来源 URL 和许可证核对。
 6. 最终 Git 卫生检查。
 
 ## 建议下一轮工作
 
-- `stage8c`: 根据 `docs/final/` 和 stage8b 证据生成技术报告 v1.0。
-- `stage8d`: 生成 PPT 大纲和讲稿。
-- `stage8e`: 最终提交前红队审核。
+- 根据 `slides/final_ppt_outline.md` 制作 PPT 成稿。
+- 对 `docs/final/technical_report_v1.0.md` 做最终人工校对。
+- 最终提交前红队审核。

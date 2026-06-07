@@ -31,7 +31,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 | integrated apply helper safety review | `docs/18_integrated_helper_review.md` | exists | stage4f red-team plus stage6a update: preview safe; --run/--make always require --yes; --make --yes applies 0001-0005 |
 | lab2 v0.2 process observation review | `docs/19_lab2_v0.2_process_observation_review.md` | exists | stage5a + stage5b red-team: pcount/pcounttest/pchildtest and negative input; integrated 0001-0004 re-reproduced from clean baseline; 0004 patch unchanged; lock/snapshot analysis and benign usys.pl mode warning documented |
 | lab4 file table observation review | `docs/20_lab4_file_table_observation_review.md` | exists | stage6a + stage6b red-team: fcount/fcounttest; independent lab4 patch and integrated 0005 re-reproduced from clean baseline; both patches unchanged; filecount lock/deadlock/no-leak analysis; sys_fcount in sysfile.c; open/close +1/-1 delta; fcount numbers non-fixed |
-| submission readiness review | `docs/21_submission_readiness_review.md` | exists | stage6d red-team: full integrated 0001-0005 reproduced from clean baseline (make/boot x2/hello/add2test/pstatetest/pcounttest+negative/pchildtest/fcounttest); doc consistency audit; risk list and pre-submission must-do (teammate reproduction + manual recording still TODO) |
+| submission readiness review | `docs/21_submission_readiness_review.md` | exists | stage6d historical snapshot: full integrated 0001-0005 reproduced at that time; superseded by final e8e2fb9 integrated 0001-0007 evidence manifest |
 | teammate reproduction troubleshooting | `docs/22_teammate_reproduction_troubleshooting.md` | exists | stage7a0: explains apply/make completion, boot normal duration, Ctrl+Z risk, qemu/make cleanup, continuation steps, feedback format, and no-log/no-secret boundaries |
 | teammate quickstart | `docs/23_teammate_quickstart.md` | exists | stage7a2: official teammate testing entry; --full first run, --quick retest after make, local-verify before recording, cleanup-qemu after stuck/Ctrl+Z, summary feedback, no external/logs/secrets |
 | lab3/lab5 completion plan | `docs/24_lab3_lab5_completion_plan.md` | exists | stage9c plan and stage10a evidence boundary: integrated 0006 pgcount, integrated 0007 fdcount, Lab5 capstone workflow, final e8e2fb9 full evidence recorded elsewhere |
@@ -48,6 +48,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 | final AI usage statement | `docs/final/09_ai_usage_and_contribution_statement.md` | exists | stage8a formal AI usage and contribution statement |
 | final reference and license statement | `docs/final/10_reference_and_license_statement.md` | exists | stage8a formal xv6 MIT license boundary and reference-project notes |
 | final limits and future work | `docs/final/11_known_limits_and_future_work.md` | exists | stage10a limits: pgcount/fdcount scope boundaries, Lab5 capstone only, final evidence recorded, platform/privacy/reference items still pending |
+| technical report v1.0 | `docs/final/technical_report_v1.0.md` | exists | stage10b judge-facing technical report draft: positioning, labs, integrated 0001-0007, verification evidence, teaching value, license/AI/limits |
 | submission checklist | `submissions/submission_checklist.md` | exists | stage10a submission checklist: platform compliance, Git hygiene, final e8e2fb9 reproducibility, docs, video metadata, teammate summaries, red-team review, final commands |
 | demo video record | `submissions/demo_record.md` | exists | stage10a records final integrated 0001-0007 video metadata and SHA256 plus 3 historical video records; no video files in Git |
 | teammate reproduction record | `submissions/teammate_reproduction_record.md` | exists | stage10a records final e8e2fb9 lead/root/z2996 full PASS digests and historical 1ba9db6 records; raw logs/summary/screenshots are not committed |
@@ -96,6 +97,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 | logs directory guide | `logs/README.md` | exists | raw logs ignored by default; current make log is not tracked |
 | reference directory guide | `references/README.md` | exists | placeholder |
 | PPT structure plan | `slides/README.md` | exists | stage6a outline includes lab2 v0.2 and lab4 file table observation; actual PPT TODO |
+| final PPT outline | `slides/final_ppt_outline.md` | exists | stage10b 15-slide final defense outline with key message, bullets, visual suggestion, and speaker notes |
 | Demo video notes | `videos/README.md` | exists | records video policy and no-video-in-Git boundary |
 | Demo script draft | `videos/demo_script.md` | exists | historical 2-3 minute demo flow; final recorded video metadata is tracked in submissions/demo_record.md |
 | Final submission | `submissions/` | - | TODO: organize against official requirements |
@@ -117,7 +119,8 @@ It is not the final technical report, does not generate PDF, and does not includ
 - scripts/xv6/cleanup-qemu.sh is the rescue command when QEMU is stuck or Ctrl+Z suspended a job.
 - docs/final/ is the formal submission documentation portal for stage8a and should be the basis for technical report v1.0 and PPT.
 - docs/README.md explains the boundary between formal docs/final documentation and historical process records.
-- Technical report v0.1 and reproducibility package are drafts for review, not final submission files.
+- Technical report v1.0 draft is docs/final/technical_report_v1.0.md; technical report v0.1 is historical only.
+- Final PPT outline is slides/final_ppt_outline.md; PPT binary/export is not committed.
 - docs/13_technical_report_v0.1.md is explicitly marked as a historical draft superseded by docs/final and a future technical report v1.0.
 - Raw logs remain ignored by Git; do not submit logs/*.log.
 - boot-xv6.sh now defaults to 45s soft timeout, hard timeout max(timeout+15,75), and 2 attempts; QEMU long-running stability and manual interactive shell testing remain TODO.

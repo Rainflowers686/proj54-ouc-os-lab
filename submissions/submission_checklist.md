@@ -48,6 +48,8 @@
 | AI 使用声明 | `docs/final/09_ai_usage_and_contribution_statement.md` | 已补充 |
 | 引用与许可证声明 | `docs/final/10_reference_and_license_statement.md` | 已补充 xv6 MIT 与参考项目待核对项 |
 | 已知限制 | `docs/final/11_known_limits_and_future_work.md` | 已补充 |
+| 技术报告 v1.0 | `docs/final/technical_report_v1.0.md` | 已形成 judge-facing 草案 |
+| PPT 大纲 | `slides/final_ppt_outline.md` | 已形成 15 页答辩结构；PPT 成稿待制作 |
 | 材料索引 | `submissions/draft-report-index.md` | 由 `scripts/collect-report.sh` 生成 |
 | 最终证据 manifest | `submissions/evidence_manifest.md` | 已记录 final commit、final verification、final video、historical evidence、外部目录和 non-committed evidence policy |
 | docs 导引 | `docs/README.md` | 已说明正式文档与过程文档边界 |
@@ -118,10 +120,9 @@ bash scripts/xv6/teammate-verify.sh --full
 
 - 队友真实姓名和系统版本（如最终材料需要）。
 - 平台提交方式和最终隐私复核结论。
-- 技术报告 v1.0。
-- PPT。
+- PPT 成稿。
 - uCore/rCore/YatSen OS/F-Tutorials/往届资料的最终 URL 与许可证核对。
 
 ## 10. 结论
 
-当前工程功能、验证链、final `e8e2fb9` lead/root/z2996 full PASS 摘要、final 视频元数据和 SHA256 已经形成提交证据基础。冲奖前仍必须补齐技术报告 v1.0、PPT、平台提交方式、最终隐私复核、引用 URL/许可证核对和最终红队审核。
+当前工程功能、验证链、final `e8e2fb9` lead/root/z2996 full PASS 摘要、final 视频元数据和 SHA256、技术报告 v1.0 草案、PPT 大纲已经形成提交证据基础。冲奖前仍必须补齐 PPT 成稿、平台提交方式、最终隐私复核、引用 URL/许可证核对和最终红队审核。
