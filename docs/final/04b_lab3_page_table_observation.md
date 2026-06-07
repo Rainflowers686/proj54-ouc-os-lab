@@ -76,7 +76,7 @@ pgcounttest done
 | `pgcount lazy delta before touch = 0` | PASS |
 | `pgcount lazy delta after two touches = 2` | PASS |
 | `pgcounttest done` | PASS |
-| 新 HEAD 队友 full verification | 待重跑 |
+| final teammate full verification | `e8e2fb9` root 与 z2996 full PASS 已记录；旧 `1ba9db6` 只作 historical evidence |
 
 ## 常见错误
 

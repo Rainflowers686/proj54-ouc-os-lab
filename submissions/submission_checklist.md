@@ -1,6 +1,6 @@
 # Submission Checklist
 
-> 维护时间：2026-06-06（stage8b reproduction evidence record）。
+> 维护时间：2026-06-07（stage10a final evidence manifest）。
 > 本 checklist 面向最终提交前自查，不包含报名信息、个人隐私、token、视频文件或大文件。
 
 ## 1. 平台提交合规
@@ -10,8 +10,8 @@
 | 官方主仓库 | 待最终确认 | 最终以比赛 GitLab / 平台要求为准，不修改 remote |
 | GitHub 使用边界 | 已说明 | GitHub 仅作私有备份/协作，不作为最终提交平台 |
 | 报名材料 | 禁止入库 | 姓名、学号、手机号、身份证等不进 Git |
-| 视频文件 | 禁止入库 | 已录制 3 段，文件名/外部位置/约略大小已记录到 `submissions/demo_record.md`；时长和提交方式待补充 |
-| 大文件/压缩包 | 禁止入库 | `.mp4/.mov/.zip/.7z/.rar` 等均禁止提交 |
+| 视频文件 | 禁止入库 | final integrated `0001-0007` 视频与 3 段 historical 视频元数据已记录到 `submissions/demo_record.md`；平台提交方式和最终隐私复核待确认 |
+| 大文件/压缩包/截图 | 禁止入库 | `.mp4/.mov/.zip/.7z/.rar/.png/.jpg` 等均禁止提交 |
 
 ## 2. Git 仓库卫生
 
@@ -33,8 +33,8 @@
 | boot evidence | `bash scripts/xv6/boot-xv6.sh` | PASS |
 | Lab3 integrated pgcount | `bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcounttest done"` | PASS；已进入 integrated `0006` |
 | Lab4 fdcount | `bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"` | PASS；已进入 integrated `0007` |
-| 一键 full 验证 | `bash scripts/xv6/teammate-verify.sh --full` | 队长本机通过 `local-verify --full` 完整跑通；队友新 HEAD full 仍需重新收集 |
-| 本地录屏前预检 | `bash scripts/xv6/local-verify.sh --quick` | 队长本机 `local-verify --full` PASS；录屏前仍推荐 quick |
+| 一键 full 验证 | `bash scripts/xv6/teammate-verify.sh --full` | final `e8e2fb9` 队长本机、root、z2996 full verification 均 PASS |
+| 本地录屏前预检 | `bash scripts/xv6/local-verify.sh --quick` | 队长本机 final full PASS；录屏前仍推荐 quick |
 | QEMU cleanup | `bash scripts/xv6/cleanup-qemu.sh` | 可用 |
 
 ## 4. 文档材料
@@ -49,20 +49,22 @@
 | 引用与许可证声明 | `docs/final/10_reference_and_license_statement.md` | 已补充 xv6 MIT 与参考项目待核对项 |
 | 已知限制 | `docs/final/11_known_limits_and_future_work.md` | 已补充 |
 | 材料索引 | `submissions/draft-report-index.md` | 由 `scripts/collect-report.sh` 生成 |
+| 最终证据 manifest | `submissions/evidence_manifest.md` | 已记录 final commit、final verification、final video、historical evidence、外部目录和 non-committed evidence policy |
 | docs 导引 | `docs/README.md` | 已说明正式文档与过程文档边界 |
-| 队友复现记录 | `submissions/teammate_reproduction_record.md` | 已记录 2 份旧 commit full PASS summary；stage9c 新 HEAD 待重跑 |
+| 队友复现记录 | `submissions/teammate_reproduction_record.md` | 已记录 final `e8e2fb9` root/z2996 full PASS；旧 `1ba9db6` 记录为 historical evidence |
 
 ## 5. 视频记录
 
 | 检查项 | 状态 |
 | --- | --- |
-| 已录制 3 段视频 | 已记录 |
+| final integrated `0001-0007` 视频 | 已记录大小、时长、分辨率、帧率和 SHA256 |
+| historical 视频 3 段 | 已记录为 earlier `0001-0005` / stage7-stage8 evidence |
 | 视频文件不入库 | 必须保持 |
 | 视频文件名 | 已记录 |
-| 视频时长 | 待补充 |
+| 视频时长 | final 与 historical 视频均已记录 |
 | 外部存放位置 | 已记录 |
 | 平台提交方式 | 待补充 |
-| 隐私/token/密码检查 | 待人工复核 |
+| 隐私/token/密码检查 | pending final manual review |
 
 记录文件：`submissions/demo_record.md`。
 
@@ -71,7 +73,7 @@
 | 检查项 | 状态 |
 | --- | --- |
 | 队友使用命令 | `bash scripts/xv6/teammate-verify.sh --full` |
-| copy-to-lead summary | 旧 2 份 full PASS summary 锚定 `1ba9db6`；stage9c 新 HEAD 需要重新收集 |
+| copy-to-lead summary | final `e8e2fb9` root 与 z2996 full PASS 已记录；旧 `1ba9db6` 只作 historical evidence |
 | 失败时 cleanup 流程 | `bash scripts/xv6/cleanup-qemu.sh` |
 | 是否伪造队友结果 | 禁止；未知姓名/系统版本保持待补充 |
 
@@ -86,7 +88,7 @@
 - 是否仍把 timeout 捕获夸大成长期稳定性。
 - 是否把 fcount/fdcount 夸大成完整文件系统。
 - 是否把 pgcount 夸大成完整内存管理实验。
-- 是否把旧队友 summary 写成 stage9c 新 HEAD 复现。
+- 是否把旧队友 summary 写成 final `e8e2fb9` 复现。
 - 是否把本机验证写成队友复现。
 - 是否存在 external/logs/.claude/video/隐私材料入库风险。
 
@@ -102,7 +104,7 @@ git ls-files logs/*.log
 git ls-files logs/*.summary.txt
 git ls-files logs/*.console.txt
 git ls-files .claude
-git ls-files | grep -Ei '\.(mp4|mov|avi|mkv|zip|7z|rar)$' || true
+git ls-files | grep -Ei '\.(mp4|mov|avi|mkv|zip|7z|rar|png|jpg|jpeg)$' || true
 ```
 
 如需重新验证工程：
@@ -114,12 +116,12 @@ bash scripts/xv6/teammate-verify.sh --full
 
 ## 9. 当前剩余待补充
 
-- 队友真实姓名、系统版本和队友 B 精确 summary 文件冲突（如最终材料需要）。
-- 三段视频的时长、平台提交方式和最终隐私复核结论。
+- 队友真实姓名和系统版本（如最终材料需要）。
+- 平台提交方式和最终隐私复核结论。
 - 技术报告 v1.0。
 - PPT。
 - uCore/rCore/YatSen OS/F-Tutorials/往届资料的最终 URL 与许可证核对。
 
 ## 10. 结论
 
-当前工程功能、验证链、stage9c 本机验证、历史队友 full PASS 摘要和视频元数据已经形成提交证据基础。冲奖前仍必须补齐新 HEAD 队友 `--full` summary、技术报告 v1.0、PPT、视频时长/平台提交方式、引用 URL/许可证核对和最终红队审核。
+当前工程功能、验证链、final `e8e2fb9` lead/root/z2996 full PASS 摘要、final 视频元数据和 SHA256 已经形成提交证据基础。冲奖前仍必须补齐技术报告 v1.0、PPT、平台提交方式、最终隐私复核、引用 URL/许可证核对和最终红队审核。

@@ -8,8 +8,8 @@
 | lab4 file system | v0.2 已完成 | `fcount()` file table 与 `fdcount()` fd table 观察；不是完整文件系统实验 |
 | lab5 capstone | 已完成文档闭环 | 综合复现实验；不新增内核机制 |
 | 长期稳定性测试 | 未完成 | 当前为 timeout 自动捕获 evidence |
-| 队友独立复现 | 新 HEAD 待重跑 | 旧 2 份 full PASS summary 锚定 commit `1ba9db6`；不覆盖 stage9c integrated `0001-0007` |
-| 视频提交信息 | 部分补充 | 已录制 3 段，文件名/外部位置/约略大小已记录；时长/平台提交方式待补充 |
+| 队友独立复现 | final full PASS 已记录 | root 与 z2996 两份 `e8e2fb9` / integrated `0001-0007` full PASS 已记录；旧 `1ba9db6` 只作 historical evidence |
+| 视频提交信息 | final metadata 已记录 | final integrated `0001-0007` 视频已记录大小、时长、SHA256；平台提交方式和最终隐私复核待确认 |
 | 同类项目引用 URL | 待补充 | uCore/rCore/YatSen OS/F-Tutorials 等需最终核对 |
 | 技术报告 v1.0 | 待制作 | 可基于 `docs/final/` 整理 |
 | PPT | 待制作 | 可基于 README、overview、testing、tradeoffs 整理 |
@@ -22,8 +22,9 @@
 - `pgcount()` 不能写成完整内存管理实验；只能写页表映射数量观察。
 - Lab5 不能写成新的内核机制；它是综合复现和报告实验。
 - timeout evidence 不能写成长期稳定性测试。
-- 队长本机 PASS 不能写成队友独立复现；旧队友 PASS 只能按旧 commit `1ba9db6` 的 summary/截图摘要记录。
-- 已录制视频不能自动等同于已完成平台提交；还需补充时长和提交方式。
+- 队长本机 PASS 不能写成队友独立复现；final 证据中 lead/root/z2996 必须分开记录。
+- 旧队友 PASS 只能按旧 commit `1ba9db6` 的 summary/截图摘要记录，不能覆盖 final commit `e8e2fb9`。
+- 已录制视频不能自动等同于已完成平台提交；还需确认平台提交方式和最终隐私复核。
 
 ## 后续可扩展实验
 
@@ -43,8 +44,7 @@
 
 ### lab3 后续计划
 
-- 补一篇正式 Lab3 final 文档和技术报告章节。
-- 重新收集 stage9c 新 HEAD 的 teammate `--full` summary。
+- 在技术报告 v1.0 中补充 Lab3 final 章节。
 - 设计学生骨架版和扩展问题。
 - 必须先设计安全的最小实验，不应临时堆功能。
 
@@ -57,8 +57,8 @@
 
 ## 提交前必须补齐
 
-1. 队友真实姓名、系统版本和队友 B 精确 summary 文件名冲突（如最终材料需要）。
-2. 三段视频的时长、内容确认和平台提交方式。
+1. 队友真实姓名、系统版本（如最终材料需要）。
+2. 视频/截图最终隐私复核和平台提交方式。
 3. 技术报告 v1.0。
 4. PPT。
 5. 参考来源 URL 和许可证核对。

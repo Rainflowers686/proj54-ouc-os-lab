@@ -34,23 +34,24 @@ It is not the final technical report, does not generate PDF, and does not includ
 | submission readiness review | `docs/21_submission_readiness_review.md` | exists | stage6d red-team: full integrated 0001-0005 reproduced from clean baseline (make/boot x2/hello/add2test/pstatetest/pcounttest+negative/pchildtest/fcounttest); doc consistency audit; risk list and pre-submission must-do (teammate reproduction + manual recording still TODO) |
 | teammate reproduction troubleshooting | `docs/22_teammate_reproduction_troubleshooting.md` | exists | stage7a0: explains apply/make completion, boot normal duration, Ctrl+Z risk, qemu/make cleanup, continuation steps, feedback format, and no-log/no-secret boundaries |
 | teammate quickstart | `docs/23_teammate_quickstart.md` | exists | stage7a2: official teammate testing entry; --full first run, --quick retest after make, local-verify before recording, cleanup-qemu after stuck/Ctrl+Z, summary feedback, no external/logs/secrets |
-| lab3/lab5 completion plan | `docs/24_lab3_lab5_completion_plan.md` | exists | stage9c update: integrated 0006 pgcount, integrated 0007 fdcount, Lab5 capstone workflow, new teammate full required |
-| final project overview | `docs/final/00_project_overview.md` | exists | stage9c status: OUC xv6 Lab Kit positioning, scoring weights, integrated 0001-0007, OUC teaching value, reference-project comparison, boundaries |
+| lab3/lab5 completion plan | `docs/24_lab3_lab5_completion_plan.md` | exists | stage9c plan and stage10a evidence boundary: integrated 0006 pgcount, integrated 0007 fdcount, Lab5 capstone workflow, final e8e2fb9 full evidence recorded elsewhere |
+| final project overview | `docs/final/00_project_overview.md` | exists | stage10a status: OUC xv6 Lab Kit positioning, scoring weights, integrated 0001-0007, final e8e2fb9 lead/root/z2996 full PASS, evidence boundaries |
 | final environment setup | `docs/final/01_environment_setup.md` | exists | stage8a formal environment and repository hygiene guide |
 | final lab0 guide | `docs/final/02_lab0_baseline_build_boot.md` | exists | stage8a formal lab0 baseline/build/boot guide |
 | final lab1 guide | `docs/final/03_lab1_hello_add2.md` | exists | stage8a formal hello/add2 syscall lab guide |
 | final lab2 guide | `docs/final/04_lab2_process_observation.md` | exists | stage8a formal pstate/pcount/pchild process observation lab guide |
 | final lab3 guide | `docs/final/04b_lab3_page_table_observation.md` | exists | stage9c formal pgcount page-table observation guide |
 | final lab4 guide | `docs/final/05_lab4_file_table_observation.md` | exists | stage9c formal fcount/fdcount file table and fd table observation lab guide |
-| final testing and verification | `docs/final/06_testing_and_verification.md` | exists | stage9c testing coverage table includes integrated pgcount/fdcount evidence and real-result boundaries |
-| final teammate reproduction guide | `docs/final/07_teammate_reproduction_guide.md` | exists | stage8a formal teammate reproduction and feedback guide |
+| final testing and verification | `docs/final/06_testing_and_verification.md` | exists | stage10a testing coverage table includes integrated pgcount/fdcount evidence, final e8e2fb9 lead/root/z2996 full PASS, and real-result boundaries |
+| final teammate reproduction guide | `docs/final/07_teammate_reproduction_guide.md` | exists | stage10a formal teammate reproduction and feedback guide with final e8e2fb9 root/z2996 PASS |
 | final design decisions | `docs/final/08_design_decisions_and_tradeoffs.md` | exists | stage8a formal design tradeoffs and scope control |
 | final AI usage statement | `docs/final/09_ai_usage_and_contribution_statement.md` | exists | stage8a formal AI usage and contribution statement |
 | final reference and license statement | `docs/final/10_reference_and_license_statement.md` | exists | stage8a formal xv6 MIT license boundary and reference-project notes |
-| final limits and future work | `docs/final/11_known_limits_and_future_work.md` | exists | stage9c limits: pgcount/fdcount scope boundaries, Lab5 capstone only, new teammate full pending |
-| submission checklist | `submissions/submission_checklist.md` | exists | stage8b submission checklist: platform compliance, Git hygiene, reproducibility, docs, video metadata, teammate summaries, red-team review, final commands |
-| demo video record | `submissions/demo_record.md` | exists | stage8b records 3 video file names, external path, approximate sizes, and no-video-in-Git boundary |
-| teammate reproduction record | `submissions/teammate_reproduction_record.md` | exists | stage8b records two teammate --full PASS summary digests; raw logs/summary/screenshots are not committed |
+| final limits and future work | `docs/final/11_known_limits_and_future_work.md` | exists | stage10a limits: pgcount/fdcount scope boundaries, Lab5 capstone only, final evidence recorded, platform/privacy/reference items still pending |
+| submission checklist | `submissions/submission_checklist.md` | exists | stage10a submission checklist: platform compliance, Git hygiene, final e8e2fb9 reproducibility, docs, video metadata, teammate summaries, red-team review, final commands |
+| demo video record | `submissions/demo_record.md` | exists | stage10a records final integrated 0001-0007 video metadata and SHA256 plus 3 historical video records; no video files in Git |
+| teammate reproduction record | `submissions/teammate_reproduction_record.md` | exists | stage10a records final e8e2fb9 lead/root/z2996 full PASS digests and historical 1ba9db6 records; raw logs/summary/screenshots are not committed |
+| final evidence manifest | `submissions/evidence_manifest.md` | exists | stage10a central index: final commit, integrated 0001-0007, lead/root/z2996 PASS, final video SHA256, historical evidence, external directories, non-committed evidence policy |
 | Technical report v0.1 | `docs/13_technical_report_v0.1.md` | exists | historical stage2c draft with stage8b obsolete notice; not final report |
 | Reproducibility package | `reproducibility/README.md` | exists | lab0/lab1/lab2/integrated-labs reproduction checklist and template |
 | lab0 environment guide | `labs/lab0-env-setup/README.md` | exists | xv6 baseline make succeeded; boot evidence found; manual interaction TODO |
@@ -61,7 +62,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 | lab5 final integration | `labs/lab5-final-integration/README.md` | exists | capstone reproduction workflow for integrated 0001-0007; no new kernel mechanism |
 | lab1 test record | `tests/lab1/README.md` | exists | records patched make and hello output evidence |
 | lab2 test record | `tests/lab2/README.md` | exists | records pstatetest, pcounttest, and pchildtest output evidence |
-| lab3 test record | `tests/lab3/README.md` | exists | records pgcount eager/lazy output captures from independent and integrated 0006; new teammate full pending |
+| lab3 test record | `tests/lab3/README.md` | exists | records pgcount eager/lazy output captures from independent and integrated 0006; final teammate coverage recorded in submissions evidence manifest |
 | lab4 test record | `tests/lab4/README.md` | exists | records fcounttest/fdcounttest captures and non-fixed count boundary |
 | xv6 fetch script | `scripts/xv6/fetch-xv6.sh` | exists | stage1b tooling |
 | xv6 baseline check script | `scripts/xv6/check-xv6-baseline.sh` | exists | stage1b tooling; make not run by default |
@@ -95,8 +96,8 @@ It is not the final technical report, does not generate PDF, and does not includ
 | logs directory guide | `logs/README.md` | exists | raw logs ignored by default; current make log is not tracked |
 | reference directory guide | `references/README.md` | exists | placeholder |
 | PPT structure plan | `slides/README.md` | exists | stage6a outline includes lab2 v0.2 and lab4 file table observation; actual PPT TODO |
-| Demo video notes | `videos/README.md` | exists | records video policy and TODO status |
-| Demo script draft | `videos/demo_script.md` | exists | historical 2-3 minute demo flow; stage9c final demo should include integrated 0001-0007, pgcounttest, and fdcounttest |
+| Demo video notes | `videos/README.md` | exists | records video policy and no-video-in-Git boundary |
+| Demo script draft | `videos/demo_script.md` | exists | historical 2-3 minute demo flow; final recorded video metadata is tracked in submissions/demo_record.md |
 | Final submission | `submissions/` | - | TODO: organize against official requirements |
 
 ## Notes
@@ -106,7 +107,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 - xv6 baseline make, hardened boot evidence retry, lab1 patched make, hello output, add2 output, pstatetest output, pcounttest output, pchildtest output, fcounttest output, and integrated sequence evidence are summarized in docs/04_test_report.md.
 - lab1 now has two patch levels: 0001 hello minimal syscall and 0002 add2 argint extension.
 - lab2 has an independent pstate process observation patch from clean baseline.
-- lab3 has both an independent pgcount patch and integrated 0006; new teammate full verification is still required for current HEAD.
+- lab3 has both an independent pgcount patch and integrated 0006; final e8e2fb9 full verification by lead/root/z2996 is recorded in submissions/evidence_manifest.md.
 - integrated-labs provides the verified comprehensive demo sequence with hello=22, add2=23, pstate=24, pcount=25, fcount=26, pgcount=27, fdcount=28.
 - The child-state demo command is pchildtest; the longer pstatechildtest name is not used because xv6 DIRSIZ caused a real mkfs failure.
 - scripts/xv6/apply-integrated-labs.sh is the recommended helper for final integrated demo reproduction and now applies integrated 0001-0007.
@@ -124,5 +125,6 @@ It is not the final technical report, does not generate PDF, and does not includ
 - apply-integrated-labs.sh --make --yes uses XV6_MAKE_TIMEOUT_SECONDS, default 600 seconds; make success is never fabricated.
 - Teammate QEMU cleanup troubleshooting is documented in docs/22_teammate_reproduction_troubleshooting.md.
 - Plain-language teammate quickstart is documented in docs/23_teammate_quickstart.md; teammates should copy the COPY THIS SUMMARY TO TEAM LEAD block to the team lead.
-- Video files are not committed; stage8b video file names, external path, and approximate sizes are recorded in submissions/demo_record.md.
-- Two teammate --full verification PASS summaries are recorded as text in submissions/teammate_reproduction_record.md, but they are historical evidence at commit 1ba9db6 and do not cover stage9c current HEAD.
+- Video files are not committed; final and historical video metadata plus SHA256 are recorded in submissions/demo_record.md.
+- Final e8e2fb9 lead/root/z2996 full PASS summaries are recorded as text in submissions/teammate_reproduction_record.md; old 1ba9db6 records are historical evidence only.
+- submissions/evidence_manifest.md is the central final evidence index and does not store raw evidence files.

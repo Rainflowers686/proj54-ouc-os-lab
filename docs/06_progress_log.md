@@ -822,3 +822,34 @@
   - `pgcount()` is page-table mapping observation only, not full memory management.
   - `fcount()` / `fdcount()` are file table / fd table observations only, not a complete file system lab.
   - The two teammate full PASS summaries at commit `1ba9db6` are now historical evidence only; they do not cover current integrated `0001-0007`. New teammate `--full` summaries are required before claiming new-HEAD teammate reproduction.
+
+## 2026-06-07: stage10a final integrated evidence manifest
+
+- Commit hash: TODO after commit
+- Goal: record the final evidence manifest for commit `e8e2fb9 feat(integrated): add lab3 pgcount and lab4 fdcount workflow` without changing OS code, integrated patches, or xv6 verification scripts.
+- Completed:
+  - Updated `submissions/teammate_reproduction_record.md` with final `e8e2fb9` / integrated `0001-0007` verification records.
+  - Recorded team lead local full PASS: user `rain`, repo root `/mnt/d/Edge Download/CSCC/proj54-ouc-os-lab`, summary `logs/teammate-verify-20260606-232145.summary.txt`, all checks PASS.
+  - Recorded teammate A final full PASS: user `root`, repo root `/root/workspace/proj54-ouc-os-lab`, time `2026-06-06T23:52:59+08:00`, summary `logs/teammate-verify-20260606-235139.summary.txt`, all checks PASS, external summary/screenshot SHA256 recorded.
+  - Recorded teammate B final full PASS: user `z2996`, repo root shown as `~/workspace/proj54-ouc-os-lab`, summary `logs/teammate-verify-20260607-114807.summary.txt`, all checks PASS, external console/screenshot SHA256 recorded.
+  - Marked the old `1ba9db6` teammate records as historical/superseded evidence for the earlier integrated `0001-0005` / stage7-stage8 workflow.
+  - Rewrote `submissions/demo_record.md` with final integrated `0001-0007` video metadata: `20260606_final_integrated_0001_0007_demo.mp4`, size `12,120,565 bytes`, duration `00:01:32`, resolution `2560x1440`, 60 fps, SHA256 `0FF2D3581552B3FD3A2630E827251CF46C36BC3BE8F8B9D9DDB691FC0668A93B`.
+  - Preserved the three earlier videos as historical evidence with file sizes, durations, resolution, frame rate, and SHA256.
+  - Added `submissions/evidence_manifest.md` as the central final evidence index.
+  - Updated README, final docs, submission checklist, AI usage record, collect-report script, and generated material index references.
+- Boundaries:
+  - No GitLab/GitHub remote was modified.
+  - No `patches/integrated-labs/` file was modified.
+  - No `scripts/xv6/` file was modified.
+  - No OS feature, patch, or verification workflow behavior was changed.
+  - `external/xv6-riscv/`, raw logs, summary files, console logs, screenshots, videos, `.claude/`, `.vscode/`, large files, and privacy materials remain outside Git.
+  - Video and screenshot privacy status remains `pending final manual review`; platform upload method still needs final confirmation.
+  - timeout capture is still not long-running stability testing; `fcount()` / `fdcount()` remain file table / fd table observation only; Lab5 remains capstone only.
+- Validation:
+  - `bash scripts/collect-report.sh`: PASS; regenerated `submissions/draft-report-index.md`.
+  - `git diff --check`: PASS.
+  - `git status --short`: showed only intended documentation/index changes plus new `submissions/evidence_manifest.md`.
+  - `git status --ignored --short external logs .claude`: showed `external/xv6-riscv/`, `.claude/`, and logs as ignored.
+  - `git ls-files external/xv6-riscv`, `git ls-files logs/*.log`, `git ls-files logs/*.summary.txt`, `git ls-files logs/*.console.txt`, and `git ls-files .claude`: no tracked files.
+  - `git ls-files | grep -Ei '\.(mp4|mov|avi|mkv|zip|7z|rar|png|jpg|jpeg)$' || true`: no tracked video, archive, screenshot, or image evidence files.
+  - `git diff --name-only -- patches/integrated-labs scripts/xv6`: no output; stage10a did not modify integrated patches or xv6 verification scripts.

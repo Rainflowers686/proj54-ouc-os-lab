@@ -79,14 +79,16 @@ logs/teammate-verify-YYYYMMDD-HHMMSS.summary.txt
 
 ## 当前已收到的队友结果
 
-截至 2026-06-06，已收到两份队友 `--full` verification PASS summary。注意：这些 summary 锚定旧 commit `1ba9db6`，不覆盖 stage9c 新增的 integrated `0001-0007`。当前 HEAD 需要重新收集 teammate `--full` summary：
+截至 2026-06-07，final commit `e8e2fb9 feat(integrated): add lab3 pgcount and lab4 fdcount workflow` 已收到两份队友 `--full` verification PASS 证据。它们覆盖 integrated `0001-0007`，包括 `pgcounttest` 和 `fdcounttest`：
 
 | 记录 | 终端 user | repo root | commit | mode | overall |
 | --- | --- | --- | --- | --- | --- |
-| 队友 A | `root` | `/root/workspace/proj54-ouc-os-lab` | `1ba9db6 tooling: speed up verification and clean repo hygiene` | `full` | PASS |
-| 队友 B | `z2996` | `/home/z2996/workspace/proj54-ouc-os-lab` | `1ba9db6 tooling: speed up verification and clean repo hygiene` | `full` | PASS |
+| 队友 A | `root` | `/root/workspace/proj54-ouc-os-lab` | `e8e2fb9 feat(integrated): add lab3 pgcount and lab4 fdcount workflow` | `full` | PASS |
+| 队友 B | `z2996` | `~/workspace/proj54-ouc-os-lab` | `e8e2fb9 feat(integrated): add lab3 pgcount and lab4 fdcount workflow` | `full` | PASS |
 
-文字摘要见 `submissions/teammate_reproduction_record.md`。原始 logs、summary 文件和截图不入仓；队友真实姓名、系统版本和队友 B 的精确 summary 文件冲突仍待核对，不补造。
+文字摘要和外部证据 SHA256 见 `submissions/teammate_reproduction_record.md` 与 `submissions/evidence_manifest.md`。原始 logs、summary 文件、console log 和截图不入仓；队友真实姓名和系统版本仍保持待补充，不补造。
+
+旧 commit `1ba9db6` 的两份队友 PASS 只作为 historical/superseded evidence，不覆盖 final `e8e2fb9`。
 
 ## 队友反馈模板
 

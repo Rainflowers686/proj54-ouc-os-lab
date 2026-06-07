@@ -106,7 +106,7 @@ pstate(child) = <state> (<STATE_NAME>)
 | `pcount(99) = -1` | PASS |
 | `pstate(child) =` | PASS |
 | 长期稳定性测试 | 未执行 |
-| 队友独立复现 | 旧 2 份队友 PASS summary 锚定 commit `1ba9db6`；stage9c 新 HEAD 需重新跑 `teammate-verify.sh --full` |
+| 队友独立复现 | final `e8e2fb9` root 与 z2996 full PASS 已记录；旧 `1ba9db6` 只作 historical evidence |
 
 ## 常见错误
 

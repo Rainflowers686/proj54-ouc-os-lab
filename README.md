@@ -26,9 +26,9 @@
 | lab5 capstone                 | 已完成文档闭环                | 综合复现实验；组织 clean baseline、integrated `0001-0007`、make/boot/全部用户程序验证，不新增内核机制                 |
 | integrated-labs 0001-0007     | 已完成                        | clean baseline 可顺序应用并 make；同一构建验证 hello/add2/pstate/pcount/pchild/fcount/pgcount/fdcount                 |
 | verification scripts          | 已更新                        | `doctor.sh`、`teammate-verify.sh`、`local-verify.sh`、`cleanup-qemu.sh`；full/quick 覆盖 pgcounttest 和 fdcounttest |
-| 队长本机验证                  | 已完成                        | local/full 路径已 PASS；summary/raw logs 不入库                                                                       |
-| 视频记录                      | 已录制 3 段                   | 视频文件在仓库外，不提交 Git；文件名、大小和待补项记录见 `submissions/demo_record.md`                               |
-| 队友独立复现                  | 旧证据已记录，新 HEAD 待重跑  | 两份 full PASS summary 锚定旧 commit `1ba9db6`；stage9c 后只作历史证据，不覆盖 integrated `0001-0007`                |
+| 队长本机验证                  | final full PASS               | `e8e2fb9` / integrated `0001-0007` local/full PASS；summary/raw logs 不入库                                           |
+| 视频记录                      | final 视频已记录              | final integrated `0001-0007` 视频已记录大小、时长、SHA256；视频文件在仓库外，不提交 Git                             |
+| 队友独立复现                  | final full PASS               | root 与 z2996 两份 `e8e2fb9` / integrated `0001-0007` full PASS 已记录；旧 `1ba9db6` 只作 historical evidence         |
 
 ## 评委快速复现
 
@@ -83,13 +83,14 @@ bash scripts/xv6/cleanup-qemu.sh
 
 ## 视频说明
 
-已录制 3 段视频，视频文件保存在仓库外，不提交 Git。当前仓库只记录视频文件名、用途、约略大小、外部位置和待补项：
+最终 integrated `0001-0007` 视频已录制并记录 SHA256。旧三段视频保留为 historical evidence，只覆盖 earlier integrated `0001-0005` / stage7-stage8 workflow。所有视频文件保存在仓库外，不提交 Git。当前仓库只记录视频文件名、用途、大小、时长、SHA256、外部位置和边界说明：
 
 ```text
 submissions/demo_record.md
+submissions/evidence_manifest.md
 ```
 
-视频不得包含 token、密码、个人隐私、报名材料或未公开账号信息。
+视频不得包含 token、密码、个人隐私、报名材料或未公开账号信息；最终上传前隐私复核状态仍按 `pending final manual review` 处理，除非人工确认。
 
 ## 诚信与边界
 
@@ -99,7 +100,8 @@ submissions/demo_record.md
 - timeout 自动捕获只证明脚本在真实 QEMU 输出中匹配到预期文本，不等同于长期稳定性测试。
 - `fcount()` / `fdcount()` 只是 file table / fd table 计数观察，不是完整文件系统实验。
 - `pcount(RUNNING)` 和 `fcount(...)` 的具体数字不固定；`pchildtest` 状态受调度时序影响。
-- 已收到两份队友 `--full` verification PASS summary，但它们锚定旧 commit `1ba9db6`；stage9c 新 HEAD 需要重新收集 teammate `--full` summary。
+- final commit `e8e2fb9` 已收到队长本机、队友 root、队友 z2996 三份 `--full` verification PASS 摘要；原始 summary/log/screenshot 不入仓。
+- 旧 commit `1ba9db6` 的两份队友 PASS 与旧三段视频只作为 historical/superseded evidence，不覆盖 final integrated `0001-0007`。
 - AI 可辅助规划、审查和文档/脚本落地；make/QEMU/PASS 结果必须来自真实命令。
 
 ## 已知限制与后续计划
@@ -108,4 +110,4 @@ submissions/demo_record.md
 - lab4 当前为 file table / fd table 观察 v0.2，后续可扩展 inode、open-file summary 等内容。
 - lab5 当前是 capstone 文档和综合复现闭环，不新增内核功能。
 - 技术报告 v1.0 和 PPT 仍需基于 `docs/final/` 整理。
-- 新 HEAD 队友 full summary、队友真实姓名/系统版本、视频时长/平台提交方式、同类项目参考 URL 仍需最终补齐。
+- 队友真实姓名/系统版本、平台提交方式、视频/截图最终隐私复核、同类项目参考 URL 仍需最终补齐或人工确认。

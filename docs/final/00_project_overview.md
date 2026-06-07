@@ -38,8 +38,8 @@ proj54 是教学型功能挑战，不是“内核实现赛道刷 LTP”项目。
 | lab5 | capstone 已完成 | 综合复现实验文档；不新增内核机制 |
 | integrated-labs | 已完成 | `0001-0007` 可从 clean baseline 顺序应用并 make |
 | 一键验证 | 已更新 | doctor/local/teammate/cleanup 脚本；local/teammate 覆盖 pgcounttest 和 fdcounttest |
-| 视频 | 已录制 3 段 | 文件在仓库外；文件名/大小/外部位置已记录，时长和平台提交方式待补充 |
-| 队友独立复现 | 旧证据已记录，新 HEAD 待重跑 | 两份 full PASS summary 锚定旧 commit `1ba9db6`；不覆盖 stage9c integrated `0001-0007` |
+| 视频 | final 视频已记录 | `e8e2fb9` / integrated `0001-0007` final video 已记录大小、时长、SHA256；旧三段视频为 historical evidence |
+| 队友独立复现 | final full PASS | root 与 z2996 两份 `e8e2fb9` / integrated `0001-0007` full PASS 已记录；旧 `1ba9db6` 只作 historical evidence |
 
 ## OUC 本校课程特色
 
@@ -69,11 +69,11 @@ proj54 是教学型功能挑战，不是“内核实现赛道刷 LTP”项目。
 
 - 不提交 `external/xv6-riscv/`。
 - 不提交 `logs/*.log`、`logs/*.summary.txt`、视频、大文件、隐私材料。
-- 不把旧 commit `1ba9db6` 的队友 PASS 写成 stage9c 新 HEAD 复现。
+- 不把旧 commit `1ba9db6` 的队友 PASS 写成 final commit `e8e2fb9` 复现；旧记录只作为 historical/superseded evidence。
 - 不把 Lab5 写成新的内核机制；它是 capstone 综合复现实验。
 - 不把 timeout 捕获写成长期稳定性测试。
 - 不把 lab4 `fcount()` / `fdcount()` 写成完整文件系统实验。
-- 不把队长本机验证写成队友独立复现；队友记录只按已收到 summary/截图摘要整理，未知姓名和系统版本保持待补充。
+- 不把队长本机验证写成队友独立复现；final 记录中队长本机、队友 root、队友 z2996 分开记录，未知真实姓名和系统版本保持待补充。
 - 不把本项目表述为 LTP 覆盖或内核实现赛道项目。
 
 ## 下一步产出
@@ -81,5 +81,5 @@ proj54 是教学型功能挑战，不是“内核实现赛道刷 LTP”项目。
 - 基于 `docs/final/` 整理技术报告 v1.0。
 - 基于 `docs/final/00`、`06`、`08` 制作 PPT。
 - 补充队友真实姓名和系统版本（如最终材料需要）。
-- 补充视频时长和平台提交方式。
+- 确认平台提交方式和视频/截图最终隐私复核。
 - 最终核查参考来源 URL 与许可证。
