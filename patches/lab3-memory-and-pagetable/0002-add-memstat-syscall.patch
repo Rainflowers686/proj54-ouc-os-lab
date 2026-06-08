@@ -1,0 +1,207 @@
+diff --git a/Makefile b/Makefile
+index 1e88984..74d88ea 100644
+--- a/Makefile
++++ b/Makefile
+@@ -145,6 +145,7 @@ UPROGS=\
+ 	$U/_logstress\
+ 	$U/_forphan\
+ 	$U/_dorphan\
++	$U/_memstattest\
+ 
+ fs.img: mkfs/mkfs README $(UPROGS)
+ 	mkfs/mkfs fs.img README $(UPROGS)
+diff --git a/kernel/memstat.h b/kernel/memstat.h
+new file mode 100644
+index 0000000..39ef7d6
+--- /dev/null
++++ b/kernel/memstat.h
+@@ -0,0 +1,7 @@
++// memstat: read-only user-address-space observation result.
++// Filled by sys_memstat() and copied out to user space.
++struct memstat {
++  uint64 sz_bytes;    // process memory size (p->sz)
++  int mapped_pages;   // user pages with PTE_V && PTE_U in [0, sz)
++  int page_size;      // PGSIZE
++};
+diff --git a/kernel/syscall.c b/kernel/syscall.c
+index 822720c..db018e1 100644
+--- a/kernel/syscall.c
++++ b/kernel/syscall.c
+@@ -102,6 +102,7 @@ extern uint64 sys_unlink(void);
+ extern uint64 sys_link(void);
+ extern uint64 sys_mkdir(void);
+ extern uint64 sys_close(void);
++extern uint64 sys_memstat(void);
+ 
+ // An array mapping syscall numbers from syscall.h
+ // to the function that handles the system call.
+@@ -128,6 +129,7 @@ static uint64 (*syscalls[])(void) = {
+   [SYS_link]    sys_link,
+   [SYS_mkdir]   sys_mkdir,
+   [SYS_close]   sys_close,
++  [SYS_memstat] sys_memstat,
+   // clang-format on
+ };
+ 
+diff --git a/kernel/syscall.h b/kernel/syscall.h
+index 454d1b4..5fd76c0 100644
+--- a/kernel/syscall.h
++++ b/kernel/syscall.h
+@@ -20,3 +20,4 @@
+ #define SYS_link   19
+ #define SYS_mkdir  20
+ #define SYS_close  21
++#define SYS_memstat 22
+diff --git a/kernel/sysproc.c b/kernel/sysproc.c
+index 73ff1f3..d7c1a83 100644
+--- a/kernel/sysproc.c
++++ b/kernel/sysproc.c
+@@ -6,6 +6,7 @@
+ #include "spinlock.h"
+ #include "proc.h"
+ #include "vm.h"
++#include "memstat.h"
+ 
+ uint64
+ sys_exit(void)
+@@ -107,3 +108,30 @@ sys_uptime(void)
+   release(&tickslock);
+   return xticks;
+ }
++
++// Lab3 advanced optional: read-only observation of the calling process's
++// user address space. Counts mapped user pages (PTE_V && PTE_U) in [0, sz)
++// without allocating, modifying any PTE, or exposing physical addresses,
++// then copies the result struct out to user space.
++uint64
++sys_memstat(void)
++{
++  uint64 uaddr;
++  struct proc *p = myproc();
++  struct memstat st;
++
++  argaddr(0, &uaddr);
++
++  st.sz_bytes = p->sz;
++  st.page_size = PGSIZE;
++  st.mapped_pages = 0;
++  for (uint64 va = 0; va < p->sz; va += PGSIZE) {
++    pte_t *pte = walk(p->pagetable, va, 0);
++    if (pte != 0 && (*pte & PTE_V) && (*pte & PTE_U))
++      st.mapped_pages++;
++  }
++
++  if (copyout(p->pagetable, uaddr, (char *)&st, sizeof(st)) < 0)
++    return -1;
++  return 0;
++}
+diff --git a/user/memstattest.c b/user/memstattest.c
+new file mode 100644
+index 0000000..98b8cc4
+--- /dev/null
++++ b/user/memstattest.c
+@@ -0,0 +1,75 @@
++#include "kernel/types.h"
++#include "kernel/riscv.h"
++#include "kernel/memstat.h"
++#include "user/user.h"
++
++// memstattest: Lab3 advanced optional test for the memstat() syscall.
++//
++// It verifies, with real computed deltas (never hardcoded output):
++//   - page_size == PGSIZE (4096)
++//   - eager sbrk(2 * PGSIZE) raises mapped_pages by exactly 2
++//   - eager sbrk(2 * PGSIZE) raises sz_bytes by exactly 8192
++//   - an invalid user pointer makes memstat() return -1
++// Any failed expectation calls fail() which exits with code 1.
++
++static void
++fail(char *msg)
++{
++  printf("memstattest FAIL: %s\n", msg);
++  exit(1);
++}
++
++static void
++align_break(void)
++{
++  uint64 cur = (uint64)sbrk(0);
++  uint64 up = PGROUNDUP(cur);
++
++  if (up != cur) {
++    if (sbrk(up - cur) == (char *)-1)
++      fail("align sbrk failed");
++  }
++}
++
++int
++main(void)
++{
++  struct memstat before;
++  struct memstat after;
++  int r;
++
++  align_break();
++
++  if (memstat(&before) != 0)
++    fail("memstat before sbrk failed");
++
++  printf("memstat page_size = %d\n", before.page_size);
++  if (before.page_size != PGSIZE)
++    fail("page_size is not PGSIZE");
++
++  if (sbrk(2 * PGSIZE) == (char *)-1)
++    fail("eager sbrk failed");
++
++  if (memstat(&after) != 0)
++    fail("memstat after sbrk failed");
++
++  printf("memstat mapped delta = %d\n", after.mapped_pages - before.mapped_pages);
++  printf("memstat size delta = %d\n", (int)(after.sz_bytes - before.sz_bytes));
++
++  if (after.mapped_pages - before.mapped_pages != 2)
++    fail("mapped_pages delta is not 2");
++  if (after.sz_bytes - before.sz_bytes != (uint64)(2 * PGSIZE))
++    fail("sz_bytes delta is not 8192");
++
++  // Invalid user pointer: well above p->sz but below MAXVA, so walk() does
++  // not panic and copyout() must reject it.
++  r = memstat((struct memstat *)0x40000000UL);
++  printf("memstat invalid pointer = %d\n", r);
++  if (r != -1)
++    fail("invalid pointer did not return -1");
++
++  sbrk(-2 * PGSIZE);
++
++  printf("memstattest done\n");
++  exit(0);
++}
+diff --git a/user/user.h b/user/user.h
+index ecd0921..2227f4e 100644
+--- a/user/user.h
++++ b/user/user.h
+@@ -1,6 +1,7 @@
+ #define SBRK_ERROR ((char *)-1)
+ 
+ struct stat;
++struct memstat;
+ 
+ // system calls
+ int fork(void);
+@@ -24,6 +25,7 @@ int getpid(void);
+ char *sys_sbrk(int, int);
+ int pause(int);
+ int uptime(void);
++int memstat(struct memstat *);
+ 
+ // ulib.c
+ int stat(const char *, struct stat *);
+diff --git a/user/usys.pl b/user/usys.pl
+index c5d4c3a..9e86105 100755
+--- a/user/usys.pl
++++ b/user/usys.pl
+@@ -42,3 +42,4 @@ entry("getpid");
+ entry("sbrk");
+ entry("pause");
+ entry("uptime");
++entry("memstat");

@@ -25,6 +25,7 @@
 | lab4 fcount/fdcount           | v0.2 已完成                   | 全局 file table 与当前进程 fd table 观察；不是完整文件系统实验                                                        |
 | lab5 capstone                 | 已完成文档闭环                | 综合复现实验；组织 clean baseline、integrated `0001-0007`、make/boot/全部用户程序验证，不新增内核机制                 |
 | integrated-labs 0001-0007     | 已完成                        | clean baseline 可顺序应用并 make；同一构建验证 hello/add2/pstate/pcount/pchild/fcount/pgcount/fdcount                 |
+| 进阶可选 memstat/fdinfo       | independent 已验证（未进 integrated） | `memstat`(lab3 `0002`)/`fdinfo`(lab4 `0002`) 教 `copyout + struct ABI`；clean baseline round-trip 验证；未纳入队友 full verify；不影响 `e8e2fb9` 证据 |
 | verification scripts          | 已更新                        | `doctor.sh`、`teammate-verify.sh`、`local-verify.sh`、`cleanup-qemu.sh`；full/quick 覆盖 pgcounttest 和 fdcounttest |
 | 队长本机验证                  | final full PASS               | `e8e2fb9` / integrated `0001-0007` local/full PASS；summary/raw logs 不入库                                           |
 | 视频记录                      | final 视频已记录              | final integrated `0001-0007` 视频已记录大小、时长、SHA256；视频文件在仓库外，不提交 Git                             |

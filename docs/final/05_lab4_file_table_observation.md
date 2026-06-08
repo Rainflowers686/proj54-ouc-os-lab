@@ -123,3 +123,18 @@ fcounttest done
 2. 为什么 `open()` 后 file table 数量可能变化？
 3. 如何扩展到 per-process fd table 观察？
 4. 如何设计 inode 观察实验，同时避免泄漏路径或内容？
+
+## 进阶可选：fdinfo（advanced optional, independent）
+
+> 维护时间：2026-06-08（stage11a）。
+
+`fdinfo()` 是 Lab4 的进阶可选 independent patch，把 `fcount()`/`fdcount()` 的"计数"升级为"看一个 fd 的内核元数据"。
+
+| 字段 | 内容 |
+| --- | --- |
+| patch | `patches/lab4-file-table-observation/0002-add-fdinfo-syscall.patch` |
+| 接口 | `int fdinfo(int fd, struct fdinfo *out)`，返回 `{type, readable, writable, ref}` |
+| 教学点 | `argint + argaddr + copyout + struct ABI`；只查 `myproc()->ofile[fd]`，在 `ftable.lock` 下读取，不返回路径/inode 号/内容 |
+| 验证 | clean baseline round-trip 已通过：`open fd ok`、`dup fd ok`、`closed fd = -1`、`bad fd = -1`、`fdinfotest done`（`ref` 观察输出但不强断言） |
+
+边界与状态：仍是 fd table **观察**实验，**不是完整文件系统**；`SYS_fdinfo = 22`（independent，与 `fcount` 不可叠加）；**未进入** integrated `0001-0007`；**未纳入**队友 full verification（rain/root/z2996）；**不影响** `e8e2fb9` 证据。若未来进入 integrated `0008/0009`（届时 `SYS_fdinfo = 30`），必须重新队友 full verify、重录视频、重算 SHA256。

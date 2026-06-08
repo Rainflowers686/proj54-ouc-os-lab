@@ -106,3 +106,14 @@ pgcounttest done
 2. 为什么触摸 lazy 区域会让 `pgcount` 增加？
 3. 如果只统计 `PTE_V` 而不统计 `PTE_U`，教学语义会有什么问题？
 4. 为什么本实验不返回物理地址或 PTE 原始值？
+
+## 进阶可选实验：memstat（advanced optional, independent）
+
+`pgcount()` 之后，可以做一个进阶可选实验 `memstat()`，把"数页"升级为"用 `copyout` 把一个结构体拷回用户态"。
+
+- patch：`patches/lab3-memory-and-pagetable/0002-add-memstat-syscall.patch`（独立于 `0001`）。
+- 接口：`int memstat(struct memstat *out)`，返回 `{sz_bytes, mapped_pages, page_size}`。
+- 教学点：`argaddr + copyout + struct ABI`——内核如何安全地把结构体写回用户缓冲区；`copyout` 失败返回 -1。
+- 验证：`bash scripts/xv6/run-xv6-command.sh memstattest "memstattest done"`，clean baseline round-trip 已通过（`page_size = 4096`、`mapped delta = 2`、`size delta = 8192`、`invalid pointer = -1`）。
+
+边界与状态：仍然是页表/地址空间**观察**实验，不是完整内存管理；`SYS_memstat = 22` 与 `pgcount` 相同，两个 independent patch **不可叠加**；**未进入** integrated `0001-0007`，**未纳入**队友 full verification，**不影响** `e8e2fb9` 证据。组合演示见未来 integrated `0008/0009`（届时编号 `SYS_memstat = 29`，并需重新队友 full verify、重录视频、重算 SHA256）。

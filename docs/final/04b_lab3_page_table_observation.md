@@ -94,3 +94,18 @@ pgcounttest done
 2. 为什么 `sbrklazy(2 * PGSIZE)` 触摸前 delta 是 0？
 3. 为什么 `pgcount()` 不应该返回物理地址？
 4. 如果要观察 page fault 次数，应该新增什么证据和边界？
+
+## 进阶可选：memstat（advanced optional, independent）
+
+> 维护时间：2026-06-08（stage11a）。
+
+`memstat()` 是 Lab3 的进阶可选 independent patch，把 `pgcount()` 的"数页"升级为"用 `copyout` 把结构体拷回用户态"。
+
+| 字段 | 内容 |
+| --- | --- |
+| patch | `patches/lab3-memory-and-pagetable/0002-add-memstat-syscall.patch` |
+| 接口 | `int memstat(struct memstat *out)`，返回 `{sz_bytes, mapped_pages, page_size}` |
+| 教学点 | `argaddr + copyout + struct ABI` |
+| 验证 | clean baseline round-trip 已通过：`page_size = 4096`、`mapped delta = 2`、`size delta = 8192`、`invalid pointer = -1`、`memstattest done` |
+
+边界与状态：仍是页表/地址空间**观察**实验，**不是完整内存管理**；`SYS_memstat = 22`（independent，与 `pgcount` 不可叠加）；**未进入** integrated `0001-0007`；**未纳入**队友 full verification（rain/root/z2996）；**不影响** `e8e2fb9` 证据。若未来进入 integrated `0008/0009`（届时 `SYS_memstat = 29`），必须重新队友 full verify、重录视频、重算 SHA256。

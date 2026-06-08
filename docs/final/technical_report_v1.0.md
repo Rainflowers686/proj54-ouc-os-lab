@@ -245,6 +245,15 @@ Lab5 的价值在于把多个分散实验整理成一次完整课程验收流程
 
 三方 full verification 均覆盖 doctor/check-env/baseline/apply+make/boot/hello/add2test/pstatetest/pcounttest/pchildtest/fcounttest/pgcounttest/fdcounttest/overall。原始 summary、console log 和截图不提交 Git；文字摘要与 SHA256 记录在 `submissions/teammate_reproduction_record.md` 和 `submissions/evidence_manifest.md`。
 
+## 12.1 进阶可选实验（advanced optional，未进入 integrated）
+
+除 integrated `0001-0007` 外，项目另提供两个**进阶可选 independent patch**，用于演示内核如何用 `copyout` 把结构体安全拷回用户态：
+
+- `memstat`（`patches/lab3-memory-and-pagetable/0002-add-memstat-syscall.patch`）：`memstat(struct memstat *out)` 返回 `{sz_bytes, mapped_pages, page_size}`，教学点 `argaddr + copyout + struct ABI`。
+- `fdinfo`（`patches/lab4-file-table-observation/0002-add-fdinfo-syscall.patch`）：`fdinfo(int fd, struct fdinfo *out)` 返回 `{type, readable, writable, ref}`，教学点 `argint + argaddr + copyout + struct ABI`，只查当前进程 `ofile[fd]`，不返回路径/inode 号/内容。
+
+两者均从 clean baseline round-trip 验证通过，使用 `SYS_*=22`（independent，彼此不可叠加）。它们**未进入** integrated `0001-0007`、**未纳入**上面的三方 full verification，也**不影响** `e8e2fb9` 证据；`memstat` 不是完整内存管理实验，`fdinfo` 不是完整文件系统实验。若未来纳入 integrated `0008/0009`（届时 `SYS_memstat = 29`、`SYS_fdinfo = 30`），必须重新 rain/root/z2996 full verify、重录视频、重算 SHA256。
+
 ## 13. 演示视频与证据链
 
 最终视频证据为：

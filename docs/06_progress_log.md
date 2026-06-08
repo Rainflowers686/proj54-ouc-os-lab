@@ -905,3 +905,34 @@
   - No external source tree, raw logs, summary files, screenshots, videos, archives, `.claude/`, `.vscode/`, or private material was added.
 - Validation:
   - Final validation commands are run at the end of stage10c; results are reported in the final assistant response.
+
+## 2026-06-08: stage11a advanced optional independent patches (memstat / fdinfo)
+
+- Commit hash: TODO after commit
+- Goal: lift implementation depth with two struct-returning observation syscalls (argaddr/argint + copyout + struct ABI) WITHOUT touching integrated 0001-0007, scripts/xv6, or the e8e2fb9 evidence chain.
+- Completed:
+  - Added `patches/lab3-memory-and-pagetable/0002-add-memstat-syscall.patch`: `memstat(struct memstat *out)` returns `{sz_bytes, mapped_pages, page_size}` via `argaddr + copyout`; `SYS_memstat = 22` (clean baseline independent).
+  - Added `patches/lab4-file-table-observation/0002-add-fdinfo-syscall.patch`: `fdinfo(int fd, struct fdinfo *out)` returns `{type, readable, writable, ref}` via `argint + argaddr + copyout`; self-only `myproc()->ofile[fd]`, read under `ftable.lock`; `SYS_fdinfo = 22`.
+  - Both struct fields are fully set before copyout and the structs have no padding, so copyout leaks no uninitialized kernel-stack bytes.
+- Real validation (clean baseline round-trip, WSL2 Ubuntu-24.04; red-team re-verified):
+  - memstat: apply + `make` (-Werror clean) + `memstattest` -> `page_size = 4096`, `mapped delta = 2`, `size delta = 8192`, `invalid pointer = -1`, `memstattest done`.
+  - fdinfo: apply + `make` (-Werror clean) + `fdinfotest` -> `open fd ok`, `dup fd ok`, `closed fd = -1`, `bad fd = -1`, `fdinfotest done`.
+  - Deltas/results are computed by the test programs (never hardcoded); any mismatch calls `fail()` + `exit(1)`.
+- Boundaries:
+  - independent advanced optional only; each uses `SYS_*=22` and the two are mutually exclusive (cannot be stacked); combine via a future integrated `0008/0009` (`SYS_memstat = 29`, `SYS_fdinfo = 30`).
+  - NOT in integrated `0001-0007`; NOT covered by rain/root/z2996 full verification; does NOT affect the `e8e2fb9` three-way full PASS, so no teammate re-verify is needed now.
+  - `memstat` is not full memory management; `fdinfo` is not a full file system.
+  - `patches/integrated-labs/` and `scripts/xv6/` were not modified; external tree restored to integrated `0001-0007`.
+
+## 2026-06-08: stage11a-docs document memstat / fdinfo advanced optional patches
+
+- Commit hash: TODO after commit
+- Goal: add the minimum necessary documentation so the two advanced patches are no longer orphan files; no learner-first README overhaul, no integrated 0008/0009, no verification-script changes.
+- Completed (documentation only):
+  - Added advanced-optional sections to `patches/lab3-memory-and-pagetable/README.md`, `patches/lab4-file-table-observation/README.md`, `labs/lab3-memory-and-pagetable/README.md`, `labs/lab4-file-system/README.md`, `tests/lab3/README.md`, `tests/lab4/README.md`, `docs/final/04b_lab3_page_table_observation.md`, `docs/final/05_lab4_file_table_observation.md`.
+  - Added an advanced-optional row and anti-overclaim line to `docs/final/11_known_limits_and_future_work.md`; added a light `12.1` advanced-optional section to `docs/final/technical_report_v1.0.md`; added a status row to `README.md`.
+  - Added `0002` patch entries to `scripts/collect-report.sh` and regenerated `submissions/draft-report-index.md`; recorded AI usage in `docs/05_ai_usage_record.md`.
+  - Every section states: `SYS_*=22` independent / not stackable / not in integrated 0001-0007 / not teammate-verified / does not affect e8e2fb9 / future integrated 0008/0009 needs full re-verify + re-record + re-SHA256.
+- Boundaries:
+  - No `patches/integrated-labs/`, `scripts/xv6/`, or OS code modified; no external/logs/video/screenshot/.claude/.vscode added.
+  - Did not claim memstat/fdinfo are in final integrated or teammate-verified.

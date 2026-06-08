@@ -117,6 +117,17 @@ bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"
 - stage9c 已真实捕获 `fdcounttest done`，并观察到 fd delta open=1、dup=2、close one=1、close two=0。
 - 本地一次日志中观察到 `before=1`、`after_open=2`、`after_close=1`，但该数字不作为固定验收标准。
 
+## 进阶可选实验：fdinfo（advanced optional, independent）
+
+`fcount()`/`fdcount()` 之后，可以做一个进阶可选实验 `fdinfo()`，把"数 fd"升级为"看一个 fd 的内核元数据"。
+
+- patch：`patches/lab4-file-table-observation/0002-add-fdinfo-syscall.patch`（独立于 `0001`）。
+- 接口：`int fdinfo(int fd, struct fdinfo *out)`，返回 `{type, readable, writable, ref}`。
+- 教学点：`argint + argaddr + copyout + struct ABI`——内核如何按 fd 取出 `struct file` 的元数据并安全拷回用户态；只查 `myproc()->ofile[fd]`，在 `ftable.lock` 下读取，不返回路径/inode 号/内容/物理地址。
+- 验证：`bash scripts/xv6/run-xv6-command.sh fdinfotest "fdinfotest done"`，clean baseline round-trip 已通过（`open fd ok`、`dup fd ok`、`closed fd = -1`、`bad fd = -1`）。
+
+边界与状态：仍然是 fd table **观察**实验，不是完整文件系统；`SYS_fdinfo = 22` 与 `fcount` 相同，两个 independent patch **不可叠加**；**未进入** integrated `0001-0007`，**未纳入**队友 full verification，**不影响** `e8e2fb9` 证据。组合演示见未来 integrated `0008/0009`（届时编号 `SYS_fdinfo = 30`，并需重新队友 full verify、重录视频、重算 SHA256）。
+
 ## 当前边界
 
 - 这不是完整文件系统实验。

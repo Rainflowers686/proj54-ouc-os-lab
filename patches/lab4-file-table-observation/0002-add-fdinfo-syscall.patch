@@ -1,0 +1,242 @@
+diff --git a/Makefile b/Makefile
+index 1e88984..7837563 100644
+--- a/Makefile
++++ b/Makefile
+@@ -145,6 +145,7 @@ UPROGS=\
+ 	$U/_logstress\
+ 	$U/_forphan\
+ 	$U/_dorphan\
++	$U/_fdinfotest\
+ 
+ fs.img: mkfs/mkfs README $(UPROGS)
+ 	mkfs/mkfs fs.img README $(UPROGS)
+diff --git a/kernel/defs.h b/kernel/defs.h
+index ee5d495..872bea6 100644
+--- a/kernel/defs.h
++++ b/kernel/defs.h
+@@ -33,6 +33,7 @@ struct file*    filedup(struct file*);
+ void            fileinit(void);
+ int             fileread(struct file*, uint64, int n);
+ int             filestat(struct file*, uint64 addr);
++void            fileinfo(struct file*, int*, int*, int*, int*);
+ int             filewrite(struct file*, uint64, int n);
+ 
+ // fs.c
+diff --git a/kernel/fdinfo.h b/kernel/fdinfo.h
+new file mode 100644
+index 0000000..b42dcf4
+--- /dev/null
++++ b/kernel/fdinfo.h
+@@ -0,0 +1,9 @@
++// fdinfo: read-only observation of one open file descriptor of the calling
++// process. Filled by sys_fdinfo() and copied out to user space. It exposes
++// only descriptor-level metadata, never a path, inode number, or file content.
++struct fdinfo {
++  int type;      // struct file type (FD_NONE/FD_PIPE/FD_INODE/FD_DEVICE)
++  int readable;  // 1 if the fd is readable
++  int writable;  // 1 if the fd is writable
++  int ref;       // struct file reference count (observation only)
++};
+diff --git a/kernel/file.c b/kernel/file.c
+index 13a4e69..9b66fc3 100644
+--- a/kernel/file.c
++++ b/kernel/file.c
+@@ -101,6 +101,18 @@ filestat(struct file *f, uint64 addr)
+   return -1;
+ }
+ 
++// Read descriptor-level metadata of f under ftable.lock (observation only).
++void
++fileinfo(struct file *f, int *type, int *readable, int *writable, int *ref)
++{
++  acquire(&ftable.lock);
++  *type = f->type;
++  *readable = f->readable;
++  *writable = f->writable;
++  *ref = f->ref;
++  release(&ftable.lock);
++}
++
+ // Read from file f.
+ // addr is a user virtual address.
+ int
+diff --git a/kernel/syscall.c b/kernel/syscall.c
+index 822720c..6e8b5f1 100644
+--- a/kernel/syscall.c
++++ b/kernel/syscall.c
+@@ -102,6 +102,7 @@ extern uint64 sys_unlink(void);
+ extern uint64 sys_link(void);
+ extern uint64 sys_mkdir(void);
+ extern uint64 sys_close(void);
++extern uint64 sys_fdinfo(void);
+ 
+ // An array mapping syscall numbers from syscall.h
+ // to the function that handles the system call.
+@@ -128,6 +129,7 @@ static uint64 (*syscalls[])(void) = {
+   [SYS_link]    sys_link,
+   [SYS_mkdir]   sys_mkdir,
+   [SYS_close]   sys_close,
++  [SYS_fdinfo]  sys_fdinfo,
+   // clang-format on
+ };
+ 
+diff --git a/kernel/syscall.h b/kernel/syscall.h
+index 454d1b4..a50e276 100644
+--- a/kernel/syscall.h
++++ b/kernel/syscall.h
+@@ -20,3 +20,4 @@
+ #define SYS_link   19
+ #define SYS_mkdir  20
+ #define SYS_close  21
++#define SYS_fdinfo 22
+diff --git a/kernel/sysfile.c b/kernel/sysfile.c
+index a6299e9..8c04be1 100644
+--- a/kernel/sysfile.c
++++ b/kernel/sysfile.c
+@@ -15,6 +15,7 @@
+ #include "sleeplock.h"
+ #include "file.h"
+ #include "fcntl.h"
++#include "fdinfo.h"
+ 
+ // Fetch the nth word-sized system call argument as a file descriptor
+ // and return both the descriptor and the corresponding struct file.
+@@ -119,6 +120,32 @@ sys_fstat(void)
+   return filestat(f, st);
+ }
+ 
++// Lab4 advanced optional: read-only observation of one open fd of the calling
++// process. Returns descriptor-level metadata (type/readable/writable/ref) via
++// copyout. Returns -1 for a bad/closed fd or a bad user pointer. It never
++// exposes a path, inode number, or file content.
++uint64
++sys_fdinfo(void)
++{
++  int fd;
++  uint64 uaddr;
++  struct proc *p = myproc();
++  struct file *f;
++  struct fdinfo info;
++
++  argint(0, &fd);
++  argaddr(1, &uaddr);
++
++  if (fd < 0 || fd >= NOFILE || (f = p->ofile[fd]) == 0)
++    return -1;
++
++  fileinfo(f, &info.type, &info.readable, &info.writable, &info.ref);
++
++  if (copyout(p->pagetable, uaddr, (char *)&info, sizeof(info)) < 0)
++    return -1;
++  return 0;
++}
++
+ // Create the path new as a link to the same inode as old.
+ uint64
+ sys_link(void)
+diff --git a/user/fdinfotest.c b/user/fdinfotest.c
+new file mode 100644
+index 0000000..ca2c0f3
+--- /dev/null
++++ b/user/fdinfotest.c
+@@ -0,0 +1,71 @@
++#include "kernel/types.h"
++#include "kernel/fcntl.h"
++#include "kernel/fdinfo.h"
++#include "user/user.h"
++
++// fdinfotest: Lab4 advanced optional test for the fdinfo() syscall.
++//
++// It verifies, with real syscall results (never hardcoded output):
++//   - fdinfo(open fd) returns 0 with FD_INODE + readable + writable for O_RDWR
++//   - fdinfo(dup fd) also returns 0
++//   - fdinfo(closed fd) returns -1
++//   - fdinfo(bad fd) returns -1
++// Any failed expectation calls fail() which exits with code 1.
++// ref is observed but not strongly asserted (it can vary by environment).
++
++#define FD_INODE 2
++
++static void
++fail(char *msg)
++{
++  printf("fdinfotest FAIL: %s\n", msg);
++  exit(1);
++}
++
++int
++main(void)
++{
++  struct fdinfo a;
++  struct fdinfo b;
++  int fd;
++  int dupfd;
++  int r;
++
++  unlink("fdinfotmp");
++
++  fd = open("fdinfotmp", O_CREATE | O_RDWR);
++  if (fd < 0)
++    fail("open fdinfotmp failed");
++
++  if (fdinfo(fd, &a) != 0)
++    fail("fdinfo on open fd failed");
++  if (a.type != FD_INODE || a.readable != 1 || a.writable != 1)
++    fail("fdinfo open fd fields unexpected");
++  printf("fdinfo open fd ok\n");
++
++  dupfd = dup(fd);
++  if (dupfd < 0)
++    fail("dup failed");
++  if (fdinfo(dupfd, &b) != 0)
++    fail("fdinfo on dup fd failed");
++  if (b.type != FD_INODE || b.readable != 1 || b.writable != 1)
++    fail("fdinfo dup fd fields unexpected");
++  printf("fdinfo dup fd ok\n");
++
++  close(fd);
++  r = fdinfo(fd, &a);
++  printf("fdinfo closed fd = %d\n", r);
++  if (r != -1)
++    fail("closed fd did not return -1");
++
++  r = fdinfo(99, &a);
++  printf("fdinfo bad fd = %d\n", r);
++  if (r != -1)
++    fail("bad fd did not return -1");
++
++  close(dupfd);
++  unlink("fdinfotmp");
++
++  printf("fdinfotest done\n");
++  exit(0);
++}
+diff --git a/user/user.h b/user/user.h
+index ecd0921..74e6842 100644
+--- a/user/user.h
++++ b/user/user.h
+@@ -1,6 +1,7 @@
+ #define SBRK_ERROR ((char *)-1)
+ 
+ struct stat;
++struct fdinfo;
+ 
+ // system calls
+ int fork(void);
+@@ -24,6 +25,7 @@ int getpid(void);
+ char *sys_sbrk(int, int);
+ int pause(int);
+ int uptime(void);
++int fdinfo(int, struct fdinfo *);
+ 
+ // ulib.c
+ int stat(const char *, struct stat *);
+diff --git a/user/usys.pl b/user/usys.pl
+index c5d4c3a..86e2a79 100755
+--- a/user/usys.pl
++++ b/user/usys.pl
+@@ -42,3 +42,4 @@ entry("getpid");
+ entry("sbrk");
+ entry("pause");
+ entry("uptime");
++entry("fdinfo");

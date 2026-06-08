@@ -44,3 +44,30 @@ bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"
 ## 与测试报告的关系
 
 正式测试摘要记录在 [../../docs/04_test_report.md](../../docs/04_test_report.md)。本文件只记录 lab4 的测试目标、当前验证状态和后续补充方向。
+
+## 进阶可选：fdinfo（advanced optional, independent）
+
+`fdinfo()` 是 Lab4 的进阶可选 independent patch（`patches/lab4-file-table-observation/0002-add-fdinfo-syscall.patch`），用 `argint + argaddr + copyout` 把当前进程某个 fd 的 `{type, readable, writable, ref}` 拷回用户态；只查 `myproc()->ofile[fd]`，不返回路径/inode 号/内容。
+
+验证命令（clean baseline，独立于 `0001`）：
+
+```bash
+git -C external/xv6-riscv reset --hard 74f84181a3404d1d6a6ff98d342233979066ebb8
+git -C external/xv6-riscv clean -fdx
+git -C external/xv6-riscv apply ../../patches/lab4-file-table-observation/0002-add-fdinfo-syscall.patch
+make -C external/xv6-riscv
+bash scripts/xv6/run-xv6-command.sh fdinfotest "fdinfotest done"
+```
+
+真实结果（clean baseline round-trip 已验证）：
+
+| 测试项 | 结果 |
+| --- | --- |
+| clean baseline apply + `make` | PASS |
+| `fdinfo open fd ok`（O_RDWR：type=FD_INODE、readable、writable） | PASS |
+| `fdinfo dup fd ok` | PASS |
+| `fdinfo closed fd = -1` | PASS |
+| `fdinfo bad fd = -1` | PASS |
+| `fdinfotest done` | PASS |
+
+`ref` 被观察输出但不强断言。边界：`SYS_fdinfo = 22`（independent，与 `fcount` 不可叠加）；**未进入** integrated `0001-0007`；**未纳入**队友 full verification；**不影响** `e8e2fb9` 证据。

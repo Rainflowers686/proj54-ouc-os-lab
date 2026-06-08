@@ -7,6 +7,7 @@
 | lab3 memory/pagetable | integrated 已完成 | `pgcount()` 页表映射数量观察已进入 integrated `0006`；不是完整内存管理实验 |
 | lab4 file system | v0.2 已完成 | `fcount()` file table 与 `fdcount()` fd table 观察；不是完整文件系统实验 |
 | lab5 capstone | 已完成文档闭环 | 综合复现实验；不新增内核机制 |
+| advanced optional patches | independent 已验证 | `memstat`(lab3 `0002`) 与 `fdinfo`(lab4 `0002`) 经 clean baseline round-trip 验证，教 `argaddr/argint + copyout + struct ABI`；**未进入** integrated `0001-0007`，**未纳入**队友 full verification，**不影响** `e8e2fb9` 证据 |
 | 长期稳定性测试 | 未完成 | 当前为 timeout 自动捕获 evidence |
 | 队友独立复现 | final full PASS 已记录 | root 与 z2996 两份 `e8e2fb9` / integrated `0001-0007` full PASS 已记录；旧 `1ba9db6` 只作 historical evidence |
 | 视频提交信息 | final metadata 已记录 | final integrated `0001-0007` 视频已记录大小、时长、SHA256；平台提交方式和最终隐私复核待确认 |
@@ -25,6 +26,7 @@
 - 队长本机 PASS 不能写成队友独立复现；final 证据中 lead/root/z2996 必须分开记录。
 - 旧队友 PASS 只能按旧 commit `1ba9db6` 的 summary/截图摘要记录，不能覆盖 final commit `e8e2fb9`。
 - 已录制视频不能自动等同于已完成平台提交；还需确认平台提交方式和最终隐私复核。
+- `memstat` / `fdinfo` 是 advanced optional independent patch，不能写成已进入 integrated `0001-0007`、已进入 final integrated 或已被队友验证；它们不影响 `e8e2fb9` 三方 full PASS 证据。
 
 ## 后续可扩展实验
 

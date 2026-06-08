@@ -81,8 +81,10 @@ It is not the final technical report, does not generate PDF, and does not includ
 | lab2 pstate syscall patch | `patches/lab2-process-observation/0001-add-pstate-syscall.patch` | exists | commit-ready independent patch from clean baseline |
 | lab2 patch guide | `patches/lab2-process-observation/README.md` | exists | apply/build/run instructions |
 | lab3 pgcount syscall patch | `patches/lab3-memory-and-pagetable/0001-add-pgcount-syscall.patch` | exists | stage9b independent patch from clean baseline; SYS_pgcount 22; eager/lazy pgcounttest verified |
+| lab3 memstat advanced optional patch | `patches/lab3-memory-and-pagetable/0002-add-memstat-syscall.patch` | exists | stage11a independent advanced patch; memstat(struct memstat*) via argaddr+copyout; SYS_memstat 22; clean-baseline round-trip verified; not in integrated 0001-0007; not teammate-verified; does not affect e8e2fb9 |
 | lab3 patch guide | `patches/lab3-memory-and-pagetable/README.md` | exists | apply/build/run instructions and eager/lazy allocation teaching notes |
 | lab4 fcount syscall patch | `patches/lab4-file-table-observation/0001-add-fcount-syscall.patch` | exists | commit-ready independent patch from clean baseline |
+| lab4 fdinfo advanced optional patch | `patches/lab4-file-table-observation/0002-add-fdinfo-syscall.patch` | exists | stage11a independent advanced patch; fdinfo(int,struct fdinfo*) via argint+argaddr+copyout; SYS_fdinfo 22; self-only ofile[fd]; clean-baseline round-trip verified; not in integrated 0001-0007; not teammate-verified; does not affect e8e2fb9 |
 | lab4 patch guide | `patches/lab4-file-table-observation/README.md` | exists | apply/build/run instructions |
 | integrated hello syscall patch | `patches/integrated-labs/0001-add-hello-syscall.patch` | exists | comprehensive demo sequence step 1 |
 | integrated add2 argint syscall patch | `patches/integrated-labs/0002-add-argint-add2-syscall.patch` | exists | comprehensive demo sequence step 2 |
