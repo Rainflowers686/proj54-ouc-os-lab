@@ -10,7 +10,7 @@
 | 官方主仓库 | 待最终确认 | 最终以比赛 GitLab / 平台要求为准，不修改 remote |
 | GitHub 使用边界 | 已说明 | GitHub 仅作私有备份/协作，不作为最终提交平台 |
 | 报名材料 | 禁止入库 | 姓名、学号、手机号、身份证等不进 Git |
-| 视频文件 | 禁止入库 | final integrated `0001-0007` 视频与 3 段 historical 视频元数据已记录到 `submissions/demo_record.md`；平台提交方式和最终隐私复核待确认 |
+| 视频文件 | 禁止入库 | `0001-0007` 视频（historical stable checkpoint，只覆盖 `0001-0007`）与 3 段 historical 视频元数据已记录到 `submissions/demo_record.md`；覆盖 `0001-0009`（含 memstat/fdinfo）的新视频与新 SHA256 为 TBD；平台提交方式和最终隐私复核待确认 |
 | 大文件/压缩包/截图 | 禁止入库 | `.mp4/.mov/.zip/.7z/.rar/.png/.jpg` 等均禁止提交 |
 
 ## 2. Git 仓库卫生
@@ -21,7 +21,7 @@
 | `logs/*.log` | ignored，不被跟踪 |
 | `logs/*.summary.txt` | ignored，不被跟踪 |
 | `.claude/`、`.vscode/` | ignored，不被跟踪 |
-| integrated patches | 当前为 `patches/integrated-labs/0001-0007`；`0006` 为 pgcount，`0007` 为 fdcount |
+| integrated patches | 当前为 `patches/integrated-labs/0001-0009`；`0006` pgcount，`0007` fdcount，`0008` memstat（`SYS_memstat 29`），`0009` fdinfo（`SYS_fdinfo 30`）；不得修改 `0001-0007` 内容 |
 | remote | 不修改 GitLab/GitHub remote |
 
 ## 3. 工程复现
@@ -33,8 +33,10 @@
 | boot evidence | `bash scripts/xv6/boot-xv6.sh` | PASS |
 | Lab3 integrated pgcount | `bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcounttest done"` | PASS；已进入 integrated `0006` |
 | Lab4 fdcount | `bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"` | PASS；已进入 integrated `0007` |
-| 一键 full 验证 | `bash scripts/xv6/teammate-verify.sh --full` | final `e8e2fb9` 队长本机、root、z2996 full verification 均 PASS |
-| 本地录屏前预检 | `bash scripts/xv6/local-verify.sh --quick` | 队长本机 final full PASS；录屏前仍推荐 quick |
+| Lab3 进阶 memstat | `bash scripts/xv6/run-xv6-command.sh memstattest "memstattest done"` | PASS；stage11b 已进入 integrated `0008`（`SYS_memstat 29`）；队长本机 `local-verify --full` 已验证；非完整内存管理 |
+| Lab4 进阶 fdinfo | `bash scripts/xv6/run-xv6-command.sh fdinfotest "fdinfotest done"` | PASS；stage11b 已进入 integrated `0009`（`SYS_fdinfo 30`）；队长本机 `local-verify --full` 已验证；非完整文件系统 |
+| 一键 full 验证 | `bash scripts/xv6/teammate-verify.sh --full` | historical：`e8e2fb9` 队长本机、root、z2996 full verification 均 PASS（只覆盖 `0001-0007`）；TBD：含 memstat/fdinfo 的 `0001-0009` 队友 full verify 尚未进行，不得伪造 |
+| 本地录屏前预检 | `bash scripts/xv6/local-verify.sh --quick` | 队长本机 `0001-0009` full PASS 已完成；录屏前仍推荐 quick |
 | QEMU cleanup | `bash scripts/xv6/cleanup-qemu.sh` | 可用 |
 
 ## 4. 文档材料
@@ -43,7 +45,7 @@
 | --- | --- | --- |
 | 评委入口 README | `README.md` | stage8a 已重构 |
 | 正式文档入口 | `docs/final/` | stage8a 已新增正式初版 |
-| 测试覆盖表 | `docs/final/06_testing_and_verification.md` | 已包含 doctor/baseline/boot/用户程序/pgcount/fdcount/local/teammate/manual demo |
+| 测试覆盖表 | `docs/final/06_testing_and_verification.md` | 已包含 doctor/baseline/boot/用户程序/pgcount/fdcount/memstat/fdinfo/local/teammate/manual demo |
 | Lab3 patch | `patches/lab3-memory-and-pagetable/0001-add-pgcount-syscall.patch` 与 integrated `0006` | 已生成并本机验证 |
 | AI 使用声明 | `docs/final/09_ai_usage_and_contribution_statement.md` | 已补充 |
 | 引用与许可证声明 | `docs/final/10_reference_and_license_statement.md` | 已补充 xv6 MIT 与参考项目待核对项 |
@@ -54,15 +56,16 @@
 | PPT 生成器 | `slides/generate_final_ppt.py` | 使用 Python 标准库生成 PPTX；不嵌入视频、截图或 raw logs |
 | PPT 成稿 | `slides/final_defense_ppt.pptx` | 已生成；16:9；16 张 slide 与 16 份 speaker notes；`63,695 bytes`；无 `ppt/media/` 文件；仍需人工最终审阅和排练 |
 | 材料索引 | `submissions/draft-report-index.md` | 由 `scripts/collect-report.sh` 生成 |
-| 最终证据 manifest | `submissions/evidence_manifest.md` | 已记录 final commit、final verification、final video、historical evidence、外部目录和 non-committed evidence policy |
+| 最终证据 manifest | `submissions/evidence_manifest.md` | 已记录 integrated `0001-0009` 边界、`e8e2fb9 / 0001-0007` historical stable checkpoint、新 final commit/verification/video/SHA256 TBD、外部目录和 non-committed evidence policy |
 | docs 导引 | `docs/README.md` | 已说明正式文档与过程文档边界 |
-| 队友复现记录 | `submissions/teammate_reproduction_record.md` | 已记录 final `e8e2fb9` root/z2996 full PASS；旧 `1ba9db6` 记录为 historical evidence |
+| 队友复现记录 | `submissions/teammate_reproduction_record.md` | `e8e2fb9` lead/root/z2996 full PASS 记录为 historical `0001-0007` checkpoint；含 memstat/fdinfo 的 `0001-0009` 队友 full verify 为 TBD；旧 `1ba9db6` 记录为 historical evidence |
 
 ## 5. 视频记录
 
 | 检查项 | 状态 |
 | --- | --- |
-| final integrated `0001-0007` 视频 | 已记录大小、时长、分辨率、帧率和 SHA256 |
+| `0001-0007` 视频（historical stable checkpoint） | 已记录大小、时长、分辨率、帧率和 SHA256；只覆盖 `0001-0007` |
+| `0001-0009` 新视频（含 memstat/fdinfo） | TBD：尚未录制；须重新录制并登记新 SHA256，不得伪造 |
 | historical 视频 3 段 | 已记录为 earlier `0001-0005` / stage7-stage8 evidence |
 | 视频文件不入库 | 必须保持 |
 | 视频文件名 | 已记录 |
@@ -78,7 +81,7 @@
 | 检查项 | 状态 |
 | --- | --- |
 | 队友使用命令 | `bash scripts/xv6/teammate-verify.sh --full` |
-| copy-to-lead summary | final `e8e2fb9` root 与 z2996 full PASS 已记录；旧 `1ba9db6` 只作 historical evidence |
+| copy-to-lead summary | `e8e2fb9` root 与 z2996 full PASS 已记录为 historical `0001-0007` checkpoint；含 memstat/fdinfo 的 `0001-0009` 队友 full verify 为 TBD；旧 `1ba9db6` 只作 historical evidence |
 | 失败时 cleanup 流程 | `bash scripts/xv6/cleanup-qemu.sh` |
 | 是否伪造队友结果 | 禁止；未知姓名/系统版本保持待补充 |
 
@@ -94,6 +97,8 @@
 - 是否把 fcount/fdcount 夸大成完整文件系统。
 - 是否把 pgcount 夸大成完整内存管理实验。
 - 是否把旧队友 summary 写成 final `e8e2fb9` 复现。
+- 是否把 `e8e2fb9 / 0001-0007` 三方 full PASS 写成已覆盖 `0001-0009`（含 memstat/fdinfo）；旧三方 PASS 只覆盖 `0001-0007`。
+- 是否把 memstat 夸大成完整内存管理，或把 fdinfo 夸大成完整文件系统。
 - 是否把本机验证写成队友复现。
 - 是否存在 external/logs/.claude/video/隐私材料入库风险。
 
@@ -121,6 +126,8 @@ bash scripts/xv6/teammate-verify.sh --full
 
 ## 9. 当前剩余待补充
 
+- integrated `0001-0009`（含 memstat/fdinfo）的 rain/root/z2996 三方 full verify 重新复现，以及新 commit hash 登记（当前 TBD）。
+- 覆盖 `0001-0009` 的新演示视频录制与新 SHA256 登记（当前 TBD，不得伪造）。
 - 队友真实姓名和系统版本（如最终材料需要）。
 - 平台提交方式和最终隐私复核结论。
 - PPT 人工最终审阅和答辩排练。
@@ -128,4 +135,4 @@ bash scripts/xv6/teammate-verify.sh --full
 
 ## 10. 结论
 
-当前工程功能、验证链、final `e8e2fb9` lead/root/z2996 full PASS 摘要、final 视频元数据和 SHA256、技术报告 v1.0、PPT 源稿和 PPTX 成稿已经形成提交证据基础。冲奖前仍必须完成 PPT 人工最终审阅/排练、平台提交方式确认、最终隐私复核、引用 URL/许可证核对和最终红队审核。
+当前工程功能、验证链、`e8e2fb9 / 0001-0007` lead/root/z2996 full PASS 摘要（historical stable checkpoint）、`0001-0007` 视频元数据和 SHA256、技术报告 v1.0、PPT 源稿和 PPTX 成稿已经形成提交证据基础；stage11b 已把 integrated 扩展为 `0001-0009`（新增 memstat `0008` / fdinfo `0009`）并在队长本机 `local-verify --full` overall PASS。冲奖前仍必须完成 integrated `0001-0009` 的 rain/root/z2996 三方 full verify 重新复现、新视频录制与新 SHA256 登记（当前 TBD）、PPT 人工最终审阅/排练、平台提交方式确认、最终隐私复核、引用 URL/许可证核对和最终红队审核。

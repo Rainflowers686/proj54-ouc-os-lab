@@ -100,12 +100,14 @@ bash scripts/xv6/teammate-verify.sh --full
 bash scripts/xv6/teammate-verify.sh --quick
 ```
 
-## stage9c 更新：integrated 0001-0007
+## stage9c/stage11b 更新：integrated 0001-0009
 
-当前 integrated-labs 已扩展到 `0001-0007`：
+stage9c 把 integrated-labs 扩展到 `0001-0007`，stage11b 起 current integrated suite 为 `0001-0009`：
 
 - `0006-add-pgcount-page-table-observation.patch`：Lab3 `pgcount()`，`SYS_pgcount = 27`。
 - `0007-add-fdcount-observation.patch`：Lab4 v0.2 `fdcount()`，`SYS_fdcount = 28`。
+- `0008-add-memstat-copyout-observation.patch`（stage11b）：Lab3 进阶 `memstat()`，`SYS_memstat = 29`，argaddr + copyout + struct ABI。
+- `0009-add-fdinfo-copyout-observation.patch`（stage11b）：Lab4 进阶 `fdinfo()`，`SYS_fdinfo = 30`，argint + argaddr + copyout + struct ABI。
 
 当前一键复现入口：
 
@@ -113,7 +115,7 @@ bash scripts/xv6/teammate-verify.sh --quick
 bash scripts/xv6/teammate-verify.sh --full
 ```
 
-该流程会覆盖 hello、add2test、pstatetest、pcounttest、pchildtest、fcounttest、pgcounttest 和 fdcounttest。两份旧队友 full PASS summary 锚定 commit `1ba9db6`，不覆盖 stage9c 新 HEAD；正式提交前需要重新收集 teammate full summary。
+该流程会覆盖 hello、add2test、pstatetest、pcounttest、pchildtest、fcounttest、pgcounttest、fdcounttest、memstattest 和 fdinfotest。旧队友证据均不覆盖 current `0001-0009`：两份 `1ba9db6` full PASS 只覆盖 earlier suite，`e8e2fb9` 的三方 full PASS 是 historical stable checkpoint（只覆盖 `0001-0007`）；正式提交前需要在新 commit 上重新收集 teammate full summary（当前 TBD）。
 
 队长录屏前本地预检使用：
 
@@ -224,11 +226,11 @@ pstate(child) = <state> (<STATE_NAME>)
 
 - TODO: 第二名队员在另一台机器独立复现 lab1/lab2。
 - TODO: 失败时补充 FAQ 和 issue 记录。
-- TODO: stage9c 后重新收集队友独立复现 integrated-labs `0001-0007`。
+- TODO: stage11b 后在新 commit 上重新收集队友独立复现 integrated-labs `0001-0009`（含 memstattest/fdinfotest）。
 
 ## stage6a 更新：lab4 与 integrated 0001-0005（历史记录）
 
-stage6a 时 integrated-labs 扩展到 `0001-0005`，新增 lab4 文件表观察实验。stage9c 当前版本已进一步扩展到 `0001-0007`：
+stage6a 时 integrated-labs 扩展到 `0001-0005`，新增 lab4 文件表观察实验。stage9c 时点进一步扩展到 `0001-0007`（stage11b 起 current suite 为 `0001-0009`）：
 
 - `0005-add-file-table-observation.patch`
 - `fcount()` syscall

@@ -70,4 +70,4 @@ bash scripts/xv6/run-xv6-command.sh memstattest "memstattest done"
 | `memstat invalid pointer = -1` | PASS |
 | `memstattest done` | PASS |
 
-边界：`SYS_memstat = 22`（independent，与 `pgcount` 不可叠加）；**未进入** integrated `0001-0007`；**未纳入**队友 full verification；**不影响** `e8e2fb9` 证据。
+边界：independent 版 `SYS_memstat = 22`（与 `pgcount` 不可叠加）。stage11b 起 `memstat` **已进入** integrated `0008`（`SYS_memstat = 29`），current integrated suite 为 `0001-0009`，`memstattest` 已纳入 local/teammate full verify 并在队长本机 `local-verify --full` overall PASS。证据边界：`e8e2fb9 / 0001-0007` 三方 full PASS 为 historical stable checkpoint，不覆盖 `0001-0009`；`0001-0009` 的队友复现、新视频、新 SHA256 为 TBD，不得伪造。

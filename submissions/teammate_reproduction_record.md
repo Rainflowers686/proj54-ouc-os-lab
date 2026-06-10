@@ -13,7 +13,21 @@
 bash scripts/xv6/teammate-verify.sh --full
 ```
 
-## Final Verification For `e8e2fb9` / Integrated `0001-0007`
+## Current Final Verification（stage11b：integrated `0001-0009`）— TBD
+
+> stage11b 把 `memstat`(`0008`) 和 `fdinfo`(`0009`) 进入 integrated 主线，final integrated suite 变为 `0001-0009`。下面的 `e8e2fb9 / 0001-0007` 三方 full PASS **降级为 historical**，**不覆盖** `0001-0009`。新 `0001-0009` 的队友复现尚未进行，全部 TBD，**不得伪造**。
+
+| 角色 | user | commit | suite | result |
+| --- | --- | --- | --- | --- |
+| 队长本机 | `rain` | TBD after commit | `0001-0009` | TBD（需重新 `teammate-verify.sh --full`） |
+| 队友 A | `root` | TBD after commit | `0001-0009` | TBD |
+| 队友 B | `z2996` | TBD after commit | `0001-0009` | TBD |
+
+本机参考（非队友复现）：stage11b 在当前工作树用 `local-verify.sh --full` 实测 `0001-0009` overall PASS（含 `memstattest`/`fdinfotest`）；该结果只证明工作树可复现，待用户提交新 commit、由 rain/root/z2996 重新 full verify 后才计入 final teammate evidence。
+
+## Previous Stable Checkpoint — `e8e2fb9` / Integrated `0001-0007`（historical）
+
+> 以下三方 full PASS 是历史稳定检查点，只证明 `0001-0007`，**不覆盖** stage11b 的 `0001-0009`。
 
 最终工程 commit：
 
@@ -21,7 +35,7 @@ bash scripts/xv6/teammate-verify.sh --full
 e8e2fb9 feat(integrated): add lab3 pgcount and lab4 fdcount workflow
 ```
 
-最终 integrated suite：`0001-0007`
+integrated suite：`0001-0007`
 
 覆盖检查项：
 

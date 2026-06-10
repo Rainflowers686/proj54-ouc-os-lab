@@ -141,8 +141,8 @@ fdinfotest done
 边界与状态：
 
 - 这是 fd table **观察**实验，**不是完整文件系统实验**。
-- `SYS_fdinfo = 22` 与 `fcount` 的 `SYS_fcount = 22` 相同：两个 independent patch **不可叠加**，各自从 clean baseline 单独应用。需要组合演示时应走未来的 integrated `0008/0009`（编号将改为 `SYS_fdinfo = 30`）。
-- **未进入** integrated `0001-0007`。
-- **未纳入**队友（rain/root/z2996）full verification；当前不需要队友重新 full verify。
-- **不影响** `e8e2fb9` 三方 full PASS 证据。
-- 若未来进入 integrated `0008/0009`，必须重新 rain/root/z2996 full verify、重录视频、重算 SHA256。
+- `SYS_fdinfo = 22` 与 `fcount` 的 `SYS_fcount = 22` 相同：两个 independent patch **不可叠加**，各自从 clean baseline 单独应用。组合演示走 integrated 路线。
+- stage11b 起 `fdinfo` **已进入** integrated `0009`（`patches/integrated-labs/0009-add-fdinfo-copyout-observation.patch`，integrated 编号 `SYS_fdinfo = 30`，`fileinfo()` 在 `ftable.lock` 下读取），current integrated suite 为 `0001-0009`。
+- integrated 变体已在队长本机 `local-verify --full` overall PASS（含 `fdinfotest`）；本 independent patch 本身仍未纳入队友 full verification。
+- `e8e2fb9` 三方 full PASS 是 historical stable checkpoint，只覆盖 `0001-0007`，**不覆盖** `0001-0009`。
+- 含 fdinfo 的 `0001-0009` 队友 full verify（rain/root/z2996）、新视频、新 SHA256 均为 TBD，须在新 commit 上重新复现后填写，不得伪造。

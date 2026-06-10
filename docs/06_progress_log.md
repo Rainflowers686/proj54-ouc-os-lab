@@ -936,3 +936,50 @@
 - Boundaries:
   - No `patches/integrated-labs/`, `scripts/xv6/`, or OS code modified; no external/logs/video/screenshot/.claude/.vscode added.
   - Did not claim memstat/fdinfo are in final integrated or teammate-verified.
+
+## 2026-06-10: stage11b integrate memstat / fdinfo into integrated 0001-0009
+
+- Commit hash: TODO after commit
+- Goal: promote the already red-teamed advanced `memstat`/`fdinfo` observation syscalls from independent-only into the integrated comprehensive demo sequence as integrated `0008`/`0009`, extending the final suite to `0001-0009`, WITHOUT modifying integrated `0001-0007` content.
+- Completed:
+  - Added `patches/integrated-labs/0008-add-memstat-copyout-observation.patch`: integrated `memstat(struct memstat *out)` returning `{sz_bytes, mapped_pages, page_size}` via `argaddr + copyout`; `SYS_memstat = 29`; reuses the `uvmpagecount()` helper that integrated `0006` already added (independent variant inlines the same walk); `memstattest` user program; 8 files.
+  - Added `patches/integrated-labs/0009-add-fdinfo-copyout-observation.patch`: integrated `fdinfo(int fd, struct fdinfo *out)` returning `{type, readable, writable, ref}` via `argint + argaddr + copyout`; `SYS_fdinfo = 30`; self-only `myproc()->ofile[fd]`, read through a `fileinfo()` helper under `ftable.lock`; `fdinfotest` user program; 10 files.
+  - Both integrated structs are fully populated before copyout and have no padding, so copyout leaks no uninitialized kernel-stack bytes.
+  - Updated `scripts/xv6/apply-integrated-labs.sh` so the helper now applies integrated `0001-0009` (PATCHES list and the 0006/0007/0008/0009 dependency hint).
+  - Updated `scripts/xv6/teammate-verify.sh` to add `memstattest`/`fdinfotest` PASS/FAIL steps and the suite description.
+  - Updated `scripts/xv6/local-verify.sh` INFO line to list `pgcounttest`, `fdcounttest`, `memstattest`, and `fdinfotest`.
+- Real validation (clean baseline, WSL2 Ubuntu-24.04):
+  - Generated each integrated patch as a clean increment using a throwaway commit over applied `0001-0007`, then round-trip verified each patch: reset clean baseline -> `git apply` `0001-0009` -> `make` (-Werror clean) -> `run-xv6-command.sh`.
+  - `bash scripts/xv6/local-verify.sh --full`: overall PASS; apply+make+boot plus all program checks (hello/add2/pstate/pcount/pchild/fcount/pgcount/fdcount/memstat/fdinfo) captured from real QEMU output.
+  - memstat observed: `page_size = 4096`, mapped/size deltas computed by the test (not fixed); fdinfo observed: open/dup ok, closed fd `-1`, bad fd `-1`.
+  - `bash -n` syntax checks PASS for the three updated scripts.
+- Evidence framing (no fabrication):
+  - The previous `e8e2fb9` lead/root/z2996 three-way full PASS, the `0001-0007` final video, and its SHA256 are recorded as a **historical stable checkpoint** that covers only `0001-0007`; they do **not** cover `0001-0009`.
+  - The new `0001-0009` final commit, the rain/root/z2996 re-verification, the new demo video, and its SHA256 are recorded as **TBD**; the `local-verify --full` PASS above is team-lead local working-tree evidence only and is not claimed as teammate reproduction.
+- Boundaries:
+  - Did NOT modify the content of integrated `0001-0007`; only added integrated `0008`/`0009`.
+  - `memstat` is address-space (page-count) observation, not full memory management; `fdinfo` is fd-metadata observation, not a full file system.
+  - No physical addresses, host paths, inode numbers, or file contents are exposed by either syscall or its test.
+  - `external/xv6-riscv/`, `logs/*.log`, summary/console files, screenshots, and videos remain ignored and must not be committed.
+- Validation commands are re-run at the end of stage11b; results are reported in the final assistant response.
+
+## 2026-06-10: stage11b-fix reconcile integrated 0001-0009 documentation drift
+
+- Commit hash: TODO after commit (part of the stage11b commit)
+- Goal: fix the documentation drift found by the stage11b red-team review — several docs still presented `0001-0007` as the current integrated suite, six stage11a sections still said memstat/fdinfo were "not in integrated / future 0008/0009", and two `draft-report-index.md` descriptors claimed `0001-0009` content that the underlying docs did not yet contain.
+- Completed (documentation consistency only):
+  - `patches/integrated-labs/README.md`: purpose list, patch sequence table (added `0008`/`0009` rows), helper behavior, manual apply order, auto-verify commands, results table (memstattest/fdinfotest rows, `0001-0009` apply row), and evidence boundaries updated to current suite `0001-0009` with historical/TBD framing.
+  - `docs/final/00_project_overview.md`: scoring row and status table updated to `0001-0009`; video and teammate rows reframed as historical `0001-0007` checkpoint + `0001-0009` TBD; added key-boundary lines (old evidence does not cover `0001-0009`; memstat/fdinfo are observation only).
+  - `labs/lab5-final-integration/README.md`: capstone workflow, coverage list, verification commands (added memstattest/fdinfotest), patch-reading step, and current status updated to `0001-0009` with historical/TBD evidence boundaries.
+  - Six stage11a residue files (`labs/lab3*`, `labs/lab4*`, `tests/lab3`, `tests/lab4`, `patches/lab3*/README.md`, `patches/lab4*/README.md`): kept the independent-patch facts (`SYS_*=22`, mutually exclusive, clean-baseline only) and replaced "未进入 integrated / 未来 0008/0009" with "stage11b 已进入 integrated `0008`/`0009`（`SYS_memstat=29`/`SYS_fdinfo=30`）; `0001-0009` teammate verify / new video / new SHA256 TBD".
+  - `docs/final/07_teammate_reproduction_guide.md`: added a stage11b banner; `e8e2fb9` reframed from final commit to historical stable checkpoint covering only `0001-0007`.
+  - `docs/24_lab3_lab5_completion_plan.md`: added a prominent stage11b banner declaring the document a stage9c process record; fixed the "currently applies `0001-0007`" line.
+  - `reproducibility/README.md`: integrated section updated to `0001-0009` (added `0008`/`0009` bullets and memstattest/fdinfotest coverage); stale "当前 0001-0007" wording and the teammate TODO re-anchored.
+  - `submissions/evidence_manifest.md`: external-directory descriptions reframed (historical checkpoint; directory name kept as-is); `docs/final/11` "final commit" wording fixed.
+  - `scripts/collect-report.sh`: descriptors for docs/24, docs/final/07, patches/integrated-labs README, and the 04b/05 final guides synchronized with real doc content; regenerated `submissions/draft-report-index.md`.
+- Kept as historical (not changed): dated stage entries in `docs/05`/`docs/06`, historical evidence sections in demo/teammate/evidence docs, external asset directory and file names containing `e8e2fb9_final_0001_0007`, and slide headings whose bodies already carry historical/TBD framing.
+- Boundaries:
+  - No `patches/integrated-labs/0001-0009` patch content, `scripts/xv6/`, or OS code was modified.
+  - No teammate reproduction, new video, or new SHA256 was fabricated; all `0001-0009` evidence remains TBD.
+  - `external/xv6-riscv/`, logs, summaries, screenshots, videos, `.claude/`, `.vscode/` remain uncommitted.
+- Validation: `bash scripts/collect-report.sh`, `git diff --check`, `git status --short`, no-change checks on integrated `0001-0007` patches and `external`, and `git ls-files` hygiene checks; results reported in the final assistant response. `local-verify --full` was not re-run because no engineering file changed (last run on 2026-06-10 remains overall PASS).

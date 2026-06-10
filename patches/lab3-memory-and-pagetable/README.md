@@ -118,8 +118,8 @@ memstattest done
 边界与状态：
 
 - 这是页表/地址空间**观察**实验，**不是完整内存管理实验**。
-- `SYS_memstat = 22` 与 `pgcount` 的 `SYS_pgcount = 22` 相同：两个 independent patch **不可叠加**，各自从 clean baseline 单独应用。需要组合演示时应走未来的 integrated `0008/0009`（编号将改为 `SYS_memstat = 29`）。
-- **未进入** integrated `0001-0007`。
-- **未纳入**队友（rain/root/z2996）full verification；当前不需要队友重新 full verify。
-- **不影响** `e8e2fb9` 三方 full PASS 证据。
-- 若未来进入 integrated `0008/0009`，必须重新 rain/root/z2996 full verify、重录视频、重算 SHA256。
+- `SYS_memstat = 22` 与 `pgcount` 的 `SYS_pgcount = 22` 相同：两个 independent patch **不可叠加**，各自从 clean baseline 单独应用。组合演示走 integrated 路线。
+- stage11b 起 `memstat` **已进入** integrated `0008`（`patches/integrated-labs/0008-add-memstat-copyout-observation.patch`，integrated 编号 `SYS_memstat = 29`，复用 integrated `0006` 的 `uvmpagecount()`），current integrated suite 为 `0001-0009`。
+- integrated 变体已在队长本机 `local-verify --full` overall PASS（含 `memstattest`）；本 independent patch 本身仍未纳入队友 full verification。
+- `e8e2fb9` 三方 full PASS 是 historical stable checkpoint，只覆盖 `0001-0007`，**不覆盖** `0001-0009`。
+- 含 memstat 的 `0001-0009` 队友 full verify（rain/root/z2996）、新视频、新 SHA256 均为 TBD，须在新 commit 上重新复现后填写，不得伪造。

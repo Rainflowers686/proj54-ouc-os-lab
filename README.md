@@ -23,13 +23,13 @@
 | lab2 pstate/pcount/pchildtest | 已完成                        | 进程状态观察、状态计数、子进程状态观察                                                                                |
 | lab3 pgcount                  | integrated 已完成             | 页表映射数量观察；eager/lazy allocation 对比；integrated `0006`                                                       |
 | lab4 fcount/fdcount           | v0.2 已完成                   | 全局 file table 与当前进程 fd table 观察；不是完整文件系统实验                                                        |
-| lab5 capstone                 | 已完成文档闭环                | 综合复现实验；组织 clean baseline、integrated `0001-0007`、make/boot/全部用户程序验证，不新增内核机制                 |
-| integrated-labs 0001-0007     | 已完成                        | clean baseline 可顺序应用并 make；同一构建验证 hello/add2/pstate/pcount/pchild/fcount/pgcount/fdcount                 |
-| 进阶可选 memstat/fdinfo       | independent 已验证（未进 integrated） | `memstat`(lab3 `0002`)/`fdinfo`(lab4 `0002`) 教 `copyout + struct ABI`；clean baseline round-trip 验证；未纳入队友 full verify；不影响 `e8e2fb9` 证据 |
+| lab5 capstone                 | 已完成文档闭环                | 综合复现实验；组织 clean baseline、integrated `0001-0009`、make/boot/全部用户程序验证，不新增内核机制 |
+| integrated-labs 0001-0009     | 已完成（队长本机）            | clean baseline 可顺序应用并 make；同一构建验证 hello/add2/pstate/pcount/pchild/fcount/pgcount/fdcount/memstat/fdinfo（队长本机 `local-verify --full` PASS） |
+| 进阶 memstat/fdinfo（integrated `0008`/`0009`） | integrated 已完成（队长本机），队友复现 TBD | `memstat`(独立 lab3 `0002` + integrated `0008`，`SYS 29`)/`fdinfo`(独立 lab4 `0002` + integrated `0009`，`SYS 30`) 教 `argaddr/argint + copyout + struct ABI`；队长本机 `local-verify --full` PASS；含 memstat/fdinfo 的 `0001-0009` 队友 full verify 为 TBD；非完整内存管理/文件系统 |
 | verification scripts          | 已更新                        | `doctor.sh`、`teammate-verify.sh`、`local-verify.sh`、`cleanup-qemu.sh`；full/quick 覆盖 pgcounttest 和 fdcounttest |
-| 队长本机验证                  | final full PASS               | `e8e2fb9` / integrated `0001-0007` local/full PASS；summary/raw logs 不入库                                           |
-| 视频记录                      | final 视频已记录              | final integrated `0001-0007` 视频已记录大小、时长、SHA256；视频文件在仓库外，不提交 Git                             |
-| 队友独立复现                  | final full PASS               | root 与 z2996 两份 `e8e2fb9` / integrated `0001-0007` full PASS 已记录；旧 `1ba9db6` 只作 historical evidence         |
+| 队长本机验证                  | `0001-0009` full PASS（本机）  | stage11b `0001-0009` 队长本机 `local-verify --full` overall PASS（含 memstat/fdinfo）；旧 `e8e2fb9 / 0001-0007` 为 historical；summary/raw logs 不入库 |
+| 视频记录                      | `0001-0007` historical；`0001-0009` TBD | `0001-0007` 视频（historical stable checkpoint）已记录大小、时长、SHA256；覆盖 `0001-0009` 的新视频与新 SHA256 为 TBD；视频文件在仓库外，不提交 Git |
+| 队友独立复现                  | `0001-0007` historical；`0001-0009` TBD | root 与 z2996 两份 `e8e2fb9` / integrated `0001-0007` full PASS 记录为 historical stable checkpoint（只覆盖 `0001-0007`）；含 memstat/fdinfo 的 `0001-0009` 队友 full verify 为 TBD，不得伪造；旧 `1ba9db6` 只作 historical evidence |
 
 ## 评委快速复现
 
@@ -88,7 +88,7 @@ bash scripts/xv6/cleanup-qemu.sh
 
 ## 视频说明
 
-最终 integrated `0001-0007` 视频已录制并记录 SHA256。旧三段视频保留为 historical evidence，只覆盖 earlier integrated `0001-0005` / stage7-stage8 workflow。所有视频文件保存在仓库外，不提交 Git。当前仓库只记录视频文件名、用途、大小、时长、SHA256、外部位置和边界说明：
+`0001-0007` 视频已录制并记录 SHA256，但只覆盖 `0001-0007`，stage11b 后降级为 historical stable checkpoint；覆盖 `0001-0009`（含 memstat/fdinfo）的新视频与新 SHA256 为 TBD，须重新录制，不得伪造。旧三段视频保留为 historical evidence，只覆盖 earlier integrated `0001-0005` / stage7-stage8 workflow。所有视频文件保存在仓库外，不提交 Git。当前仓库只记录视频文件名、用途、大小、时长、SHA256、外部位置和边界说明：
 
 ```text
 submissions/demo_record.md
@@ -100,13 +100,14 @@ submissions/evidence_manifest.md
 ## 诚信与边界
 
 - 不提交 `external/xv6-riscv/`、`logs/*.log`、`logs/*.summary.txt`、`.claude/`、`.vscode/`、视频、大文件或隐私材料。
-- `patches/integrated-labs/0001-0007` 是当前已验证综合序列；`0006` 为 Lab3 `pgcount()`，`0007` 为 Lab4 v0.2 `fdcount()`。
+- `patches/integrated-labs/0001-0009` 是当前综合序列；`0006` Lab3 `pgcount()`，`0007` Lab4 v0.2 `fdcount()`，`0008` 进阶 `memstat()`（`SYS 29`），`0009` 进阶 `fdinfo()`（`SYS 30`）；`0001-0007` 内容未改动。
 - Lab5 是 capstone 综合复现实验，不是新的内核机制。
 - timeout 自动捕获只证明脚本在真实 QEMU 输出中匹配到预期文本，不等同于长期稳定性测试。
 - `fcount()` / `fdcount()` 只是 file table / fd table 计数观察，不是完整文件系统实验。
 - `pcount(RUNNING)` 和 `fcount(...)` 的具体数字不固定；`pchildtest` 状态受调度时序影响。
-- final commit `e8e2fb9` 已收到队长本机、队友 root、队友 z2996 三份 `--full` verification PASS 摘要；原始 summary/log/screenshot 不入仓。
-- 旧 commit `1ba9db6` 的两份队友 PASS 与旧三段视频只作为 historical/superseded evidence，不覆盖 final integrated `0001-0007`。
+- historical stable checkpoint commit `e8e2fb9` 已收到队长本机、队友 root、队友 z2996 三份 `--full` verification PASS 摘要，但只覆盖 integrated `0001-0007`；原始 summary/log/screenshot 不入仓。
+- stage11b 把 integrated 扩展为 `0001-0009`（新增 memstat `0008` / fdinfo `0009`），队长本机 `local-verify --full` overall PASS；但覆盖 `0001-0009` 的 new final commit、rain/root/z2996 三方 full verify、新视频和新 SHA256 仍为 TBD，须重新复现后填写，不得伪造。
+- 旧 commit `1ba9db6` 的两份队友 PASS 与旧三段视频只作为 historical/superseded evidence，不覆盖 `e8e2fb9` 的 integrated `0001-0007`。
 - AI 可辅助规划、审查和文档/脚本落地；make/QEMU/PASS 结果必须来自真实命令。
 
 ## 已知限制与后续计划

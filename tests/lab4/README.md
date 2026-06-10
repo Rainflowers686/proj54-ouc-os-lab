@@ -17,7 +17,7 @@ lab4 v0.2 用于验证文件表与 fd 表观察实验：
 | independent lab4 patch clean apply | PASS |
 | independent lab4 patch `make` | PASS |
 | independent `fcounttest` | PASS，检测到 `fcounttest done` |
-| integrated `0001-0007` clean apply + `make` | PASS |
+| integrated `0001-0009` clean apply + `make`（stage11b，含 memstat `0008` / fdinfo `0009`） | PASS（队长本机） |
 | integrated `fcounttest` 前缀捕获 | PASS，检测到 `fcount(before) =`、`fcount(after_open) =`、`fcount(after_close) =`、`fcounttest done` |
 | integrated `fdcounttest` 捕获 | PASS，检测到 `fdcounttest done`；fd delta open=1、dup=2、close one=1、close two=0 |
 
@@ -70,4 +70,4 @@ bash scripts/xv6/run-xv6-command.sh fdinfotest "fdinfotest done"
 | `fdinfo bad fd = -1` | PASS |
 | `fdinfotest done` | PASS |
 
-`ref` 被观察输出但不强断言。边界：`SYS_fdinfo = 22`（independent，与 `fcount` 不可叠加）；**未进入** integrated `0001-0007`；**未纳入**队友 full verification；**不影响** `e8e2fb9` 证据。
+`ref` 被观察输出但不强断言。边界：independent 版 `SYS_fdinfo = 22`（与 `fcount` 不可叠加）。stage11b 起 `fdinfo` **已进入** integrated `0009`（`SYS_fdinfo = 30`），current integrated suite 为 `0001-0009`，`fdinfotest` 已纳入 local/teammate full verify 并在队长本机 `local-verify --full` overall PASS。证据边界：`e8e2fb9 / 0001-0007` 三方 full PASS 为 historical stable checkpoint，不覆盖 `0001-0009`；`0001-0009` 的队友复现、新视频、新 SHA256 为 TBD，不得伪造。

@@ -34,25 +34,25 @@ It is not the final technical report, does not generate PDF, and does not includ
 | submission readiness review | `docs/21_submission_readiness_review.md` | exists | stage6d historical snapshot: full integrated 0001-0005 reproduced at that time; superseded by final e8e2fb9 integrated 0001-0007 evidence manifest |
 | teammate reproduction troubleshooting | `docs/22_teammate_reproduction_troubleshooting.md` | exists | stage7a0: explains apply/make completion, boot normal duration, Ctrl+Z risk, qemu/make cleanup, continuation steps, feedback format, and no-log/no-secret boundaries |
 | teammate quickstart | `docs/23_teammate_quickstart.md` | exists | stage7a2: official teammate testing entry; --full first run, --quick retest after make, local-verify before recording, cleanup-qemu after stuck/Ctrl+Z, summary feedback, no external/logs/secrets |
-| lab3/lab5 completion plan | `docs/24_lab3_lab5_completion_plan.md` | exists | stage9c plan and stage10a evidence boundary: integrated 0006 pgcount, integrated 0007 fdcount, Lab5 capstone workflow, final e8e2fb9 full evidence recorded elsewhere |
-| final project overview | `docs/final/00_project_overview.md` | exists | stage10a status: OUC xv6 Lab Kit positioning, scoring weights, integrated 0001-0007, final e8e2fb9 lead/root/z2996 full PASS, evidence boundaries |
+| lab3/lab5 completion plan | `docs/24_lab3_lab5_completion_plan.md` | exists | stage9c process record with stage11b banner: described 0001-0007 state is historical; current integrated suite is 0001-0009; e8e2fb9 evidence is a historical stable checkpoint recorded elsewhere |
+| final project overview | `docs/final/00_project_overview.md` | exists | stage11b status: OUC xv6 Lab Kit positioning, scoring weights, integrated 0001-0009 (memstat 0008/fdinfo 0009), e8e2fb9 0001-0007 PASS historical, new evidence TBD, evidence boundaries |
 | final environment setup | `docs/final/01_environment_setup.md` | exists | stage8a formal environment and repository hygiene guide |
 | final lab0 guide | `docs/final/02_lab0_baseline_build_boot.md` | exists | stage8a formal lab0 baseline/build/boot guide |
 | final lab1 guide | `docs/final/03_lab1_hello_add2.md` | exists | stage8a formal hello/add2 syscall lab guide |
 | final lab2 guide | `docs/final/04_lab2_process_observation.md` | exists | stage8a formal pstate/pcount/pchild process observation lab guide |
-| final lab3 guide | `docs/final/04b_lab3_page_table_observation.md` | exists | stage9c formal pgcount page-table observation guide |
-| final lab4 guide | `docs/final/05_lab4_file_table_observation.md` | exists | stage9c formal fcount/fdcount file table and fd table observation lab guide |
-| final testing and verification | `docs/final/06_testing_and_verification.md` | exists | stage10a testing coverage table includes integrated pgcount/fdcount evidence, final e8e2fb9 lead/root/z2996 full PASS, and real-result boundaries |
-| final teammate reproduction guide | `docs/final/07_teammate_reproduction_guide.md` | exists | stage10a formal teammate reproduction and feedback guide with final e8e2fb9 root/z2996 PASS |
+| final lab3 guide | `docs/final/04b_lab3_page_table_observation.md` | exists | stage9c formal pgcount page-table observation guide; stage11b advanced memstat section now covers independent + integrated 0008 |
+| final lab4 guide | `docs/final/05_lab4_file_table_observation.md` | exists | stage9c formal fcount/fdcount file table and fd table observation lab guide; stage11b advanced fdinfo section now covers independent + integrated 0009 |
+| final testing and verification | `docs/final/06_testing_and_verification.md` | exists | stage11b testing coverage table now includes memstat/fdinfo; e8e2fb9 0001-0007 lead/root/z2996 full PASS historical; new 0001-0009 teammate verify TBD; real-result boundaries |
+| final teammate reproduction guide | `docs/final/07_teammate_reproduction_guide.md` | exists | stage11b updated teammate reproduction and feedback guide: e8e2fb9 root/z2996 PASS recorded as historical 0001-0007 stable checkpoint; 0001-0009 (with memstattest/fdinfotest) teammate re-verify TBD |
 | final design decisions | `docs/final/08_design_decisions_and_tradeoffs.md` | exists | stage8a formal design tradeoffs and scope control |
 | final AI usage statement | `docs/final/09_ai_usage_and_contribution_statement.md` | exists | stage8a formal AI usage and contribution statement |
 | final reference and license statement | `docs/final/10_reference_and_license_statement.md` | exists | stage8a formal xv6 MIT license boundary and reference-project notes |
-| final limits and future work | `docs/final/11_known_limits_and_future_work.md` | exists | stage10a limits: pgcount/fdcount scope boundaries, Lab5 capstone only, final evidence recorded, platform/privacy/reference items still pending |
-| technical report v1.0 | `docs/final/technical_report_v1.0.md` | exists | stage10b judge-facing technical report draft: positioning, labs, integrated 0001-0007, verification evidence, teaching value, license/AI/limits |
-| submission checklist | `submissions/submission_checklist.md` | exists | stage10a submission checklist: platform compliance, Git hygiene, final e8e2fb9 reproducibility, docs, video metadata, teammate summaries, red-team review, final commands |
-| demo video record | `submissions/demo_record.md` | exists | stage10a records final integrated 0001-0007 video metadata and SHA256 plus 3 historical video records; no video files in Git |
-| teammate reproduction record | `submissions/teammate_reproduction_record.md` | exists | stage10a records final e8e2fb9 lead/root/z2996 full PASS digests and historical 1ba9db6 records; raw logs/summary/screenshots are not committed |
-| final evidence manifest | `submissions/evidence_manifest.md` | exists | stage10a central index: final commit, integrated 0001-0007, lead/root/z2996 PASS, final video SHA256, historical evidence, external directories, non-committed evidence policy |
+| final limits and future work | `docs/final/11_known_limits_and_future_work.md` | exists | stage11b limits: pgcount/fdcount/memstat/fdinfo observation-only scope boundaries, integrated suite 0001-0009, e8e2fb9 evidence historical, new evidence/platform/privacy/reference items still pending |
+| technical report v1.0 | `docs/final/technical_report_v1.0.md` | exists | stage11b judge-facing technical report draft: positioning, labs, integrated 0001-0009 (memstat 0008/fdinfo 0009), e8e2fb9 0001-0007 evidence historical, new evidence TBD, teaching value, license/AI/limits |
+| submission checklist | `submissions/submission_checklist.md` | exists | stage11b submission checklist: integrated suite now 0001-0009; e8e2fb9 0001-0007 reproducibility historical; new 0001-0009 teammate re-verify + re-record TBD; platform compliance, Git hygiene, docs, red-team review, final commands |
+| demo video record | `submissions/demo_record.md` | exists | stage11b: integrated suite now 0001-0009; old 0001-0007 video is historical stable checkpoint; new 0001-0009 video TBD; 3 earlier historical video records; no video files in Git |
+| teammate reproduction record | `submissions/teammate_reproduction_record.md` | exists | stage11b: integrated suite now 0001-0009; e8e2fb9 lead/root/z2996 full PASS is historical 0001-0007 checkpoint; new 0001-0009 teammate verify TBD; raw logs/summary/screenshots are not committed |
+| final evidence manifest | `submissions/evidence_manifest.md` | exists | stage11b central index: integrated suite now 0001-0009 with memstat 0008/fdinfo 0009; e8e2fb9 0001-0007 PASS + video are historical stable checkpoint; new final commit/PASS/video/SHA256 TBD; external directories; non-committed evidence policy |
 | Technical report v0.1 | `docs/13_technical_report_v0.1.md` | exists | historical stage2c draft with stage8b obsolete notice; not final report |
 | Reproducibility package | `reproducibility/README.md` | exists | lab0/lab1/lab2/integrated-labs reproduction checklist and template |
 | lab0 environment guide | `labs/lab0-env-setup/README.md` | exists | xv6 baseline make succeeded; boot evidence found; manual interaction TODO |
@@ -60,7 +60,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 | lab2 process state observation | `labs/lab2-process-and-scheduling/README.md` | exists | pstate independent patch verified; integrated v0.2 adds pcount, pcounttest, pchildtest |
 | lab3 memory and pagetable | `labs/lab3-memory-and-pagetable/README.md` | exists | pgcount page-table observation lab: eager/lazy allocation comparison; independent and integrated 0006 verified |
 | lab4 file system | `labs/lab4-file-system/README.md` | exists | file table/fd table observation v0.2: fcount/fdcount verified; not a complete file system lab |
-| lab5 final integration | `labs/lab5-final-integration/README.md` | exists | capstone reproduction workflow for integrated 0001-0007; no new kernel mechanism |
+| lab5 final integration | `labs/lab5-final-integration/README.md` | exists | capstone reproduction workflow for integrated 0001-0009; no new kernel mechanism |
 | lab1 test record | `tests/lab1/README.md` | exists | records patched make and hello output evidence |
 | lab2 test record | `tests/lab2/README.md` | exists | records pstatetest, pcounttest, and pchildtest output evidence |
 | lab3 test record | `tests/lab3/README.md` | exists | records pgcount eager/lazy output captures from independent and integrated 0006; final teammate coverage recorded in submissions evidence manifest |
@@ -70,10 +70,10 @@ It is not the final technical report, does not generate PDF, and does not includ
 | xv6 boot evidence script | `scripts/xv6/boot-xv6.sh` | exists | captures boot keywords under soft+hard timeout; default 45s soft, max(timeout+15,75)s hard, 2 attempts, per-attempt logs, trap cleanup |
 | xv6 command evidence script | `scripts/xv6/run-xv6-command.sh` | exists | captures user program output under soft+hard timeout; default 60s soft, max(timeout+15,75)s hard, 2 attempts, fs.img prebuild, trap cleanup, fast QEMU exit on expected output match (stage7a3) |
 | lab1 patch apply helper | `scripts/xv6/apply-lab1-patch.sh` | exists | preview by default; --run resets clean baseline and applies; --make optional |
-| integrated labs apply helper | `scripts/xv6/apply-integrated-labs.sh` | exists | preview by default; --run/--make always require --yes; applies integrated 0001-0007; make has XV6_MAKE_TIMEOUT_SECONDS; make logs ignored |
+| integrated labs apply helper | `scripts/xv6/apply-integrated-labs.sh` | exists | preview by default; --run/--make always require --yes; applies integrated 0001-0009; make has XV6_MAKE_TIMEOUT_SECONDS; make logs ignored |
 | xv6 doctor script | `scripts/xv6/doctor.sh` | exists | stage7a2 read-only environment diagnosis: time/cwd/uname/commit, Git repo, tools, baseline files, logs ignored, QEMU leftovers, /mnt warning; no make or QEMU run |
 | xv6 QEMU cleanup helper | `scripts/xv6/cleanup-qemu.sh` | exists | stage7a2 rescue tool: explains Ctrl+C interrupt vs Ctrl+Z suspend, lists qemu/make qemu processes before/after, warns pkill may affect same-WSL QEMU, exits 0 |
-| teammate one-shot verification | `scripts/xv6/teammate-verify.sh` | exists | stage9c workflow: --full clean apply+make and --quick retest; doctor/check-env/baseline, boot, hello/add2/pstate/pcount/pchild/fcount/pgcount/fdcount verification, copy-to-lead summary in ignored logs |
+| teammate one-shot verification | `scripts/xv6/teammate-verify.sh` | exists | stage11b workflow: --full clean apply+make and --quick retest; doctor/check-env/baseline, boot, hello/add2/pstate/pcount/pchild/fcount/pgcount/fdcount/memstat/fdinfo verification, copy-to-lead summary in ignored logs |
 | local pre-recording verification | `scripts/xv6/local-verify.sh` | exists | stage7a2 team-lead wrapper around teammate-verify; --full/--quick; recommended --quick before recording |
 | lab1 hello syscall patch | `patches/lab1-system-call/0001-add-hello-syscall.patch` | exists | tracked patch; third-party source not submitted |
 | lab1 add2 argint syscall patch | `patches/lab1-system-call/0002-add-argint-add2-syscall.patch` | exists | commit-ready incremental patch after 0001 |
@@ -81,10 +81,10 @@ It is not the final technical report, does not generate PDF, and does not includ
 | lab2 pstate syscall patch | `patches/lab2-process-observation/0001-add-pstate-syscall.patch` | exists | commit-ready independent patch from clean baseline |
 | lab2 patch guide | `patches/lab2-process-observation/README.md` | exists | apply/build/run instructions |
 | lab3 pgcount syscall patch | `patches/lab3-memory-and-pagetable/0001-add-pgcount-syscall.patch` | exists | stage9b independent patch from clean baseline; SYS_pgcount 22; eager/lazy pgcounttest verified |
-| lab3 memstat advanced optional patch | `patches/lab3-memory-and-pagetable/0002-add-memstat-syscall.patch` | exists | stage11a independent advanced patch; memstat(struct memstat*) via argaddr+copyout; SYS_memstat 22; clean-baseline round-trip verified; not in integrated 0001-0007; not teammate-verified; does not affect e8e2fb9 |
+| lab3 memstat advanced optional patch | `patches/lab3-memory-and-pagetable/0002-add-memstat-syscall.patch` | exists | stage11a independent advanced patch; memstat(struct memstat*) via argaddr+copyout; SYS_memstat 22; clean-baseline round-trip verified; stage11b also integrates this as integrated 0008 (SYS_memstat 29); independent variant not teammate-verified; does not affect historical e8e2fb9 |
 | lab3 patch guide | `patches/lab3-memory-and-pagetable/README.md` | exists | apply/build/run instructions and eager/lazy allocation teaching notes |
 | lab4 fcount syscall patch | `patches/lab4-file-table-observation/0001-add-fcount-syscall.patch` | exists | commit-ready independent patch from clean baseline |
-| lab4 fdinfo advanced optional patch | `patches/lab4-file-table-observation/0002-add-fdinfo-syscall.patch` | exists | stage11a independent advanced patch; fdinfo(int,struct fdinfo*) via argint+argaddr+copyout; SYS_fdinfo 22; self-only ofile[fd]; clean-baseline round-trip verified; not in integrated 0001-0007; not teammate-verified; does not affect e8e2fb9 |
+| lab4 fdinfo advanced optional patch | `patches/lab4-file-table-observation/0002-add-fdinfo-syscall.patch` | exists | stage11a independent advanced patch; fdinfo(int,struct fdinfo*) via argint+argaddr+copyout; SYS_fdinfo 22; self-only ofile[fd]; clean-baseline round-trip verified; stage11b also integrates this as integrated 0009 (SYS_fdinfo 30); independent variant not teammate-verified; does not affect historical e8e2fb9 |
 | lab4 patch guide | `patches/lab4-file-table-observation/README.md` | exists | apply/build/run instructions |
 | integrated hello syscall patch | `patches/integrated-labs/0001-add-hello-syscall.patch` | exists | comprehensive demo sequence step 1 |
 | integrated add2 argint syscall patch | `patches/integrated-labs/0002-add-argint-add2-syscall.patch` | exists | comprehensive demo sequence step 2 |
@@ -93,7 +93,9 @@ It is not the final technical report, does not generate PDF, and does not includ
 | integrated lab4 file table observation patch | `patches/integrated-labs/0005-add-file-table-observation.patch` | exists | comprehensive demo sequence step 5; adds SYS_fcount 26 and fcounttest |
 | integrated lab3 pgcount patch | `patches/integrated-labs/0006-add-pgcount-page-table-observation.patch` | exists | comprehensive demo sequence step 6; adds SYS_pgcount 27 and pgcounttest |
 | integrated lab4 fdcount patch | `patches/integrated-labs/0007-add-fdcount-observation.patch` | exists | comprehensive demo sequence step 7; adds SYS_fdcount 28 and fdcounttest |
-| integrated patch guide | `patches/integrated-labs/README.md` | exists | apply/build/run instructions for combined lab1+lab2+lab3+lab4 demo |
+| integrated lab3 memstat patch | `patches/integrated-labs/0008-add-memstat-copyout-observation.patch` | exists | stage11b comprehensive demo sequence step 8; adds SYS_memstat 29 and memstattest; argaddr+copyout+struct ABI; reuses uvmpagecount; address-space observation only, not full memory management |
+| integrated lab4 fdinfo patch | `patches/integrated-labs/0009-add-fdinfo-copyout-observation.patch` | exists | stage11b comprehensive demo sequence step 9; adds SYS_fdinfo 30 and fdinfotest; argint+argaddr+copyout+struct ABI; self-only ofile[fd]; fd metadata observation only, not full file system |
+| integrated patch guide | `patches/integrated-labs/README.md` | exists | stage11b apply/build/run instructions for combined lab1+lab2+lab3+lab4 demo: sequence 0001-0009 incl. memstat 0008 and fdinfo 0009; old 0001-0007 teammate evidence marked historical; 0001-0009 teammate verify TBD |
 | external directory guide | `external/README.md` | exists | baseline management notes |
 | xv6 baseline metadata | `external/xv6-baseline-record.md` | exists | metadata generated; records make success and boot evidence; manual interaction TODO |
 | logs directory guide | `logs/README.md` | exists | raw logs ignored by default; current make log is not tracked |
@@ -114,10 +116,10 @@ It is not the final technical report, does not generate PDF, and does not includ
 - xv6 baseline make, hardened boot evidence retry, lab1 patched make, hello output, add2 output, pstatetest output, pcounttest output, pchildtest output, fcounttest output, and integrated sequence evidence are summarized in docs/04_test_report.md.
 - lab1 now has two patch levels: 0001 hello minimal syscall and 0002 add2 argint extension.
 - lab2 has an independent pstate process observation patch from clean baseline.
-- lab3 has both an independent pgcount patch and integrated 0006; final e8e2fb9 full verification by lead/root/z2996 is recorded in submissions/evidence_manifest.md.
-- integrated-labs provides the verified comprehensive demo sequence with hello=22, add2=23, pstate=24, pcount=25, fcount=26, pgcount=27, fdcount=28.
+- lab3 has an independent pgcount patch, integrated 0006 pgcount, and an independent memstat patch also integrated as 0008; e8e2fb9 0001-0007 full verification by lead/root/z2996 is a historical stable checkpoint in submissions/evidence_manifest.md, and the 0001-0009 re-verification is TBD.
+- integrated-labs provides the verified comprehensive demo sequence with hello=22, add2=23, pstate=24, pcount=25, fcount=26, pgcount=27, fdcount=28, memstat=29, fdinfo=30.
 - The child-state demo command is pchildtest; the longer pstatechildtest name is not used because xv6 DIRSIZ caused a real mkfs failure.
-- scripts/xv6/apply-integrated-labs.sh is the recommended helper for final integrated demo reproduction and now applies integrated 0001-0007.
+- scripts/xv6/apply-integrated-labs.sh is the recommended helper for final integrated demo reproduction and now applies integrated 0001-0009.
 - scripts/xv6/doctor.sh is the read-only environment diagnosis entry and does not run make/QEMU.
 - scripts/xv6/teammate-verify.sh --full is the recommended first teammate workflow; --quick is for retesting after make already succeeded.
 - scripts/xv6/local-verify.sh --quick is recommended for team-lead pre-recording checks.
@@ -134,5 +136,5 @@ It is not the final technical report, does not generate PDF, and does not includ
 - Teammate QEMU cleanup troubleshooting is documented in docs/22_teammate_reproduction_troubleshooting.md.
 - Plain-language teammate quickstart is documented in docs/23_teammate_quickstart.md; teammates should copy the COPY THIS SUMMARY TO TEAM LEAD block to the team lead.
 - Video files are not committed; final and historical video metadata plus SHA256 are recorded in submissions/demo_record.md.
-- Final e8e2fb9 lead/root/z2996 full PASS summaries are recorded as text in submissions/teammate_reproduction_record.md; old 1ba9db6 records are historical evidence only.
+- e8e2fb9 lead/root/z2996 full PASS (integrated 0001-0007) is recorded as a historical stable checkpoint in submissions/teammate_reproduction_record.md; the stage11b integrated suite is 0001-0009 and its teammate re-verification is TBD; old 1ba9db6 records remain historical evidence only.
 - submissions/evidence_manifest.md is the central final evidence index and does not store raw evidence files.

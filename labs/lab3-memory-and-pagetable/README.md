@@ -107,7 +107,7 @@ pgcounttest done
 3. 如果只统计 `PTE_V` 而不统计 `PTE_U`，教学语义会有什么问题？
 4. 为什么本实验不返回物理地址或 PTE 原始值？
 
-## 进阶可选实验：memstat（advanced optional, independent）
+## 进阶可选实验：memstat（advanced optional, independent + integrated `0008`）
 
 `pgcount()` 之后，可以做一个进阶可选实验 `memstat()`，把"数页"升级为"用 `copyout` 把一个结构体拷回用户态"。
 
@@ -116,4 +116,4 @@ pgcounttest done
 - 教学点：`argaddr + copyout + struct ABI`——内核如何安全地把结构体写回用户缓冲区；`copyout` 失败返回 -1。
 - 验证：`bash scripts/xv6/run-xv6-command.sh memstattest "memstattest done"`，clean baseline round-trip 已通过（`page_size = 4096`、`mapped delta = 2`、`size delta = 8192`、`invalid pointer = -1`）。
 
-边界与状态：仍然是页表/地址空间**观察**实验，不是完整内存管理；`SYS_memstat = 22` 与 `pgcount` 相同，两个 independent patch **不可叠加**；**未进入** integrated `0001-0007`，**未纳入**队友 full verification，**不影响** `e8e2fb9` 证据。组合演示见未来 integrated `0008/0009`（届时编号 `SYS_memstat = 29`，并需重新队友 full verify、重录视频、重算 SHA256）。
+边界与状态：仍然是页表/地址空间**观察**实验，不是完整内存管理；independent 版 `SYS_memstat = 22` 与 `pgcount` 相同，两个 independent patch **不可叠加**，各自从 clean baseline 单独应用。stage11b 起 `memstat` **已进入** integrated `0008`（`patches/integrated-labs/0008-add-memstat-copyout-observation.patch`，`SYS_memstat = 29`），current integrated suite 为 `0001-0009`，队长本机 `local-verify --full` overall PASS（含 `memstattest`）。证据边界：`e8e2fb9 / 0001-0007` 三方 full PASS 是 historical stable checkpoint，**不覆盖** `0001-0009`；含 memstat 的 `0001-0009` 队友 full verify、新视频、新 SHA256 均为 TBD，待重新复现后填写，不得伪造。

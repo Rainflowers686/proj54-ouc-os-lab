@@ -2,6 +2,8 @@
 
 > 维护时间：2026-06-06（stage9c）。
 > stage9a 为设计和风险评审；stage9b 实现 independent Lab3 `pgcount()` patch；stage9c 已将 Lab3 集成为 integrated `0006`，并新增 Lab4 v0.2 `fdcount()` integrated `0007` 与 Lab5 capstone 文档。旧的 stage9b 阶段结论作为历史记录保留。
+>
+> **stage11b 说明（2026-06-10）**：本文是 stage9c 的过程记录，文中"当前/integrated `0001-0007`"均描述 stage9c 时点，**不代表当前最终 integrated suite**。stage11b 起 current integrated suite 为 `0001-0009`（新增 memstat `0008` / fdinfo `0009`）；`e8e2fb9 / 0001-0007` 三方 full PASS 为 historical stable checkpoint，`0001-0009` 的队友复现、新视频、新 SHA256 为 TBD。最新状态见 `submissions/evidence_manifest.md`。
 
 ## 1. 当前实验覆盖现状
 
@@ -382,7 +384,7 @@ stage9c 已完成豪华 integrated 闭环：
 
 - 新增 `patches/integrated-labs/0006-add-pgcount-page-table-observation.patch`。
 - 新增 `patches/integrated-labs/0007-add-fdcount-observation.patch`。
-- `apply-integrated-labs.sh` 当前顺序应用 integrated `0001-0007`。
+- `apply-integrated-labs.sh` 在 stage9c 时点顺序应用 integrated `0001-0007`（stage11b 起为 `0001-0009`）。
 - `teammate-verify.sh` / `local-verify.sh` 已纳入 `pgcounttest` 和 `fdcounttest`。
 - `labs/lab5-final-integration/README.md` 已改为 capstone 综合复现实验，不新增内核机制。
 

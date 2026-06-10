@@ -95,9 +95,9 @@ pgcounttest done
 3. 为什么 `pgcount()` 不应该返回物理地址？
 4. 如果要观察 page fault 次数，应该新增什么证据和边界？
 
-## 进阶可选：memstat（advanced optional, independent）
+## 进阶可选：memstat（advanced optional, independent + integrated `0008`）
 
-> 维护时间：2026-06-08（stage11a）。
+> 维护时间：2026-06-10（stage11b 更新；原 stage11a 新增）。
 
 `memstat()` 是 Lab3 的进阶可选 independent patch，把 `pgcount()` 的"数页"升级为"用 `copyout` 把结构体拷回用户态"。
 
@@ -108,4 +108,6 @@ pgcounttest done
 | 教学点 | `argaddr + copyout + struct ABI` |
 | 验证 | clean baseline round-trip 已通过：`page_size = 4096`、`mapped delta = 2`、`size delta = 8192`、`invalid pointer = -1`、`memstattest done` |
 
-边界与状态：仍是页表/地址空间**观察**实验，**不是完整内存管理**；`SYS_memstat = 22`（independent，与 `pgcount` 不可叠加）；**未进入** integrated `0001-0007`；**未纳入**队友 full verification（rain/root/z2996）；**不影响** `e8e2fb9` 证据。若未来进入 integrated `0008/0009`（届时 `SYS_memstat = 29`），必须重新队友 full verify、重录视频、重算 SHA256。
+边界与状态：仍是页表/地址空间**观察**实验，**不是完整内存管理**；independent 版 `SYS_memstat = 22`（与 `pgcount` 不可叠加）。
+
+stage11b 更新：该 syscall 已进入 integrated 主线，作为 integrated `0008`（`patches/integrated-labs/0008-add-memstat-copyout-observation.patch`，`SYS_memstat = 29`，复用 `0006` 的 `uvmpagecount()`），final integrated suite 因此扩展为 `0001-0009`。integrated 变体已在队长本机 `local-verify.sh --full` 实测 overall PASS（含 `memstattest`）。但旧 `e8e2fb9 / 0001-0007` 的队友三方 full PASS、final video、SHA256 只覆盖 `0001-0007`，**不覆盖** `0001-0009`（降级为 historical stable checkpoint）；新 `0001-0009` 的队友 full verify、重录视频、重算 SHA256 仍为 **TBD**，不得伪造。`memstat` 不返回物理地址、宿主路径或文件内容。

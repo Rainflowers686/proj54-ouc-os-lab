@@ -112,12 +112,12 @@ bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"
 - independent lab4 patch 已生成：`patches/lab4-file-table-observation/0001-add-fcount-syscall.patch`。
 - independent patch 已从 clean baseline 应用并 `make` 成功。
 - integrated `0005-add-file-table-observation.patch` 已生成，基于 integrated `0001-0004`。
-- integrated `0001-0007` 已通过 helper 从 clean baseline 应用并 `make` 成功。
+- integrated `0001-0009`（stage11b，含 memstat `0008` / fdinfo `0009`）已通过 helper 从 clean baseline 应用并 `make` 成功（队长本机 `local-verify --full` overall PASS）。
 - 已真实捕获 `fcount(before) =`、`fcount(after_open) =`、`fcount(after_close) =` 和 `fcounttest done`。
 - stage9c 已真实捕获 `fdcounttest done`，并观察到 fd delta open=1、dup=2、close one=1、close two=0。
 - 本地一次日志中观察到 `before=1`、`after_open=2`、`after_close=1`，但该数字不作为固定验收标准。
 
-## 进阶可选实验：fdinfo（advanced optional, independent）
+## 进阶可选实验：fdinfo（advanced optional, independent + integrated `0009`）
 
 `fcount()`/`fdcount()` 之后，可以做一个进阶可选实验 `fdinfo()`，把"数 fd"升级为"看一个 fd 的内核元数据"。
 
@@ -126,7 +126,7 @@ bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"
 - 教学点：`argint + argaddr + copyout + struct ABI`——内核如何按 fd 取出 `struct file` 的元数据并安全拷回用户态；只查 `myproc()->ofile[fd]`，在 `ftable.lock` 下读取，不返回路径/inode 号/内容/物理地址。
 - 验证：`bash scripts/xv6/run-xv6-command.sh fdinfotest "fdinfotest done"`，clean baseline round-trip 已通过（`open fd ok`、`dup fd ok`、`closed fd = -1`、`bad fd = -1`）。
 
-边界与状态：仍然是 fd table **观察**实验，不是完整文件系统；`SYS_fdinfo = 22` 与 `fcount` 相同，两个 independent patch **不可叠加**；**未进入** integrated `0001-0007`，**未纳入**队友 full verification，**不影响** `e8e2fb9` 证据。组合演示见未来 integrated `0008/0009`（届时编号 `SYS_fdinfo = 30`，并需重新队友 full verify、重录视频、重算 SHA256）。
+边界与状态：仍然是 fd table **观察**实验，不是完整文件系统；independent 版 `SYS_fdinfo = 22` 与 `fcount` 相同，两个 independent patch **不可叠加**，各自从 clean baseline 单独应用。stage11b 起 `fdinfo` **已进入** integrated `0009`（`patches/integrated-labs/0009-add-fdinfo-copyout-observation.patch`，`SYS_fdinfo = 30`），current integrated suite 为 `0001-0009`，队长本机 `local-verify --full` overall PASS（含 `fdinfotest`）。证据边界：`e8e2fb9 / 0001-0007` 三方 full PASS 是 historical stable checkpoint，**不覆盖** `0001-0009`；含 fdinfo 的 `0001-0009` 队友 full verify、新视频、新 SHA256 均为 TBD，待重新复现后填写，不得伪造。
 
 ## 当前边界
 

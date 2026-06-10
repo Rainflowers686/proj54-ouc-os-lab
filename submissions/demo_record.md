@@ -3,18 +3,24 @@
 > 维护时间：2026-06-07（stage10a final evidence manifest）。
 > 本文件只记录视频元数据和提交状态，不保存视频文件。
 
+> stage11b 更新：integrated 主线已扩展为 `0001-0009`（新增 `memstat 0008` / `fdinfo 0009`）。下方的 `0001-0007` 视频**降级为 previous stable checkpoint（historical）**，**不覆盖** `0001-0009`。覆盖 `0001-0009`（含 `memstattest`/`fdinfotest`）的新视频尚未录制，为 TBD，不得伪造 SHA256 或录制状态。
+
 ## Current Status
 
 | 项目 | 状态 |
 | --- | --- |
-| final integrated `0001-0007` 视频 | 已录制并记录 SHA256 |
-| historical videos | 保留 3 段历史视频元数据 |
+| 当前 integrated suite | `0001-0009`（stage11b） |
+| 新 `0001-0009` 视频 | TBD（需重新录制并记录 SHA256） |
+| 旧 `0001-0007` 视频 | 已录制（historical，只覆盖 `0001-0007`） |
+| historical videos（更早 `0001-0005`） | 保留 3 段历史视频元数据 |
 | 视频文件是否入库 | 不入库 |
 | 视频外部保存位置 | `D:\Edge Download\CSCC\proj54_submission_assets\videos` |
 | 比赛平台提交方式 | 待确认 |
 | 是否含隐私/密码/token | pending final manual review |
 
-## Final Integrated `0001-0007` Video Evidence
+## Previous Stable Checkpoint — Integrated `0001-0007` Video Evidence（historical）
+
+> 该视频只演示 `0001-0007`，不覆盖 stage11b 的 `0001-0009`。
 
 | 字段 | 内容 |
 | --- | --- |

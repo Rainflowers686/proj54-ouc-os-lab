@@ -2,7 +2,7 @@
 
 ## 实验目标
 
-把 lab0 到 lab4 的内容串成一次完整、可复现、可汇报的 OS 课程综合实验。Lab5 不新增新的内核机制；它要求学生从 clean xv6-riscv baseline 出发，顺序应用 integrated `0001-0007`，完成构建、启动、用户程序验证、证据记录和实验报告。
+把 lab0 到 lab4 的内容串成一次完整、可复现、可汇报的 OS 课程综合实验。Lab5 不新增新的内核机制；它要求学生从 clean xv6-riscv baseline 出发，顺序应用 integrated `0001-0009`（stage11b 起的 current integrated suite），完成构建、启动、用户程序验证、证据记录和实验报告。
 
 本实验覆盖：
 
@@ -11,6 +11,7 @@
 - lab2：`pstate()`、`pcount()` 与子进程状态观察。
 - lab3：`pgcount()` 页表映射数量观察，以及 eager/lazy allocation 对比。
 - lab4：`fcount()` 全局 file table 观察与 `fdcount()` 当前进程 fd table 观察。
+- lab3/lab4 进阶（stage11b 进入 integrated）：`memstat()`（`0008`，argaddr + copyout + struct ABI）与 `fdinfo()`（`0009`，argint + argaddr + copyout + struct ABI）。
 
 ## 前置知识
 
@@ -51,9 +52,11 @@
    bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
    bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcounttest done"
    bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"
+   bash scripts/xv6/run-xv6-command.sh memstattest "memstattest done"
+   bash scripts/xv6/run-xv6-command.sh fdinfotest "fdinfotest done"
    ```
 
-5. 阅读 `patches/integrated-labs/0001-0007`，说明每个 patch 对应的 syscall、用户程序和教学主题。
+5. 阅读 `patches/integrated-labs/0001-0009`，说明每个 patch 对应的 syscall、用户程序和教学主题（`0008`/`0009` 的主题是 argaddr/argint + copyout + struct ABI）。
 
 6. 提交实验报告，报告至少包含：
 
@@ -71,7 +74,8 @@
 - 只看到 `[OK] make completed successfully` 后继续等待。该行出现即说明 apply+make 已完成。
 - 把 `pgcount()` 说成完整内存管理实验。它只观察当前进程用户页表映射数量。
 - 把 `fcount()` / `fdcount()` 说成完整文件系统实验。它们只观察 file table / fd table 计数。
-- 把旧队友 summary 写成新 HEAD 复现。stage9c 后需要重新收集 teammate `--full`。
+- 把旧队友 summary 写成新 HEAD 复现。`e8e2fb9 / 0001-0007` 三方 PASS 是 historical stable checkpoint，不覆盖 `0001-0009`；stage11b 后需要重新收集 teammate `--full`。
+- 把 `memstat()` 说成完整内存管理或把 `fdinfo()` 说成完整文件系统。它们只是 copyout 结构体观察。
 
 ## 评分 Rubric
 
@@ -93,4 +97,8 @@
 
 ## 当前状态
 
-stage9c 已完成 integrated `0001-0007` 本机验证。两位队友在旧 commit `1ba9db6` 的 full PASS 只作为历史证据，不覆盖 stage9c 新 HEAD；正式提交前需要重新收集团队成员的 `teammate-verify.sh --full` summary。
+stage11b 已把 capstone workflow 扩展到 integrated `0001-0009`（新增 memstat `0008` / fdinfo `0009`），并在队长本机完成 `local-verify.sh --full` overall PASS（含 `memstattest`/`fdinfotest`）。证据边界：
+
+- `e8e2fb9` 的 rain/root/z2996 三方 full PASS 与 `0001-0007` 视频是 historical stable checkpoint，只覆盖 `0001-0007`，不覆盖 `0001-0009`。
+- 两位队友在更早 commit `1ba9db6` 的 full PASS 只覆盖 earlier `0001-0005`，同样是历史证据。
+- 含 `memstattest`/`fdinfotest` 的 `0001-0009` 队友复现、新演示视频、新 SHA256 均为 TBD：正式提交前需要在新 commit 上重新收集团队成员的 `teammate-verify.sh --full` summary 并重录视频，不得伪造。

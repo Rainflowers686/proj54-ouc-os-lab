@@ -97,14 +97,16 @@ fcounttest done
 | 测试项 | 结果 |
 | --- | --- |
 | independent lab4 patch apply/make | PASS |
-| integrated `0001-0007` apply/make | PASS |
+| integrated `0001-0009` apply/make（stage11b，含 fdinfo `0009`） | PASS（队长本机 `local-verify --full`） |
 | `fcount(before) =` | PASS |
 | `fcount(after_open) =` | PASS |
 | `fcount(after_close) =` | PASS |
 | `fcounttest done` | PASS |
 | `fdcounttest done` | PASS |
+| `fdinfotest done`（integrated `0009`） | PASS（队长本机） |
 | 长期稳定性测试 | 未执行 |
-| 队友独立复现 | final `e8e2fb9` root 与 z2996 full PASS 已记录；旧 `1ba9db6` 只作 historical evidence |
+| 队友独立复现（`0001-0007`） | historical：`e8e2fb9` root 与 z2996 full PASS 已记录，只覆盖 `0001-0007`；旧 `1ba9db6` 只作 historical evidence |
+| 队友独立复现（`0001-0009`） | TBD：含 `fdinfotest` 的 `0001-0009` 队友 full verify 尚未进行，不得伪造 |
 
 ## 常见错误
 
@@ -113,7 +115,7 @@ fcounttest done
 | 固定承诺 fcount 数字 | 忽略 shell/console/init 等引用 | 只验证稳定前缀 |
 | 忘记 `ftable.lock` | 并发读写风险 | 遍历时持有 lock |
 | syscall 放错文件 | 文件相关 syscall 写到 `sysproc.c` | `sys_fcount()` / `sys_fdcount()` 放在 `sysfile.c` |
-| syscall number 冲突 | independent/integrated 编号不同 | fcount independent 用 22；integrated fcount=26，fdcount=28 |
+| syscall number 冲突 | independent/integrated 编号不同 | fcount independent 用 22；integrated fcount=26，fdcount=28，fdinfo=30 |
 | 漏 `usys.pl` entry | 用户态无法调用 | 添加 `entry("fcount")` |
 | 把 lab4 写成完整文件系统 | 实验范围被夸大 | 明确只是文件表观察 |
 
@@ -124,9 +126,9 @@ fcounttest done
 3. 如何扩展到 per-process fd table 观察？
 4. 如何设计 inode 观察实验，同时避免泄漏路径或内容？
 
-## 进阶可选：fdinfo（advanced optional, independent）
+## 进阶可选：fdinfo（advanced optional, independent + integrated `0009`）
 
-> 维护时间：2026-06-08（stage11a）。
+> 维护时间：2026-06-10（stage11b 更新；原 stage11a 新增）。
 
 `fdinfo()` 是 Lab4 的进阶可选 independent patch，把 `fcount()`/`fdcount()` 的"计数"升级为"看一个 fd 的内核元数据"。
 
@@ -137,4 +139,6 @@ fcounttest done
 | 教学点 | `argint + argaddr + copyout + struct ABI`；只查 `myproc()->ofile[fd]`，在 `ftable.lock` 下读取，不返回路径/inode 号/内容 |
 | 验证 | clean baseline round-trip 已通过：`open fd ok`、`dup fd ok`、`closed fd = -1`、`bad fd = -1`、`fdinfotest done`（`ref` 观察输出但不强断言） |
 
-边界与状态：仍是 fd table **观察**实验，**不是完整文件系统**；`SYS_fdinfo = 22`（independent，与 `fcount` 不可叠加）；**未进入** integrated `0001-0007`；**未纳入**队友 full verification（rain/root/z2996）；**不影响** `e8e2fb9` 证据。若未来进入 integrated `0008/0009`（届时 `SYS_fdinfo = 30`），必须重新队友 full verify、重录视频、重算 SHA256。
+边界与状态：仍是 fd table **观察**实验，**不是完整文件系统**；independent 版 `SYS_fdinfo = 22`（与 `fcount` 不可叠加）。
+
+stage11b 更新：该 syscall 已进入 integrated 主线，作为 integrated `0009`（`patches/integrated-labs/0009-add-fdinfo-copyout-observation.patch`，`SYS_fdinfo = 30`，`fileinfo()` helper 在 `ftable.lock` 下读取），final integrated suite 因此扩展为 `0001-0009`。integrated 变体已在队长本机 `local-verify.sh --full` 实测 overall PASS（含 `fdinfotest`）。但旧 `e8e2fb9 / 0001-0007` 的队友三方 full PASS、final video、SHA256 只覆盖 `0001-0007`，**不覆盖** `0001-0009`（降级为 historical stable checkpoint）；新 `0001-0009` 的队友 full verify、重录视频、重算 SHA256 仍为 **TBD**，不得伪造。`fdinfo` 只查自己的 `ofile[fd]`，不返回路径、inode 号或文件内容。

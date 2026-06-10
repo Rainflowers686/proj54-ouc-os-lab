@@ -21,7 +21,7 @@ Usage:
 Plain-language notes:
   - First time: use --full.
   - Already saw "[OK] make completed successfully": use --quick.
-  - Current integrated suite runs hello/add2/pstate/pcount/pchild/fcount/pgcount/fdcount.
+  - Current integrated suite runs hello/add2/pstate/pcount/pchild/fcount/pgcount/fdcount/memstat/fdinfo.
   - Each user-program check now exits quickly once expected output is detected
     (no more waiting for full timeout after match).
   - If it gets stuck: press Ctrl+C, then run bash scripts/xv6/cleanup-qemu.sh.
@@ -68,6 +68,8 @@ pchildtest_status="NOT_RUN"
 fcounttest_status="NOT_RUN"
 pgcounttest_status="NOT_RUN"
 fdcounttest_status="NOT_RUN"
+memstattest_status="NOT_RUN"
+fdinfotest_status="NOT_RUN"
 overall_status="FAIL"
 interrupted_status="NO"
 
@@ -89,6 +91,8 @@ set_status() {
     fcounttest) fcounttest_status="$value" ;;
     pgcounttest) pgcounttest_status="$value" ;;
     fdcounttest) fdcounttest_status="$value" ;;
+    memstattest) memstattest_status="$value" ;;
+    fdinfotest) fdinfotest_status="$value" ;;
     *) echo "[WARN] unknown status key: ${key}" ;;
   esac
 }
@@ -132,7 +136,7 @@ calculate_overall() {
     return
   fi
 
-  for status in "$boot_status" "$hello_status" "$add2test_status" "$pstatetest_status" "$pcount_status" "$pchildtest_status" "$fcounttest_status" "$pgcounttest_status" "$fdcounttest_status"; do
+  for status in "$boot_status" "$hello_status" "$add2test_status" "$pstatetest_status" "$pcount_status" "$pchildtest_status" "$fcounttest_status" "$pgcounttest_status" "$fdcounttest_status" "$memstattest_status" "$fdinfotest_status"; do
     if [ "$status" != "PASS" ]; then
       echo "FAIL"
       return
@@ -205,6 +209,8 @@ write_summary() {
     echo "fcounttest: ${fcounttest_status}"
     echo "pgcounttest: ${pgcounttest_status}"
     echo "fdcounttest: ${fdcounttest_status}"
+    echo "memstattest: ${memstattest_status}"
+    echo "fdinfotest: ${fdinfotest_status}"
     echo "overall: ${overall_status}"
     echo "summary file: ${SUMMARY_FILE}"
     echo "END SUMMARY"
@@ -227,6 +233,8 @@ write_summary() {
     echo "| fcounttest | ${fcounttest_status} |"
     echo "| pgcounttest | ${pgcounttest_status} |"
     echo "| fdcounttest | ${fdcounttest_status} |"
+    echo "| memstattest | ${memstattest_status} |"
+    echo "| fdinfotest | ${fdinfotest_status} |"
     echo "| overall | ${overall_status} |"
     echo
     echo "timeout overrides:"
@@ -329,6 +337,8 @@ run_step "pchildtest output" pchildtest bash scripts/xv6/run-xv6-command.sh pchi
 run_step "fcounttest output" fcounttest bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done" || overall=1
 run_step "pgcounttest output" pgcounttest bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcounttest done" || overall=1
 run_step "fdcounttest output" fdcounttest bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done" || overall=1
+run_step "memstattest output" memstattest bash scripts/xv6/run-xv6-command.sh memstattest "memstattest done" || overall=1
+run_step "fdinfotest output" fdinfotest bash scripts/xv6/run-xv6-command.sh fdinfotest "fdinfotest done" || overall=1
 
 echo
 write_summary
