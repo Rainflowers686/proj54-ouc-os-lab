@@ -32,8 +32,15 @@
 
 ## 怎么验收
 
-1. **统一收 summary**：要求学生报告里贴 `teammate-verify.sh --full` 输出的 `COPY THIS SUMMARY TO TEAM LEAD` 块。它自带时间、commit、user、逐项 PASS/FAIL，批量核对很快。
-2. **抽查防伪**：随机抽 10-20% 学生，当面让他重跑一条命令（比如 `run-xv6-command.sh memstattest "memstattest done"`），或问一个 T3 级别的路径问题。summary 的 commit 行和时间戳对不上的直接谈话。
+1. **统一收 summary**：要求学生报告里贴 `teammate-verify.sh --full` 输出的 `COPY THIS SUMMARY TO TEAM LEAD` 块。它自带时间、commit、user、逐项 PASS/FAIL。
+2. **批量解析**：把收到的 summary 存成一人一个文件放进 `logs/student-summaries/`（该目录被 .gitignore 忽略，不会误提交），然后：
+
+   ```bash
+   bash scripts/grade-summaries.sh --expect-commit <你布置的commit短hash> logs/student-summaries/
+   ```
+
+   它输出一人一行的表，并标记：overall 写 PASS 但某项是 FAIL（改过）、缺 memstattest/fdinfotest（旧 suite，让他重跑）、两份文件内容雷同（互相抄）、commit 对不上。**它只是辅助验收，不是评分**——干净的 PASS 也要按下一条抽查。
+3. **抽查防伪**：随机抽 10-20% 学生，当面让他重跑一条命令（比如 `bash scripts/labctl.sh test memstattest`），或问一个 T3 级别的路径问题。被 grade-summaries 标记的文件优先抽。
 3. **看增量 patch 而不是全目录**：学生交 `git diff` 出来的 patch。patch 里若出现打印写死答案的测试程序，按伪造处理（评分标准见 [grading_and_rubric.md](grading_and_rubric.md)）。
 4. **报告里必须有失败**：要求至少一条真实异常记录（Lab5 任务书 T4 已内置）。全程零波折的报告基本是抄的。
 
@@ -42,7 +49,7 @@
 最常见的五类问题和处理顺序在 [troubleshooting.md](troubleshooting.md)，助教先读一遍。要点：
 
 - 统一要求 WSL2 Ubuntu（或实验室 Linux）。Windows Git Bash 只能看文档，不能 make。
-- 开课前发 `bash scripts/xv6/doctor.sh`，让学生把输出带来——它会检查 git/make/qemu/交叉编译器，10 秒定位环境缺什么。
+- 开课前发 `bash scripts/labctl.sh doctor`，让学生把输出带来——它会检查 git/make/qemu/交叉编译器，10 秒定位环境缺什么。课堂演示也建议统一用 labctl 子命令（`setup --yes` / `boot` / `test labN`），学生跟着敲不容易抄错路径。
 - `/mnt/d/...` 路径下第一次 boot 慢是 drvfs 特性，不是坏了；愿意折腾的学生可以把仓库放进 WSL 的 ext4 家目录。
 - 学生说"卡住了"：第一句话永远是"你按过 Ctrl+Z 吗"，第二句是"跑 `bash scripts/xv6/cleanup-qemu.sh`"。
 - `riscv64-unknown-elf-gcc` 缺失是 WARN 不是错误，`riscv64-linux-gnu-gcc` 就够。

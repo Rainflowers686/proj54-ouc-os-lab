@@ -49,32 +49,30 @@
 - **Step 6：Lab5，综合复现。** [labs/lab5-final-integration/README.md](labs/lab5-final-integration/README.md)。把全部实验串成一次验收。
 - **Step 7：integrated `0001-0009`。** 一个内核同时装下全部 9 个实验 syscall（编号 22-30），入口见 [patches/integrated-labs/README.md](patches/integrated-labs/README.md)。
 
-每个 lab 目录里有两个文件：`README.md` 是教程，`student_tasks.md` 是练习和验收标准。建议先读教程、跑通验证命令，再做任务。
+每个 lab 目录里有两个文件：`README.md` 是教程，`student_tasks.md` 是练习和验收标准。建议先读教程、跑通验证命令，再做任务。做完一关可以只测这一关：`bash scripts/labctl.sh test lab3`。
 
 ## 如果你只想先跑起来
 
-在 WSL2 Ubuntu 里：
+整个课程有一个统一命令入口 `labctl`（它只是封装下面的现有脚本，不重复实现任何逻辑）。在 WSL2 Ubuntu 里：
 
 ```bash
-bash scripts/xv6/doctor.sh                         # 环境体检
-bash scripts/xv6/apply-integrated-labs.sh --make --yes   # 干净源码 + 全部 9 个 patch + make
-bash scripts/xv6/boot-xv6.sh                       # 启动并抓 boot 证据
-bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"
+bash scripts/labctl.sh doctor        # 环境体检
+bash scripts/labctl.sh setup --yes   # 干净源码 + 全部 9 个 patch + make（会重置 ignored 的 external/xv6-riscv/）
+bash scripts/labctl.sh boot          # 启动并抓 boot 证据
+bash scripts/labctl.sh test lab1     # 只跑 Lab1 的两条检查
+bash scripts/labctl.sh test all      # 跑全部 10 条用户程序检查
+bash scripts/labctl.sh verify        # 一键 full 验证（等价 teammate-verify.sh --full）
 ```
 
-或者一条命令全做完（apply + make + boot + 10 个测试程序）：
+`bash scripts/labctl.sh list` 能看到每个 lab 对应哪些测试。想直接用底层脚本也完全可以（`scripts/xv6/` 下的路径都在 labctl help 里标着）。
 
-```bash
-bash scripts/xv6/teammate-verify.sh --full
-```
-
-卡住、报错、或者误按了 `Ctrl+Z`：先跑 `bash scripts/xv6/cleanup-qemu.sh`，再看 [docs/troubleshooting.md](docs/troubleshooting.md)。`/mnt/` 路径下第一次 boot 偏慢是正常的。
+卡住、报错、或者误按了 `Ctrl+Z`：先跑 `bash scripts/labctl.sh clean`，再看 [docs/troubleshooting.md](docs/troubleshooting.md)。`/mnt/` 路径下第一次 boot 偏慢是正常的。
 
 ## 如果你是老师或助教
 
 - [docs/teacher_guide.md](docs/teacher_guide.md)：怎么把这套实验拆成 2-5 次课、每次讲什么、怎么验收。
 - [docs/grading_and_rubric.md](docs/grading_and_rubric.md)：每个 lab 的评分建议和常见扣分点。
-- 学生交上来的验证结果统一用 `teammate-verify.sh --full` 输出的 `COPY THIS SUMMARY TO TEAM LEAD` 块，方便批量核对。
+- 学生交上来的验证结果统一用 `teammate-verify.sh --full` 输出的 `COPY THIS SUMMARY TO TEAM LEAD` 块；收齐后用 `bash scripts/grade-summaries.sh logs/student-summaries/` 批量解析，它会把 overall 不一致、缺新测试项（旧 suite）、内容雷同的文件标出来——注意这只是辅助验收，最终评分仍按 rubric 和抽查。
 
 ## 如果你是评委或在看提交材料
 
@@ -91,4 +89,4 @@ bash scripts/xv6/teammate-verify.sh --full
 - `0001-0009` 的队友三方复现、新演示视频、新 SHA256 = **TBD**，复现后才填，不伪造。
 - `e8e2fb9 / 0001-0007` 的 rain/root/z2996 三方 full PASS 和旧视频 = **historical stable checkpoint**，只覆盖 `0001-0007`，不覆盖当前 suite。
 - 一直成立的边界：`pgcount`/`memstat` 不是完整内存管理，`fcount`/`fdcount`/`fdinfo` 不是完整文件系统，Lab5 不新增内核机制，QEMU timeout 捕获不等于长期稳定性测试。
-- 不入 Git 的东西：`external/xv6-riscv/`、`logs/`、视频、截图、`.claude/`、`.vscode/`、隐私材料。提交前可跑 `bash scripts/check-final-hygiene.sh` 自查。
+- 不入 Git 的东西：`external/xv6-riscv/`、`logs/`、视频、截图、`.claude/`、`.vscode/`、隐私材料。提交前三道自查：`bash scripts/check-final-hygiene.sh`（仓库卫生）、`bash scripts/check-docs-consistency.sh`（文档与脚本状态一致）、`bash scripts/check-evidence-sha256.sh`（外部证据哈希）。

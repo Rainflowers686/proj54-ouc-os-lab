@@ -1004,3 +1004,24 @@
   - No teammate reproduction, new video, or new SHA256 fabricated; all `0001-0009` evidence remains TBD.
   - No external source, logs, media, archives, `.claude/`, `.vscode/`, or privacy material committed.
 - Validation: `bash -n` on both new scripts; `collect-report.sh`; `check-final-hygiene.sh` PASS; `check-evidence-sha256.sh` run on this machine; PPTX zip inspection (16 slides, no `ppt/media/`); `git diff --check`; full `git ls-files` hygiene battery. Results in the final assistant response.
+
+## 2026-06-10: stage13 autonomous engineering upgrade (course tooling)
+
+- Commit hash: TODO after commit
+- Goal: close the three biggest "repo vs course product" gaps found by free-form review — scattered command entries, no TA batch-acceptance tool, and recurring docs/state drift that previously needed a human red team.
+- Completed:
+  - Added `scripts/labctl.sh`: single course entry. Subcommands delegate to existing scripts (doctor/setup/boot/verify/quick/precheck/clean/grade/consistency/hygiene/evidence/report); the only new knowledge is the lab-to-test matrix so `test lab1..lab4 | all | <program>` runs exactly the right `run-xv6-command.sh` checks. `setup` keeps the underlying `--yes` safety contract by refusing to run without an explicit `--yes`.
+  - Added `scripts/grade-summaries.sh`: TA batch parser for teammate-verify summaries (marker block or whole file). One row per file (user/commit/mode/overall) plus flags: INCONSISTENT (overall PASS but an item FAIL), MISSING/OLD_SUITE? (no memstattest/fdinfotest -> pre-0001-0009 summary), DUP_OF (byte-identical submissions), COMMIT_MISMATCH (with --expect-commit), MODE_QUICK, NO_BLOCK. Documented as an acceptance aid, not a grader; exit 1 when attention is needed.
+  - Added `scripts/check-docs-consistency.sh`: mechanical drift gate — PATCHES list vs patch files (both directions), `+#define SYS_*` numbers in integrated patches vs the documented 22-30 map, teammate-verify coverage of all 10 programs, labctl matrix coverage, stale-wording scan (changelogs excluded), course-critical file presence, report-index freshness; evidence truthfulness is explicitly MANUAL, never auto-passed.
+  - `.gitignore`: added `logs/student-summaries/` because `logs/*.summary.txt` only matches direct children — without this, TA-collected student files in a subdirectory would be trackable.
+  - Docs sync: README quick-start now leads with labctl (raw script paths still listed); teacher guide gained the grade-summaries workflow and labctl-based classroom demo; grading doc states the parser does not grade; troubleshooting notes labctl is a pure forwarder; submission checklist gained labctl/consistency rows and the three gates in the final command block; collect-report descriptors and index regenerated.
+- Real validation:
+  - `bash -n` on all three scripts: PASS.
+  - `labctl help` / `labctl list`: correct; `labctl test lab1` against live QEMU: 2/2 passed (hello, add2test), exit 0.
+  - `grade-summaries.sh` on three real lead-local summaries: parsed all, 3 clean PASS, exit 0; negative-path test with tampered (item FAIL under overall PASS), duplicated, old-suite, and wrong-commit inputs raised INCONSISTENT/DUP_OF/OLD_SUITE?/COMMIT_MISMATCH and exit 1.
+  - `check-docs-consistency.sh`: first run caught a real bug in its own check 2 (patches align `#define` columns; comparison was whitespace-sensitive) — fixed, then 7/7 OK, PASS, exit 0 (exit verified with `&&/||` because `$?` is unreliable across the MSYS->WSL boundary).
+- Boundaries:
+  - No `patches/integrated-labs/`, `scripts/xv6/`, or OS code modified; engineering state unchanged, heavy verification not re-run (2026-06-10 full PASS runs remain valid).
+  - grade-summaries checks internal consistency only; it cannot prove a student ran anything — spot checks remain mandatory and grading stays with the teacher.
+  - No teammate reproduction, video, or SHA256 fabricated; `0001-0009` evidence remains TBD.
+  - Lead-local summary files used for testing stay ignored in `logs/`; nothing generated was committed.

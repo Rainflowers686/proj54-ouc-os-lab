@@ -181,6 +181,10 @@ logs/*.summary.txt
 logs/*.console.txt
 logs/teammate-verify-console-*.out
 logs/teammate-verify-console-*.err
+# TA-collected student summary files (grade-summaries.sh input) — NOT committed.
+# Note: logs/*.summary.txt above only matches direct children, so the
+# collection subdirectory needs its own rule.
+logs/student-summaries/
 !logs/README.md
 
 # Archives and large binary deliverables — NOT committed

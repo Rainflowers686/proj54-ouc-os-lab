@@ -15,7 +15,8 @@ docs 目录里既有教程、教师材料，也有比赛报告和大量过程记
 
 ## 2. 已经能跑 xv6：直接进 Lab
 
-- 想一次跑全部：`bash scripts/xv6/teammate-verify.sh --full`（覆盖 integrated `0001-0009` 的 10 个测试程序）。
+- 统一入口：`bash scripts/labctl.sh help`。做完某一关只测那一关：`labctl test lab3`；看 lab↔测试对应关系：`labctl list`。
+- 想一次跑全部：`bash scripts/labctl.sh verify`（等价 `scripts/xv6/teammate-verify.sh --full`，覆盖 integrated `0001-0009` 的 10 个测试程序）。
 - 想理解某个 syscall 的实现：看对应 lab 的 README，再直接读 `patches/integrated-labs/` 里那个 patch——每个 patch 就是一次完整的"加 syscall"操作记录。
 - 想理解 `argaddr + copyout + struct ABI`：Lab3 进阶 `memstat`（integrated `0008`）和 Lab4 进阶 `fdinfo`（integrated `0009`）。
 
@@ -23,7 +24,7 @@ docs 目录里既有教程、教师材料，也有比赛报告和大量过程记
 
 - [docs/teacher_guide.md](teacher_guide.md)：课次安排、必做/选做划分、验收方式、学生环境问题处理。
 - [docs/grading_and_rubric.md](grading_and_rubric.md)：评分建议与常见扣分点。
-- 每个 lab 的 `student_tasks.md` 可以直接当作业布置；验收统一收 `teammate-verify.sh` 的 summary 块。
+- 每个 lab 的 `student_tasks.md` 可以直接当作业布置；验收统一收 `teammate-verify.sh` 的 summary 块，收齐后用 `bash scripts/grade-summaries.sh <目录>` 批量解析和防伪标记（辅助验收，不是评分）。
 
 ## 4. 比赛/提交材料：证据在哪
 
@@ -37,6 +38,8 @@ docs 目录里既有教程、教师材料，也有比赛报告和大量过程记
 `docs/00` 到 `docs/24` 是按阶段留下的开发与红队记录（计划、审查、踩坑、阶段结论），`docs/05_ai_usage_record.md` 和 `docs/06_progress_log.md` 是逐条流水账。它们的价值是"为什么当时这么做"可以追溯，但其中的"当前状态"描述只对所写阶段成立——例如 stage9c 文档里的 `0001-0007` 早已被 `0001-0009` 取代。想追溯历史时再来，新手优先级最低。
 
 `docs/13_technical_report_v0.1.md` 是早期草案，已被 `docs/final/technical_report_v1.0.md` 取代，仅作过程透明保留。
+
+提交前三道机器门禁：`bash scripts/check-final-hygiene.sh`、`bash scripts/check-docs-consistency.sh`、`bash scripts/check-evidence-sha256.sh`。
 
 ## 提交边界（一直成立）
 

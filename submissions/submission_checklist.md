@@ -37,6 +37,8 @@
 | Lab4 进阶 fdinfo | `bash scripts/xv6/run-xv6-command.sh fdinfotest "fdinfotest done"` | PASS；stage11b 已进入 integrated `0009`（`SYS_fdinfo 30`）；队长本机 `local-verify --full` 已验证；非完整文件系统 |
 | 一键 full 验证 | `bash scripts/xv6/teammate-verify.sh --full` | historical：`e8e2fb9` 队长本机、root、z2996 full verification 均 PASS（只覆盖 `0001-0007`）；TBD：含 memstat/fdinfo 的 `0001-0009` 队友 full verify 尚未进行，不得伪造 |
 | 本地录屏前预检 | `bash scripts/xv6/local-verify.sh --quick` | 队长本机 `0001-0009` full PASS 已完成；录屏前仍推荐 quick |
+| 课程入口自检 | `bash scripts/labctl.sh list` / `test lab1` | PASS；labctl 为纯转发入口 + lab→测试矩阵，已实测 `test lab1` 2/2 通过 |
+| 文档/状态一致性 | `bash scripts/check-docs-consistency.sh` | PASS；7 项机器检查（PATCHES↔文件、SYS 22-30、verify 覆盖、矩阵覆盖、失效措辞、关键文件、索引新鲜度） |
 | QEMU cleanup | `bash scripts/xv6/cleanup-qemu.sh` | 可用 |
 
 ## 4. 文档材料
@@ -106,6 +108,9 @@
 
 ```bash
 bash scripts/collect-report.sh
+bash scripts/check-final-hygiene.sh
+bash scripts/check-docs-consistency.sh
+bash scripts/check-evidence-sha256.sh
 git diff --check
 git status --short
 git status --ignored --short external logs .claude

@@ -2,7 +2,9 @@
 
 > 维护时间：2026-06-10（stage12）。覆盖 WSL、QEMU、make、PATH、timeout、`/mnt` 性能等高频问题。每条按"症状 → 可能原因 → 解决 → 报告时带什么信息"组织。
 
-通用第一步：`bash scripts/xv6/doctor.sh`。它只读不写，10 秒告诉你 git/bash/make/qemu/交叉编译器在不在、有没有 QEMU 残留进程、路径在不在 `/mnt` 下。
+通用第一步：`bash scripts/labctl.sh doctor`（等价 `scripts/xv6/doctor.sh`）。它只读不写，10 秒告诉你 git/bash/make/qemu/交叉编译器在不在、有没有 QEMU 残留进程、路径在不在 `/mnt` 下。
+
+顺便说明：`labctl` 只是统一入口，所有报错信息都来自它转发的底层脚本——本页按底层脚本的症状组织，`labctl test lab3` 报错就按 `run-xv6-command.sh` 的条目查。
 
 ## 1. `make: command not found` / `qemu-system-riscv64: command not found`
 
