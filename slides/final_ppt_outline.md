@@ -26,7 +26,7 @@
 | 9 | Lab4：fd 与 file 的关系 | 区分当前进程 fd table 和全局 file table。 | ofile[] -> struct file -> file table |
 | 10 | Lab5：把实验变成验收 | Lab5 是综合复现实验，不是新增内核机制。 | 综合复现验收阶梯 |
 | 11 | 工具链：从脚本到课程入口 | labctl、verify、summary、hash check 组成课程工具链。 | 工具链架构图 |
-| 12 | 三方复现证据 | rain/root/z2996 的全量验证共同支撑最终 HEAD。 | 三方证据卡 |
+| 12 | 三方复现证据 | rain/root/z2996 的全量验证共同支撑工程复现 commit `db85947`。 | 三方证据卡 + 工程复现 commit |
 | 13 | 证据链可以重新计算 | 外部资产不进 Git，但 SHA256 可重新核验。 | 视频元数据 + SHA256 证据链 |
 | 14 | 与 uCore/rCore 的差异 | 完整课程生态覆盖更广，本项目聚焦 OUC+xv6 的轻量入门实验和可复现验收。 | 左右对比：完整课程生态 vs 本项目 |
 | 15 | 创新在组织方式 | 创新落在 patch workflow、课程材料、复现工具和证据边界。 | 五块创新拼图 |

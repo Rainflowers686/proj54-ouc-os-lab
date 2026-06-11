@@ -57,7 +57,7 @@
 | PPT 大纲 | `slides/final_ppt_outline.md` | stage16 已重写为 16 页最终答辩结构 |
 | PPT 源稿 | `slides/final_ppt.md` | stage16 已重写为 16 页正式答辩源稿 |
 | PPT 生成器 | `slides/generate_final_ppt.ps1` | 使用 PowerPoint COM 从 Markdown 源稿生成 PPTX；不嵌入视频、截图或 raw logs |
-| PPT 成稿 | `slides/final_defense_ppt.pptx` | stage16-redesign-with-ppt-skill 已生成；16:9；16 张 slide 与 16 份 speaker notes；`114,159 bytes`；无 `ppt/media/` 文件；仍需人工最终审阅和排练 |
+| PPT 成稿 | `slides/final_defense_ppt.pptx` | stage16-redesign-with-ppt-skill 已生成；16:9；16 张 slide 与 16 份 speaker notes；`114,409 bytes`；无 `ppt/media/` 文件；仍需人工最终审阅和排练 |
 | 材料索引 | `submissions/draft-report-index.md` | 由 `scripts/collect-report.sh` 生成 |
 | 最终证据 manifest | `submissions/evidence_manifest.md` | 已记录 current final `db85947 / 0001-0009`（三方 PASS、grade-summaries 3/3、新视频+SHA256）、`e8e2fb9 / 0001-0007` historical stable checkpoint、外部目录和 non-committed evidence policy |
 | docs 导引 | `docs/README.md` | 已说明正式文档与过程文档边界 |

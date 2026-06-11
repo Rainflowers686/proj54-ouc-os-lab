@@ -425,8 +425,8 @@ function Slide12 {
     Box $Slide $users[$i] $x 180 160 42 $C.Cyan $C.Cyan $C.Ink 18 $true $ppAlignCenter $true | Out-Null
     Box $Slide $D.Labels[3] $x 235 160 88 $C.Green $C.Green $C.Ink 15 $true $ppAlignCenter $true | Out-Null
   }
-  Box $Slide ($D.Labels[4] + "`r" + $D.Labels[5] + " / " + $D.Labels[6]) 220 390 340 54 $C.Deep2 $C.Cyan $C.Ice 13 $true $ppAlignCenter $true | Out-Null
-  Box $Slide $D.Labels[7] 585 390 100 54 $C.Blue $C.Blue $C.White 14 $true $ppAlignCenter $true | Out-Null
+  Box $Slide ($D.Labels[4] + "`r" + $D.Labels[5] + " / " + $D.Labels[6]) 210 390 330 54 $C.Deep2 $C.Cyan $C.Ice 13 $true $ppAlignCenter $true | Out-Null
+  Box $Slide $D.Labels[7] 565 390 155 54 $C.Blue $C.Blue $C.White 11.5 $true $ppAlignCenter $true | Out-Null
 }
 
 function Slide13 {

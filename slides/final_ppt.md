@@ -60,7 +60,7 @@
 
 **Speaker notes**
 
-这一页必须纠正旧版本的 50/30/10/10 表述。我们现在按官方口径讲：初赛看执行展示和文档，决赛还看现场答辩、过程记录、源码分析、最终方案、PPT 和演示视频。因此项目建设不能只做内核功能。
+这一页必须纠正旧版本的非官方权重表述。我们现在按官方口径讲：初赛看执行展示和文档，决赛还看现场答辩、过程记录、源码分析、最终方案、PPT 和演示视频。因此项目建设不能只做内核功能。
 
 ## Slide 3. 复现才是第一道坎
 
@@ -331,7 +331,7 @@ Lab5 的定位要避免误解。它不是新系统调用，而是综合复现实
 - root：全量验证通过
 - z2996：全量验证通过
 - grade-summaries：3 clean PASS / 0 needs attention
-- evidence documentation commit：caf8ced
+- 工程复现 commit：db85947
 
 **Visual labels**
 
@@ -342,11 +342,11 @@ Lab5 的定位要避免误解。它不是新系统调用，而是综合复现实
 - grade-summaries
 - 3 clean PASS
 - 0 needs attention
-- caf8ced
+- 工程复现 commit：db85947
 
 **Speaker notes**
 
-这里保持克制：我们只说已经有 summary 和外部证据的事实，不编造队友真实姓名或系统版本。root 和 z2996 是终端 user。
+这里保持克制：我们只说已经有 summary 和外部证据的事实，不编造队友真实姓名或系统版本。root 和 z2996 是终端 user。三方 full verification summary 的 current commit 是 db85947；caf8ced 只是 evidence documentation commit，用于记录 final demo、三方复现、SHA256 和外部资产索引。
 
 ## Slide 13. 证据链可以重新计算
 

@@ -87,7 +87,7 @@ All listed items are recorded as PASS in the final external summaries. Raw summa
 | PPT outline | `slides/final_ppt_outline.md` |
 | PPT generator | `slides/generate_final_ppt.ps1` |
 | PPTX file | `slides/final_defense_ppt.pptx` |
-| PPTX size | `114,159 bytes` |
+| PPTX size | `114,409 bytes` |
 | slide count | 16 |
 | speaker notes count | 16 |
 | media embedding | none detected in `ppt/media/` after generation |

@@ -87,6 +87,7 @@ bash scripts/labctl.sh verify        # 一键 full 验证（等价 teammate-veri
 ## 当前证据状态（诚实边界）
 
 - current final = `db85947 / 0001-0009`（hello=22 … fdinfo=30，连续编号）：rain/root/z2996 三方 `teammate-verify.sh --full` 全 PASS，新演示视频与 SHA256 已登记（详见 [submissions/evidence_manifest.md](submissions/evidence_manifest.md)）。
+- `caf8ced` 只是证据文档登记提交，用于记录 final demo、三方复现、SHA256 和外部资产索引；工程复现仍以 `db85947 / 0001-0009` 为准。
 - `e8e2fb9 / 0001-0007` 的三方 full PASS 和旧视频 = **historical stable checkpoint**，只覆盖 `0001-0007`，保留不删但不作为 current final。
 - 一直成立的边界：`pgcount`/`memstat` 不是完整内存管理，`fcount`/`fdcount`/`fdinfo` 不是完整文件系统，Lab5 不新增内核机制，QEMU timeout 捕获不等于长期稳定性测试。
 - 不入 Git 的东西：`external/xv6-riscv/`、`logs/`、视频、截图、`.claude/`、`.vscode/`、隐私材料。提交前三道自查：`bash scripts/check-final-hygiene.sh`（仓库卫生）、`bash scripts/check-docs-consistency.sh`（文档与脚本状态一致）、`bash scripts/check-evidence-sha256.sh`（外部证据哈希）。

@@ -17,14 +17,17 @@ proj54 是教学型功能挑战，不是“内核实现赛道刷 LTP”项目。
 - 准备参加 OS 功能挑战赛、需要理解 syscall、进程表和文件表的同学。
 - 后续维护课程实验包的助教和队员。
 
-## 评分权重对应
+## 官方评分口径与本项目材料对应
 
-| 赛题关注点 | 权重 | 本项目对应材料 |
-| --- | ---: | --- |
-| 文档完整度 | 50% | `docs/final/` 正式文档、各 lab 教程式 README 与 `student_tasks.md`（必做/选做/评分 rubric）、教师指南/评分标准/troubleshooting（`docs/teacher_guide.md` 等）、常见错误、测试方法、边界说明、AI/许可证声明 |
-| 实现完整度 | 30% | lab0/lab1/lab2/lab3/lab4 与 integrated `0001-0009`（含进阶 memstat `0008` / fdinfo `0009`），覆盖 syscall、进程观察、页表观察、file table / fd table 观察和 copyout struct ABI |
-| 测试完整度 | 10% | `doctor.sh`、`teammate-verify.sh`、`local-verify.sh`、boot/command evidence、测试覆盖表 |
-| 创新性 | 10% | OUC 本校课程叙事、clean baseline patch workflow、队友一键复现、QEMU cleanup/timeout 体验、透明 AI 过程记录 |
+| 阶段 | 官方评分项 | 占比 | 本项目对应材料 |
+| --- | --- | ---: | --- |
+| 初赛 | 项目/源代码执行展示 | 50% | integrated `0001-0009` patches、`labctl`、`teammate-verify.sh --full`、QEMU demo video、三方 full verification summary |
+| 初赛 | 文档展示 | 50% | `docs/final/`、各 lab 教程式 README、`student_tasks.md`、`docs/teacher_guide.md`、`docs/grading_and_rubric.md`、`docs/troubleshooting.md`、AI/许可证/边界说明 |
+| 决赛 | 初赛阶段成绩 | 20% | 以上初赛材料与 current final evidence 继续作为基础证据 |
+| 决赛 | 决赛阶段成绩 | 80% | 现场答辩、最终技术报告、最终 PPT、演示视频、提交过程记录、源码分析和最终方案说明 |
+| 决赛阶段 | 项目/源代码执行展示 | 15% | clean baseline apply、integrated `0001-0009`、`labctl`、full/quick verification、final demo video |
+| 决赛阶段 | 设计方案文档撰写 | 25% | `docs/final/technical_report_v1.0.md`、`docs/final/` 正式文档体系、lab 教学文档、教师指南和评分 rubric |
+| 决赛阶段 | 现场答辩/提交过程记录/源码分析/最终设计方案/答辩幻灯片/作品演示视频 | 40% | `slides/final_defense_ppt.pptx`、`submissions/evidence_manifest.md`、`submissions/demo_record.md`、`submissions/teammate_reproduction_record.md`、外部 demo video 与 SHA256 |
 
 ## 当前完成状态
 
