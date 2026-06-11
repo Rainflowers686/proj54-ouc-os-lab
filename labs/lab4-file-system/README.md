@@ -143,14 +143,14 @@ bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"
 - 教学点：`argint + argaddr + copyout + struct ABI`——内核如何按 fd 取出 `struct file` 的元数据并安全拷回用户态；只查 `myproc()->ofile[fd]`，在 `ftable.lock` 下读取，不返回路径/inode 号/内容/物理地址。
 - 验证：`bash scripts/xv6/run-xv6-command.sh fdinfotest "fdinfotest done"`，clean baseline round-trip 已通过（`open fd ok`、`dup fd ok`、`closed fd = -1`、`bad fd = -1`）。
 
-边界与状态：仍然是 fd table **观察**实验，不是完整文件系统；independent 版 `SYS_fdinfo = 22` 与 `fcount` 相同，两个 independent patch **不可叠加**，各自从 clean baseline 单独应用。stage11b 起 `fdinfo` **已进入** integrated `0009`（`patches/integrated-labs/0009-add-fdinfo-copyout-observation.patch`，`SYS_fdinfo = 30`），current integrated suite 为 `0001-0009`，队长本机 `local-verify --full` overall PASS（含 `fdinfotest`）。证据边界：`e8e2fb9 / 0001-0007` 三方 full PASS 是 historical stable checkpoint，**不覆盖** `0001-0009`；含 fdinfo 的 `0001-0009` 队友 full verify、新视频、新 SHA256 均为 TBD，待重新复现后填写，不得伪造。
+边界与状态：仍然是 fd table **观察**实验，不是完整文件系统；independent 版 `SYS_fdinfo = 22` 与 `fcount` 相同，两个 independent patch **不可叠加**，各自从 clean baseline 单独应用。stage11b 起 `fdinfo` **已进入** integrated `0009`（`patches/integrated-labs/0009-add-fdinfo-copyout-observation.patch`，`SYS_fdinfo = 30`），current integrated suite 为 `0001-0009`，队长本机 `local-verify --full` overall PASS（含 `fdinfotest`）。证据边界：含 fdinfo 的 `0001-0009` 已由 rain/root/z2996 三方在 current final commit `db85947` 上 full verify 全 PASS，新视频与 SHA256 已登记（stage14，见 `submissions/evidence_manifest.md`）；`e8e2fb9 / 0001-0007` 三方 PASS 保留为 historical stable checkpoint。
 
 ## 不要误解什么
 
 - 这不是完整文件系统实验：不观察 inode，不修改文件系统布局，`fdinfo` 不返回路径/inode 号/文件内容。
 - `fdinfo` 只能查**自己**的 fd（`myproc()->ofile[fd]`），没有实现跨进程的 `fdinfo(pid, fd)`，也没有 open file summary。
 - `fcount` 的绝对数字不固定，稳定的只有 open/close 的 +1/-1 delta。
-- timeout 自动捕获不等于长期稳定性测试；`0001-0009` 的队友复现/新视频仍为 TBD。
+- timeout 自动捕获不等于长期稳定性测试。
 
 ## 下一步看哪里
 

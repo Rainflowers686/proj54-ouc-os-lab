@@ -115,7 +115,7 @@ stage9c 把 integrated-labs 扩展到 `0001-0007`，stage11b 起 current integra
 bash scripts/xv6/teammate-verify.sh --full
 ```
 
-该流程会覆盖 hello、add2test、pstatetest、pcounttest、pchildtest、fcounttest、pgcounttest、fdcounttest、memstattest 和 fdinfotest。旧队友证据均不覆盖 current `0001-0009`：两份 `1ba9db6` full PASS 只覆盖 earlier suite，`e8e2fb9` 的三方 full PASS 是 historical stable checkpoint（只覆盖 `0001-0007`）；正式提交前需要在新 commit 上重新收集 teammate full summary（当前 TBD）。
+该流程会覆盖 hello、add2test、pstatetest、pcounttest、pchildtest、fcounttest、pgcounttest、fdcounttest、memstattest 和 fdinfotest。current final 证据为 `db85947 / 0001-0009` 三方 full PASS（stage14 已登记）；`e8e2fb9 / 0001-0007` 三方 PASS 为 historical stable checkpoint，两份 `1ba9db6` full PASS 只覆盖 earlier suite。
 
 队长录屏前本地预检使用：
 

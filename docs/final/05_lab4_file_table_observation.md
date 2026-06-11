@@ -106,7 +106,7 @@ fcounttest done
 | `fdinfotest done`（integrated `0009`） | PASS（队长本机） |
 | 长期稳定性测试 | 未执行 |
 | 队友独立复现（`0001-0007`） | historical：`e8e2fb9` root 与 z2996 full PASS 已记录，只覆盖 `0001-0007`；旧 `1ba9db6` 只作 historical evidence |
-| 队友独立复现（`0001-0009`） | TBD：含 `fdinfotest` 的 `0001-0009` 队友 full verify 尚未进行，不得伪造 |
+| 队友独立复现（`0001-0009`） | 已完成：rain/root/z2996 三方在 `db85947` 上 full PASS（含 `fdinfotest`，stage14 登记） |
 
 ## 常见错误
 
@@ -141,4 +141,4 @@ fcounttest done
 
 边界与状态：仍是 fd table **观察**实验，**不是完整文件系统**；independent 版 `SYS_fdinfo = 22`（与 `fcount` 不可叠加）。
 
-stage11b 更新：该 syscall 已进入 integrated 主线，作为 integrated `0009`（`patches/integrated-labs/0009-add-fdinfo-copyout-observation.patch`，`SYS_fdinfo = 30`，`fileinfo()` helper 在 `ftable.lock` 下读取），final integrated suite 因此扩展为 `0001-0009`。integrated 变体已在队长本机 `local-verify.sh --full` 实测 overall PASS（含 `fdinfotest`）。但旧 `e8e2fb9 / 0001-0007` 的队友三方 full PASS、final video、SHA256 只覆盖 `0001-0007`，**不覆盖** `0001-0009`（降级为 historical stable checkpoint）；新 `0001-0009` 的队友 full verify、重录视频、重算 SHA256 仍为 **TBD**，不得伪造。`fdinfo` 只查自己的 `ofile[fd]`，不返回路径、inode 号或文件内容。
+stage11b 更新：该 syscall 已进入 integrated 主线，作为 integrated `0009`（`patches/integrated-labs/0009-add-fdinfo-copyout-observation.patch`，`SYS_fdinfo = 30`，`fileinfo()` helper 在 `ftable.lock` 下读取），final integrated suite 因此扩展为 `0001-0009`。integrated 变体已由 rain/root/z2996 三方在 current final commit `db85947` 上 `teammate-verify.sh --full` 全 PASS（含 `fdinfotest`），新演示视频与 SHA256 已登记（stage14，见 `submissions/evidence_manifest.md`）；旧 `e8e2fb9 / 0001-0007` 证据保留为 historical stable checkpoint。`fdinfo` 只查自己的 `ofile[fd]`，不返回路径、inode 号或文件内容。

@@ -128,14 +128,14 @@ bash scripts/xv6/run-xv6-command.sh fdinfotest "fdinfotest done"
 | `memstattest` 输出捕获（integrated `0008`） | PASS，检测到 `memstat page_size = 4096`、mapped/size delta 输出和 `memstattest done`（队长本机） |
 | `fdinfotest` 输出捕获（integrated `0009`） | PASS，检测到 open/dup ok、closed fd `-1`、bad fd `-1` 和 `fdinfotest done`（队长本机） |
 | 长期稳定性测试 | TODO |
-| 覆盖 `0001-0009` 的人工交互录屏 | TBD（旧 `0001-0007` 视频为 historical stable checkpoint） |
-| 队友复现（`0001-0009`） | TBD：需要在新 commit 上重新 `teammate-verify.sh --full` |
+| 覆盖 `0001-0009` 的人工交互录屏 | 已录制：`20260611_final_integrated_0001_0009_demo.mp4`，SHA256 已登记（旧 `0001-0007` 视频为 historical stable checkpoint） |
+| 队友复现（`0001-0009`） | 已完成：rain/root/z2996 在 current final commit `db85947` 上 `teammate-verify.sh --full` 全 PASS（stage14 登记） |
 
 ## 边界
 
 - timeout 自动捕获不等于长期稳定性测试。
 - 当前没有声称人工录屏完成。
-- 旧队友证据分两层，都不覆盖 current `0001-0009`：两份 `1ba9db6` full PASS 只证明 earlier `0001-0005`；`e8e2fb9` 的 rain/root/z2996 三方 full PASS 是 historical stable checkpoint，只覆盖 `0001-0007`。stage11b 的 integrated `0001-0009` 需要在新 commit 上重新收集 teammate full summary（当前 TBD，不得伪造）。
+- 证据分三层：current final 为 `db85947 / 0001-0009` 三方 full PASS（stage14 已登记，见 `submissions/evidence_manifest.md`）；`e8e2fb9 / 0001-0007` 三方 PASS 为 historical stable checkpoint；两份 `1ba9db6` full PASS 只证明 earlier `0001-0005`。旧证据不冒充新证据。
 - `pcount(RUNNING)`、`pstate(child)` 和 `fcount(...)` 的具体数字/状态可能随调度和环境变化，验证只依赖稳定前缀。
 - `pgcount()` 是页表映射数量观察，不是完整内存管理实验。
 - `fcount()` / `fdcount()` 是 file table / fd table 观察，不是完整文件系统实验。

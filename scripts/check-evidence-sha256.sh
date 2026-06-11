@@ -11,7 +11,11 @@
 #   - individual file missing              -> WARN (not a failure)
 #   - file present and hash matches        -> OK
 #   - file present and hash differs        -> FAIL, exit 1
-#   - new 0001-0009 evidence (still TBD)   -> NOTE only, never a failure
+#
+# Covered evidence sets:
+#   - historical stable checkpoint: e8e2fb9 / 0001-0007 (4 videos + 4 teammate files)
+#   - current final: db85947 / 0001-0009 (1 video + 3 summaries + 2 screenshots),
+#     recorded in stage14 after the real three-way reproduction
 #
 # Override the evidence location with:
 #   XV6_EVIDENCE_BASE="/path/to/proj54_submission_assets" bash scripts/check-evidence-sha256.sh
@@ -70,6 +74,12 @@ teammate_reproduction/e8e2fb9_final_0001_0007/teammateA_root_e8e2fb9_full_202606
 teammate_reproduction/e8e2fb9_final_0001_0007/teammateA_root_e8e2fb9_full_20260606-235641.screenshot.png|4A3679274CA18B2E8BAEB9023C8D6DF7BE76738A5126C0F47ADAA3954ADC19D2
 teammate_reproduction/e8e2fb9_final_0001_0007/teammateB_z2996_e8e2fb9_full_20260607-114807.console.log|108A6F254E47049B54CAFDE007542A14BFC2586AC3BA18039E66B3EDF2A9A40E
 teammate_reproduction/e8e2fb9_final_0001_0007/teammateB_z2996_e8e2fb9_full_20260607-115137.screenshot.png|7089C1175D6CE49AE8ADA712552C8053FFEE1643B9A3776899FD396D12C085EF
+videos/20260611_final_integrated_0001_0009_demo.mp4|2A2C9863C185846225A98AC874499867A71588CED2020A64249CBF99C7BC0365
+teammate_reproduction/db85947_final_0001_0009/teamlead_rain_db85947_full_20260610-221236.summary.txt|C0CBC292DD7C49E7016F4117871CC5F256D3554611E13DB5E8590020BB1DFD50
+teammate_reproduction/db85947_final_0001_0009/teammateA_root_db85947_full_20260611-080653.summary.txt|8ED5BDE02B4B14DB94A12BE3C5EA29A76D933DB5649FB6335007BF0C291FFF87
+teammate_reproduction/db85947_final_0001_0009/teammateA_root_db85947_full_20260611-081141.screenshot.jpg|86A57BED2A317CD3AB115676923FEFEC3422799793C7F233040B45C41675733C
+teammate_reproduction/db85947_final_0001_0009/teammateB_z2996_db85947_full_20260610-221859.summary.txt|5F0973FB54B012C259F6A2E08F6C322F224E356EAFC4BB8A8F684474F941255E
+teammate_reproduction/db85947_final_0001_0009/teammateB_z2996_db85947_full_20260610-222133.screenshot.png|E9AEF330994C496C2FD4A257596594732CBA3C0FCE2449C200187A9856FE6150
 "
 
 while IFS='|' read -r rel expect; do
@@ -98,9 +108,8 @@ $EXPECTED
 EOF
 
 echo
-echo "[NOTE] new 0001-0009 evidence (teammate full verify, new demo video, new"
-echo "[NOTE] SHA256) is still TBD and intentionally NOT checked here. Add its"
-echo "[NOTE] entries to this script only after the real files and hashes exist."
+echo "[NOTE] table covers both evidence sets: historical e8e2fb9/0001-0007 and"
+echo "[NOTE] current final db85947/0001-0009 (recorded in stage14)."
 echo
 echo "files present+hashed: $checked  matched: $matched  missing: $missing"
 if [ "$fail" -eq 0 ]; then

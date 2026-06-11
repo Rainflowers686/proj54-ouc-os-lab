@@ -70,4 +70,4 @@ bash scripts/xv6/run-xv6-command.sh fdinfotest "fdinfotest done"
 | `fdinfo bad fd = -1` | PASS |
 | `fdinfotest done` | PASS |
 
-`ref` 被观察输出但不强断言。边界：independent 版 `SYS_fdinfo = 22`（与 `fcount` 不可叠加）。stage11b 起 `fdinfo` **已进入** integrated `0009`（`SYS_fdinfo = 30`），current integrated suite 为 `0001-0009`，`fdinfotest` 已纳入 local/teammate full verify 并在队长本机 `local-verify --full` overall PASS。证据边界：`e8e2fb9 / 0001-0007` 三方 full PASS 为 historical stable checkpoint，不覆盖 `0001-0009`；`0001-0009` 的队友复现、新视频、新 SHA256 为 TBD，不得伪造。
+`ref` 被观察输出但不强断言。边界：independent 版 `SYS_fdinfo = 22`（与 `fcount` 不可叠加）。stage11b 起 `fdinfo` **已进入** integrated `0009`（`SYS_fdinfo = 30`），current integrated suite 为 `0001-0009`，`fdinfotest` 已纳入 local/teammate full verify 并在队长本机 `local-verify --full` overall PASS。证据边界：`0001-0009` 的三方复现、新视频、新 SHA256 已于 stage14 在 current final commit `db85947` 上完成登记（见 `submissions/evidence_manifest.md`）；`e8e2fb9 / 0001-0007` 三方 full PASS 为 historical stable checkpoint。

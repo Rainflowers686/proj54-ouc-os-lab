@@ -114,7 +114,7 @@
 
 - Lab5 **不新增内核机制**——九个 syscall 都是前面各关加的，这一关考察组织与复现。
 - "我机器上跑通了" ≠ "可复现"：报告里要写清 baseline commit、patch 顺序、真实命令和输出，失败也要如实记录。
-- 旧证据不覆盖新 suite：`e8e2fb9 / 0001-0007` 三方 PASS 是 historical checkpoint，当前 `0001-0009` 的队友复现/新视频为 TBD。
+- 旧证据不覆盖新 suite：`e8e2fb9 / 0001-0007` 三方 PASS 是 historical checkpoint；current final 证据是 `db85947 / 0001-0009` 的三方 PASS（stage14 已登记）。
 
 ## 下一步看哪里
 
@@ -128,4 +128,4 @@ stage11b 已把 capstone workflow 扩展到 integrated `0001-0009`（新增 mems
 
 - `e8e2fb9` 的 rain/root/z2996 三方 full PASS 与 `0001-0007` 视频是 historical stable checkpoint，只覆盖 `0001-0007`，不覆盖 `0001-0009`。
 - 两位队友在更早 commit `1ba9db6` 的 full PASS 只覆盖 earlier `0001-0005`，同样是历史证据。
-- 含 `memstattest`/`fdinfotest` 的 `0001-0009` 队友复现、新演示视频、新 SHA256 均为 TBD：正式提交前需要在新 commit 上重新收集团队成员的 `teammate-verify.sh --full` summary 并重录视频，不得伪造。
+- 含 `memstattest`/`fdinfotest` 的 `0001-0009` 三方复现、新演示视频、新 SHA256 已于 stage14 在 current final commit `db85947` 上完成并登记（rain/root/z2996 全 PASS，grade-summaries 3/3 clean；见 `submissions/evidence_manifest.md`）。

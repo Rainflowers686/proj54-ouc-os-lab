@@ -7,10 +7,10 @@
 | lab3 memory/pagetable | integrated 已完成 | `pgcount()` 页表映射数量观察已进入 integrated `0006`；不是完整内存管理实验 |
 | lab4 file system | v0.2 已完成 | `fcount()` file table 与 `fdcount()` fd table 观察；不是完整文件系统实验 |
 | lab5 capstone | 已完成文档闭环 | 综合复现实验；不新增内核机制 |
-| advanced optional patches（stage11b 已进 integrated） | integrated 已完成（队长本机），队友复现 TBD | `memstat`(独立 lab3 `0002`，也作 integrated `0008`，`SYS_memstat = 29`) 与 `fdinfo`(独立 lab4 `0002`，也作 integrated `0009`，`SYS_fdinfo = 30`) 教 `argaddr/argint + copyout + struct ABI`；stage11b 已进入 integrated 主线，final suite 扩展为 `0001-0009`，队长本机 `local-verify --full` overall PASS（含 memstattest/fdinfotest）。旧 `e8e2fb9 / 0001-0007` 三方 PASS 只覆盖 `0001-0007`（historical）；`0001-0009` 队友 full verify 为 **TBD** |
+| advanced optional patches（已进 integrated） | integrated 已完成，三方复现已完成 | `memstat`(独立 lab3 `0002`，也作 integrated `0008`，`SYS_memstat = 29`) 与 `fdinfo`(独立 lab4 `0002`，也作 integrated `0009`，`SYS_fdinfo = 30`) 教 `argaddr/argint + copyout + struct ABI`；final suite `0001-0009` 已由 rain/root/z2996 在 current final commit `db85947` 上 full verify 全 PASS（stage14 登记）。旧 `e8e2fb9 / 0001-0007` 三方 PASS 保留为 historical |
 | 长期稳定性测试 | 未完成 | 当前为 timeout 自动捕获 evidence |
-| 队友独立复现 | `0001-0007` historical PASS 已记录；`0001-0009` TBD | root 与 z2996 两份 `e8e2fb9` / integrated `0001-0007` full PASS 已记录，降级为 historical stable checkpoint，只覆盖 `0001-0007`；旧 `1ba9db6` 只作 historical evidence；含 memstat/fdinfo 的 `0001-0009` 队友 full verify 尚未进行，为 TBD，不得伪造 |
-| 视频提交信息 | `0001-0007` historical 已记录；`0001-0009` TBD | `0001-0007` 视频已记录大小、时长、SHA256，降级为 historical stable checkpoint，只覆盖 `0001-0007`；覆盖 `0001-0009`（含 memstat/fdinfo）的新视频和新 SHA256 尚未录制，为 TBD；平台提交方式和最终隐私复核待确认 |
+| 队友独立复现 | current final 已完成 | rain/root/z2996 三份 `db85947 / 0001-0009` full PASS 已登记（grade-summaries 3/3 clean，SHA256 见 evidence manifest）；`e8e2fb9 / 0001-0007` 与 `1ba9db6` 记录保留为 historical |
+| 视频提交信息 | current final 已录制 | `20260611_final_integrated_0001_0009_demo.mp4` 已登记大小与 SHA256（时长/分辨率/帧率待人工补充）；`0001-0007` 视频为 historical；平台提交方式和最终隐私复核待确认 |
 | 同类项目引用 URL | 待补充 | uCore/rCore/YatSen OS/F-Tutorials 等需最终核对 |
 | 技术报告 v1.0 | 草案已完成 | `docs/final/technical_report_v1.0.md` |
 | PPT | 大纲已完成，成稿待制作 | `slides/final_ppt_outline.md` 已给出 15 页结构 |
@@ -26,7 +26,7 @@
 - 队长本机 PASS 不能写成队友独立复现；final 证据中 lead/root/z2996 必须分开记录。
 - 旧队友 PASS 只能按旧 commit `1ba9db6` 的 summary/截图摘要记录，不能覆盖 `e8e2fb9`（historical stable checkpoint）。
 - 已录制视频不能自动等同于已完成平台提交；还需确认平台提交方式和最终隐私复核。
-- `memstat` / `fdinfo` 现有 independent 版（`SYS_*=22`）和 integrated 版（`0008`=`SYS_memstat 29` / `0009`=`SYS_fdinfo 30`）两条线；stage11b 已把它们加入 integrated 主线（final suite `0001-0009`），但只在队长本机 `local-verify --full` 验证，**不能**写成已被 rain/root/z2996 队友验证，也**不能**写成旧 `e8e2fb9` 三方 full PASS 已覆盖 `0001-0009`——旧三方 PASS 只覆盖 `0001-0007`，`0001-0009` 队友复现为 TBD。
+- `memstat` / `fdinfo` 现有 independent 版（`SYS_*=22`）和 integrated 版（`0008`=`SYS_memstat 29` / `0009`=`SYS_fdinfo 30`）两条线；integrated 主线 `0001-0009` 已被 rain/root/z2996 在 `db85947` 上三方验证（stage14）。仍然**不能**写成旧 `e8e2fb9` 三方 full PASS 覆盖 `0001-0009`——旧三方 PASS 只覆盖 `0001-0007`，是 historical checkpoint。
 - `memstat` 仍是地址空间观察、不是完整内存管理；`fdinfo` 仍是 fd 元数据观察、不是完整文件系统；二者都不返回物理地址、宿主路径、inode 号或文件内容。
 
 ## 后续可扩展实验

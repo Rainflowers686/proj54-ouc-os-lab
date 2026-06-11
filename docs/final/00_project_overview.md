@@ -36,10 +36,10 @@ proj54 是教学型功能挑战，不是“内核实现赛道刷 LTP”项目。
 | lab3 | integrated 已完成 | `pgcount()` 页表映射数量观察；eager/lazy allocation 对比；integrated `0006`；stage11b 进阶 `memstat()` 进入 integrated `0008`（`SYS_memstat = 29`，argaddr + copyout + struct ABI） |
 | lab4 | v0.2 已完成 | `fcount()` 全局 file table 观察；`fdcount()` 当前进程 fd table 观察；stage11b 进阶 `fdinfo()` 进入 integrated `0009`（`SYS_fdinfo = 30`，argint + argaddr + copyout + struct ABI） |
 | lab5 | capstone 已完成 | 综合复现实验文档；不新增内核机制；workflow 基于 integrated `0001-0009` |
-| integrated-labs | `0001-0009`（stage11b） | `0001-0009` 可从 clean baseline 顺序应用并 make；队长本机 `local-verify --full` overall PASS（含 memstattest/fdinfotest） |
+| integrated-labs | `0001-0009`（current final `db85947`） | `0001-0009` 可从 clean baseline 顺序应用并 make；rain/root/z2996 三方 `teammate-verify.sh --full` 均 PASS（含 memstattest/fdinfotest） |
 | 一键验证 | 已更新 | doctor/local/teammate/cleanup 脚本；local/teammate 覆盖 pgcounttest、fdcounttest、memstattest 和 fdinfotest |
-| 视频 | `0001-0007` historical；`0001-0009` TBD | `e8e2fb9` / integrated `0001-0007` 视频已记录大小、时长、SHA256，降级为 historical stable checkpoint，只覆盖 `0001-0007`；覆盖 `0001-0009` 的新视频与新 SHA256 为 TBD；旧三段视频为 historical evidence |
-| 队友独立复现 | `0001-0007` historical；`0001-0009` TBD | root 与 z2996 两份 `e8e2fb9` / integrated `0001-0007` full PASS 已记录，为 historical stable checkpoint，不覆盖 `0001-0009`；含 memstat/fdinfo 的 `0001-0009` 队友 full verify 为 TBD，不得伪造；旧 `1ba9db6` 只作 historical evidence |
+| 视频 | current final 已录制 | `20260611_final_integrated_0001_0009_demo.mp4`（31,529,984 bytes，SHA256 已登记）覆盖 current final `db85947 / 0001-0009`；`0001-0007` 视频与旧三段视频保留为 historical evidence |
+| 队友独立复现 | current final 三方 PASS | rain/root/z2996 三份 `db85947 / 0001-0009` full PASS 已登记（summary/screenshot SHA256 见 `submissions/evidence_manifest.md`，grade-summaries 解析 3/3 clean）；`e8e2fb9 / 0001-0007` 与 `1ba9db6` 记录保留为 historical |
 | 教学材料（stage12） | 已完成 | 每个 lab 配教程式 README + `student_tasks.md`（必做/选做/rubric/扣分点）；`docs/teacher_guide.md`（2/3/5 次课排法与验收）、`docs/grading_and_rubric.md`、`docs/troubleshooting.md`；根 README 与 docs 导航改为学习者优先，比赛证据分层到 `submissions/` 与 `docs/final/` |
 
 ## OUC 本校课程特色
@@ -71,7 +71,7 @@ proj54 是教学型功能挑战，不是“内核实现赛道刷 LTP”项目。
 - 不提交 `external/xv6-riscv/`。
 - 不提交 `logs/*.log`、`logs/*.summary.txt`、视频、大文件、隐私材料。
 - 不把旧 commit `1ba9db6` 的队友 PASS 写成 `e8e2fb9` 复现；旧记录只作为 historical/superseded evidence。
-- 不把 `e8e2fb9 / 0001-0007` 的三方 full PASS 和旧视频写成覆盖 current integrated `0001-0009`；它们是 historical stable checkpoint，`0001-0009` 的新 commit、三方 full verify、新视频、新 SHA256 均为 TBD。
+- 不把 `e8e2fb9 / 0001-0007` 的三方 full PASS 和旧视频写成 current final；它们是 historical stable checkpoint。current final 是 `db85947 / 0001-0009`，其三方 full verify、新视频、新 SHA256 已于 stage14 真实登记。
 - 不把 `memstat()` 写成完整内存管理，不把 `fdinfo()` 写成完整文件系统；二者都是只读观察，不返回物理地址、路径、inode 号或文件内容。
 - 不把 Lab5 写成新的内核机制；它是 capstone 综合复现实验。
 - 不把 timeout 捕获写成长期稳定性测试。

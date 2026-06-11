@@ -110,4 +110,4 @@ pgcounttest done
 
 边界与状态：仍是页表/地址空间**观察**实验，**不是完整内存管理**；independent 版 `SYS_memstat = 22`（与 `pgcount` 不可叠加）。
 
-stage11b 更新：该 syscall 已进入 integrated 主线，作为 integrated `0008`（`patches/integrated-labs/0008-add-memstat-copyout-observation.patch`，`SYS_memstat = 29`，复用 `0006` 的 `uvmpagecount()`），final integrated suite 因此扩展为 `0001-0009`。integrated 变体已在队长本机 `local-verify.sh --full` 实测 overall PASS（含 `memstattest`）。但旧 `e8e2fb9 / 0001-0007` 的队友三方 full PASS、final video、SHA256 只覆盖 `0001-0007`，**不覆盖** `0001-0009`（降级为 historical stable checkpoint）；新 `0001-0009` 的队友 full verify、重录视频、重算 SHA256 仍为 **TBD**，不得伪造。`memstat` 不返回物理地址、宿主路径或文件内容。
+stage11b 更新：该 syscall 已进入 integrated 主线，作为 integrated `0008`（`patches/integrated-labs/0008-add-memstat-copyout-observation.patch`，`SYS_memstat = 29`，复用 `0006` 的 `uvmpagecount()`），final integrated suite 因此扩展为 `0001-0009`。integrated 变体已由 rain/root/z2996 三方在 current final commit `db85947` 上 `teammate-verify.sh --full` 全 PASS（含 `memstattest`），新演示视频与 SHA256 已登记（stage14，见 `submissions/evidence_manifest.md`）；旧 `e8e2fb9 / 0001-0007` 证据保留为 historical stable checkpoint。`memstat` 不返回物理地址、宿主路径或文件内容。

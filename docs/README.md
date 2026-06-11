@@ -29,7 +29,7 @@ docs 目录里既有教程、教师材料，也有比赛报告和大量过程记
 ## 4. 比赛/提交材料：证据在哪
 
 - [docs/final/](final/)：正式提交文档（项目概述、各 lab 正式版、测试覆盖、设计取舍、AI/许可证声明、技术报告 v1.0）。
-- [submissions/evidence_manifest.md](../submissions/evidence_manifest.md)：证据总索引——哪些已验证、哪些是 historical checkpoint（`e8e2fb9 / 0001-0007`）、哪些还是 TBD（`0001-0009` 的队友复现/新视频/新 SHA256）。
+- [submissions/evidence_manifest.md](../submissions/evidence_manifest.md)：证据总索引——current final（`db85947 / 0001-0009`：三方 full PASS + 新视频 + SHA256，stage14 已登记）与 historical checkpoint（`e8e2fb9 / 0001-0007`）分层记录。
 - [submissions/draft-report-index.md](../submissions/draft-report-index.md)：全部材料清单，由 `scripts/collect-report.sh` 生成。
 - [slides/final_ppt.md](../slides/final_ppt.md)：答辩 PPT 源稿。
 

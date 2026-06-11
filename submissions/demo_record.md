@@ -1,22 +1,35 @@
 # Demo Video Record
 
-> 维护时间：2026-06-07（stage10a final evidence manifest）。
+> 维护时间：2026-06-11（stage14 record final db85947 evidence）。
 > 本文件只记录视频元数据和提交状态，不保存视频文件。
-
-> stage11b 更新：integrated 主线已扩展为 `0001-0009`（新增 `memstat 0008` / `fdinfo 0009`）。下方的 `0001-0007` 视频**降级为 previous stable checkpoint（historical）**，**不覆盖** `0001-0009`。覆盖 `0001-0009`（含 `memstattest`/`fdinfotest`）的新视频尚未录制，为 TBD，不得伪造 SHA256 或录制状态。
 
 ## Current Status
 
 | 项目 | 状态 |
 | --- | --- |
-| 当前 integrated suite | `0001-0009`（stage11b） |
-| 新 `0001-0009` 视频 | TBD（需重新录制并记录 SHA256） |
-| 旧 `0001-0007` 视频 | 已录制（historical，只覆盖 `0001-0007`） |
+| 当前 integrated suite | `0001-0009`（current final commit `db85947`） |
+| current final 视频 | **已录制**：`20260611_final_integrated_0001_0009_demo.mp4`，SHA256 已登记（见下表） |
+| 旧 `0001-0007` 视频 | 已录制（historical stable checkpoint，只覆盖 `0001-0007`） |
 | historical videos（更早 `0001-0005`） | 保留 3 段历史视频元数据 |
 | 视频文件是否入库 | 不入库 |
 | 视频外部保存位置 | `D:\Edge Download\CSCC\proj54_submission_assets\videos` |
 | 比赛平台提交方式 | 待确认 |
 | 是否含隐私/密码/token | pending final manual review |
+
+## Current Final Video — `db85947` / Integrated `0001-0009`
+
+| 字段 | 内容 |
+| --- | --- |
+| filename | `20260611_final_integrated_0001_0009_demo.mp4` |
+| external path | `D:\Edge Download\CSCC\proj54_submission_assets\videos` |
+| size | `31,529,984 bytes` |
+| created | `2026-06-11 08:26:36` |
+| modified | `2026-06-11 08:29:50` |
+| duration / 分辨率 / 帧率 | 待人工补充（仓库不猜测未提供的元数据） |
+| SHA256 | `2A2C9863C185846225A98AC874499867A71588CED2020A64249CBF99C7BC0365` |
+| scope | current final：integrated `0001-0009`（含 `memstattest`/`fdinfotest`）verification demo for commit `db85947` |
+| Git policy | video file is stored outside Git and is not committed |
+| 哈希核验 | `bash scripts/check-evidence-sha256.sh` 实测匹配 |
 
 ## Previous Stable Checkpoint — Integrated `0001-0007` Video Evidence（historical）
 
@@ -52,7 +65,7 @@
 
 - 视频文件位于仓库外：`D:\Edge Download\CSCC\proj54_submission_assets\videos`。
 - 本仓库只记录视频文件名、用途、大小、时长、分辨率、帧率、外部位置和 SHA256，不提交 `.mp4` 本体。
-- `slides/final_defense_ppt.pptx` 不嵌入视频本体；答辩时如需播放视频，应从外部提交材料或平台附件中使用 `20260606_final_integrated_0001_0007_demo.mp4`。
+- `slides/final_defense_ppt.pptx` 不嵌入视频本体；答辩时如需播放视频，应从外部提交材料或平台附件中使用 current final 的 `20260611_final_integrated_0001_0009_demo.mp4`（旧 `20260606_final_integrated_0001_0007_demo.mp4` 仅作 historical 备份）。
 - 平台提交方式仍需按比赛官方要求确认。
 - raw video files are stored outside Git and should be reviewed before platform upload.
 - 最终上传前必须人工检查视频画面中没有 token、password、cookie、报名材料、私人聊天、未公开账号或其他隐私信息。

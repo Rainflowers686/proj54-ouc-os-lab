@@ -1025,3 +1025,26 @@
   - grade-summaries checks internal consistency only; it cannot prove a student ran anything — spot checks remain mandatory and grading stays with the teacher.
   - No teammate reproduction, video, or SHA256 fabricated; `0001-0009` evidence remains TBD.
   - Lead-local summary files used for testing stay ignored in `logs/`; nothing generated was committed.
+
+## 2026-06-11: stage14 record final db85947 evidence
+
+- Commit hash: TODO after commit
+- Goal: replace every current-final TBD with the real, completed evidence for `db85947 / 0001-0009`, while keeping `e8e2fb9 / 0001-0007` and `1ba9db6` records as historical.
+- Real evidence recorded (team-provided, from real runs; hashes machine-verified before recording):
+  - Three-way `teammate-verify.sh --full` on commit `db85947`, suite `0001-0009`, all PASS: lead `rain` (summary `teamlead_rain_db85947_full_20260610-221236.summary.txt`), teammate A `root` (summary + screenshot, 2026-06-11), teammate B `z2996` (summary + screenshot, 2026-06-10). SHA256 for all five files recorded in `submissions/teammate_reproduction_record.md` and `submissions/evidence_manifest.md`.
+  - Batch acceptance: `bash scripts/grade-summaries.sh --expect-commit db85947 logs/student-summaries` -> parsed 3, clean PASS 3, needs attention 0 (`GRADE_SUMMARIES_RESULT: OK`).
+  - New final demo video `20260611_final_integrated_0001_0009_demo.mp4` (31,529,984 bytes, created 2026-06-11 08:26:36, modified 08:29:50), SHA256 `2A2C9863C185846225A98AC874499867A71588CED2020A64249CBF99C7BC0365`; duration/resolution/framerate intentionally left 待人工补充 (not provided, not guessed).
+- Completed:
+  - `scripts/check-evidence-sha256.sh`: added the 6 new external files (1 video, 3 summaries, 2 screenshots) alongside the 8 historical entries; real run hashed **14/14 matched** (`EVIDENCE_SHA256_RESULT: PASS`) — this was executed BEFORE any document recorded the new values.
+  - `submissions/evidence_manifest.md`: Current Final Evidence section now carries the full db85947 record (commit, three-way PASS with file names + SHA256, grade-summaries result, video metadata); external directory table gained `db85947_final_0001_0009`.
+  - `submissions/demo_record.md`: new Current Final Video section; status table updated; defense-playback note now points to the new video.
+  - `submissions/teammate_reproduction_record.md`: Current Final Verification section rewritten from TBD to the completed three-way table with external file SHA256s.
+  - `submissions/submission_checklist.md`: verification/video/teammate rows and conclusion updated; remaining-items list now only video display metadata, real names, platform method, privacy review, PPT rehearsal.
+  - docs/final (00/06/07/technical_report/04b/05/11), README, docs/README, docs/24 banner, labs lab3/lab4/lab5, patches integrated/lab3/lab4 READMEs, reproducibility, tests lab3/lab4, slides source+outline: every stale "0001-0009 evidence TBD" claim replaced with the completed db85947 record or a pointer to the manifest; old evidence kept historical everywhere.
+  - `scripts/collect-report.sh` descriptors synced (manifest/demo/teammate/checklist/evidence-checker now describe the recorded state); index regenerated; PPTX regenerated from the updated slides source.
+- Boundaries:
+  - No raw summary/screenshot/video copied into the repo; external files stay outside Git with hashes recorded.
+  - No `patches/integrated-labs/` content or `scripts/xv6/` modified; engineering state unchanged, heavy verification not re-run.
+  - Old `e8e2fb9 / 0001-0007` three-way PASS + video and `1ba9db6` records remain historical stable checkpoint / superseded evidence; never claimed as current final.
+  - Teammate real names / OS versions still 待补充 if the platform requires them; video duration/resolution/framerate 待人工补充.
+- Validation: `check-evidence-sha256.sh` 14/14 PASS; `check-final-hygiene.sh`; `check-docs-consistency.sh`; `collect-report.sh`; PPTX zip inspection; `git diff --check`; full `git ls-files` battery. Results in the final assistant response.

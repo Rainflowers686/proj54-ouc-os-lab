@@ -1,11 +1,11 @@
 # Teammate Reproduction Record
 
-> 维护时间：2026-06-07（stage10a final evidence manifest）。
+> 维护时间：2026-06-11（stage14 record final db85947 evidence）。
 > 本文件只记录队友复现 summary 的文字摘要和外部证据元数据，不提交原始 `logs/` 文件、summary 文件、截图、终端历史或隐私材料。
 
 ## 记录目的
 
-本记录用于证明最终 integrated `0001-0007` 工作流已经在队长本机和两位队友环境中完成 `full` verification。仓库只保留人工整理后的摘要、外部文件名、路径和 SHA256，避免把原始日志、截图、视频、账号信息或机器隐私提交到 Git。
+本记录用于证明 current final integrated `0001-0009` 工作流（commit `db85947`）已经在队长本机和两位队友环境中完成 `full` verification；旧 `e8e2fb9 / 0001-0007` 三方记录保留为 historical stable checkpoint。仓库只保留人工整理后的摘要、外部文件名、路径和 SHA256，避免把原始日志、截图、视频、账号信息或机器隐私提交到 Git。
 
 正式复现命令：
 
@@ -13,17 +13,27 @@
 bash scripts/xv6/teammate-verify.sh --full
 ```
 
-## Current Final Verification（stage11b：integrated `0001-0009`）— TBD
+## Current Final Verification（stage14：`db85947` / integrated `0001-0009`）— 已完成
 
-> stage11b 把 `memstat`(`0008`) 和 `fdinfo`(`0009`) 进入 integrated 主线，final integrated suite 变为 `0001-0009`。下面的 `e8e2fb9 / 0001-0007` 三方 full PASS **降级为 historical**，**不覆盖** `0001-0009`。新 `0001-0009` 的队友复现尚未进行，全部 TBD，**不得伪造**。
+> current final commit：`db85947 feat(course): add lab runner and grading helpers`。三方 `teammate-verify.sh --full` 复现均为真实执行，覆盖 doctor/check-env/baseline/apply+make/boot/hello/add2test/pstatetest/pcounttest/pchildtest/fcounttest/pgcounttest/fdcounttest/memstattest/fdinfotest/overall，结果全 PASS。
 
 | 角色 | user | commit | suite | result |
 | --- | --- | --- | --- | --- |
-| 队长本机 | `rain` | TBD after commit | `0001-0009` | TBD（需重新 `teammate-verify.sh --full`） |
-| 队友 A | `root` | TBD after commit | `0001-0009` | TBD |
-| 队友 B | `z2996` | TBD after commit | `0001-0009` | TBD |
+| 队长本机 | `rain` | `db85947` | `0001-0009` | full PASS |
+| 队友 A | `root` | `db85947` | `0001-0009` | full PASS |
+| 队友 B | `z2996` | `db85947` | `0001-0009` | full PASS |
 
-本机参考（非队友复现）：stage11b 在当前工作树用 `local-verify.sh --full` 实测 `0001-0009` overall PASS（含 `memstattest`/`fdinfotest`）；该结果只证明工作树可复现，待用户提交新 commit、由 rain/root/z2996 重新 full verify 后才计入 final teammate evidence。
+外部证据文件（不入 Git，位于 `D:\Edge Download\CSCC\proj54_submission_assets\teammate_reproduction\db85947_final_0001_0009\`）：
+
+| 角色 | 类型 | 文件 | SHA256 |
+| --- | --- | --- | --- |
+| rain | summary | `teamlead_rain_db85947_full_20260610-221236.summary.txt` | `C0CBC292DD7C49E7016F4117871CC5F256D3554611E13DB5E8590020BB1DFD50` |
+| root | summary | `teammateA_root_db85947_full_20260611-080653.summary.txt` | `8ED5BDE02B4B14DB94A12BE3C5EA29A76D933DB5649FB6335007BF0C291FFF87` |
+| root | screenshot | `teammateA_root_db85947_full_20260611-081141.screenshot.jpg` | `86A57BED2A317CD3AB115676923FEFEC3422799793C7F233040B45C41675733C` |
+| z2996 | summary | `teammateB_z2996_db85947_full_20260610-221859.summary.txt` | `5F0973FB54B012C259F6A2E08F6C322F224E356EAFC4BB8A8F684474F941255E` |
+| z2996 | screenshot | `teammateB_z2996_db85947_full_20260610-222133.screenshot.png` | `E9AEF330994C496C2FD4A257596594732CBA3C0FCE2449C200187A9856FE6150` |
+
+批量核对：三份 summary 经 `bash scripts/grade-summaries.sh --expect-commit db85947 logs/student-summaries` 解析，parsed 3 / clean PASS 3 / needs attention 0（`GRADE_SUMMARIES_RESULT: OK`）。外部文件哈希经 `bash scripts/check-evidence-sha256.sh` 实测匹配。队友真实姓名、系统版本如最终材料需要仍待人工补充，不编造。
 
 ## Previous Stable Checkpoint — `e8e2fb9` / Integrated `0001-0007`（historical）
 

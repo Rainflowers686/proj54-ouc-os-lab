@@ -122,4 +122,4 @@ memstattest done
 - stage11b 起 `memstat` **已进入** integrated `0008`（`patches/integrated-labs/0008-add-memstat-copyout-observation.patch`，integrated 编号 `SYS_memstat = 29`，复用 integrated `0006` 的 `uvmpagecount()`），current integrated suite 为 `0001-0009`。
 - integrated 变体已在队长本机 `local-verify --full` overall PASS（含 `memstattest`）；本 independent patch 本身仍未纳入队友 full verification。
 - `e8e2fb9` 三方 full PASS 是 historical stable checkpoint，只覆盖 `0001-0007`，**不覆盖** `0001-0009`。
-- 含 memstat 的 `0001-0009` 队友 full verify（rain/root/z2996）、新视频、新 SHA256 均为 TBD，须在新 commit 上重新复现后填写，不得伪造。
+- 含 memstat 的 `0001-0009` 队友 full verify（rain/root/z2996）、新视频、新 SHA256 已于 stage14 在 current final commit `db85947` 上完成并登记（见 `submissions/evidence_manifest.md`）。

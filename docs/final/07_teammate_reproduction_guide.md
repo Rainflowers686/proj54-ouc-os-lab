@@ -79,7 +79,19 @@ logs/teammate-verify-YYYYMMDD-HHMMSS.summary.txt
 
 ## 当前已收到的队友结果
 
-> stage11b 更新：current integrated suite 已扩展为 `0001-0009`（新增 memstat `0008` / fdinfo `0009`），`teammate-verify.sh --full` 现在包含 `memstattest` 和 `fdinfotest`。下表的 `e8e2fb9` 三方 PASS 是 **historical stable checkpoint**，只覆盖 `0001-0007`，**不覆盖** `0001-0009`。含 memstat/fdinfo 的 `0001-0009` 队友复现必须在用户提交新 commit 后由 rain/root/z2996 重新执行，当前为 TBD，不得伪造。
+### Current final：`db85947 / 0001-0009`（stage14，已完成）
+
+截至 2026-06-11，current final commit `db85947 feat(course): add lab runner and grading helpers` 已收到三方 `--full` verification PASS，覆盖 integrated `0001-0009` 全部 10 个用户程序（含 `memstattest`/`fdinfotest`）：
+
+| 记录 | 终端 user | commit | mode | overall |
+| --- | --- | --- | --- | --- |
+| 队长本机 | `rain` | `db85947` | `full` | PASS |
+| 队友 A | `root` | `db85947` | `full` | PASS |
+| 队友 B | `z2996` | `db85947` | `full` | PASS |
+
+三份 summary 经 `bash scripts/grade-summaries.sh --expect-commit db85947 logs/student-summaries` 批量核对：3/3 clean PASS、0 needs attention。summary/screenshot 的外部文件名与 SHA256 登记在 `submissions/teammate_reproduction_record.md`，可用 `bash scripts/check-evidence-sha256.sh` 一键核验；原始文件不入 Git。
+
+### Historical stable checkpoint：`e8e2fb9 / 0001-0007`
 
 截至 2026-06-07，historical stable checkpoint commit `e8e2fb9 feat(integrated): add lab3 pgcount and lab4 fdcount workflow` 已收到两份队友 `--full` verification PASS 证据。它们覆盖 integrated `0001-0007`，包括 `pgcounttest` 和 `fdcounttest`：
 
@@ -90,7 +102,7 @@ logs/teammate-verify-YYYYMMDD-HHMMSS.summary.txt
 
 文字摘要和外部证据 SHA256 见 `submissions/teammate_reproduction_record.md` 与 `submissions/evidence_manifest.md`。原始 logs、summary 文件、console log 和截图不入仓；队友真实姓名和系统版本仍保持待补充，不补造。
 
-旧 commit `1ba9db6` 的两份队友 PASS 只作为 historical/superseded evidence，不覆盖 `e8e2fb9`；而 `e8e2fb9` 的三方 PASS 又只覆盖 `0001-0007`，不覆盖 stage11b 的 `0001-0009`。
+旧 commit `1ba9db6` 的两份队友 PASS 只作为 historical/superseded evidence，不覆盖 `e8e2fb9`；`e8e2fb9` 的三方 PASS 只覆盖 `0001-0007`，为 historical stable checkpoint。current final 证据以上方 `db85947 / 0001-0009` 表为准。
 
 ## 队友反馈模板
 

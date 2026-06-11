@@ -10,7 +10,7 @@
 | 官方主仓库 | 待最终确认 | 最终以比赛 GitLab / 平台要求为准，不修改 remote |
 | GitHub 使用边界 | 已说明 | GitHub 仅作私有备份/协作，不作为最终提交平台 |
 | 报名材料 | 禁止入库 | 姓名、学号、手机号、身份证等不进 Git |
-| 视频文件 | 禁止入库 | `0001-0007` 视频（historical stable checkpoint，只覆盖 `0001-0007`）与 3 段 historical 视频元数据已记录到 `submissions/demo_record.md`；覆盖 `0001-0009`（含 memstat/fdinfo）的新视频与新 SHA256 为 TBD；平台提交方式和最终隐私复核待确认 |
+| 视频文件 | 禁止入库 | current final `0001-0009` 视频（`20260611_..._demo.mp4`，SHA256 已登记）与 historical `0001-0007` 视频、3 段更早历史视频的元数据均记录在 `submissions/demo_record.md`；视频本体在仓库外；平台提交方式和最终隐私复核待确认 |
 | 大文件/压缩包/截图 | 禁止入库 | `.mp4/.mov/.zip/.7z/.rar/.png/.jpg` 等均禁止提交 |
 
 ## 2. Git 仓库卫生
@@ -35,7 +35,7 @@
 | Lab4 fdcount | `bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"` | PASS；已进入 integrated `0007` |
 | Lab3 进阶 memstat | `bash scripts/xv6/run-xv6-command.sh memstattest "memstattest done"` | PASS；stage11b 已进入 integrated `0008`（`SYS_memstat 29`）；队长本机 `local-verify --full` 已验证；非完整内存管理 |
 | Lab4 进阶 fdinfo | `bash scripts/xv6/run-xv6-command.sh fdinfotest "fdinfotest done"` | PASS；stage11b 已进入 integrated `0009`（`SYS_fdinfo 30`）；队长本机 `local-verify --full` 已验证；非完整文件系统 |
-| 一键 full 验证 | `bash scripts/xv6/teammate-verify.sh --full` | historical：`e8e2fb9` 队长本机、root、z2996 full verification 均 PASS（只覆盖 `0001-0007`）；TBD：含 memstat/fdinfo 的 `0001-0009` 队友 full verify 尚未进行，不得伪造 |
+| 一键 full 验证 | `bash scripts/xv6/teammate-verify.sh --full` | **current final：`db85947 / 0001-0009` 三方（rain/root/z2996）full PASS 已完成并登记**；historical：`e8e2fb9 / 0001-0007` 三方 PASS 保留为 checkpoint |
 | 本地录屏前预检 | `bash scripts/xv6/local-verify.sh --quick` | 队长本机 `0001-0009` full PASS 已完成；录屏前仍推荐 quick |
 | 课程入口自检 | `bash scripts/labctl.sh list` / `test lab1` | PASS；labctl 为纯转发入口 + lab→测试矩阵，已实测 `test lab1` 2/2 通过 |
 | 文档/状态一致性 | `bash scripts/check-docs-consistency.sh` | PASS；7 项机器检查（PATCHES↔文件、SYS 22-30、verify 覆盖、矩阵覆盖、失效措辞、关键文件、索引新鲜度） |
@@ -58,16 +58,16 @@
 | PPT 生成器 | `slides/generate_final_ppt.py` | 使用 Python 标准库生成 PPTX；不嵌入视频、截图或 raw logs |
 | PPT 成稿 | `slides/final_defense_ppt.pptx` | 已生成；16:9；16 张 slide 与 16 份 speaker notes；`63,695 bytes`；无 `ppt/media/` 文件；仍需人工最终审阅和排练 |
 | 材料索引 | `submissions/draft-report-index.md` | 由 `scripts/collect-report.sh` 生成 |
-| 最终证据 manifest | `submissions/evidence_manifest.md` | 已记录 integrated `0001-0009` 边界、`e8e2fb9 / 0001-0007` historical stable checkpoint、新 final commit/verification/video/SHA256 TBD、外部目录和 non-committed evidence policy |
+| 最终证据 manifest | `submissions/evidence_manifest.md` | 已记录 current final `db85947 / 0001-0009`（三方 PASS、grade-summaries 3/3、新视频+SHA256）、`e8e2fb9 / 0001-0007` historical stable checkpoint、外部目录和 non-committed evidence policy |
 | docs 导引 | `docs/README.md` | 已说明正式文档与过程文档边界 |
-| 队友复现记录 | `submissions/teammate_reproduction_record.md` | `e8e2fb9` lead/root/z2996 full PASS 记录为 historical `0001-0007` checkpoint；含 memstat/fdinfo 的 `0001-0009` 队友 full verify 为 TBD；旧 `1ba9db6` 记录为 historical evidence |
+| 队友复现记录 | `submissions/teammate_reproduction_record.md` | current final `db85947 / 0001-0009` 三方 full PASS 已登记（summary/screenshot SHA256 齐全）；`e8e2fb9 / 0001-0007` 与 `1ba9db6` 记录为 historical |
 
 ## 5. 视频记录
 
 | 检查项 | 状态 |
 | --- | --- |
+| `0001-0009` current final 视频（含 memstat/fdinfo） | **已录制并登记**：`20260611_final_integrated_0001_0009_demo.mp4`，31,529,984 bytes，SHA256 `2A2C9863...C7BC0365`；时长/分辨率/帧率待人工补充 |
 | `0001-0007` 视频（historical stable checkpoint） | 已记录大小、时长、分辨率、帧率和 SHA256；只覆盖 `0001-0007` |
-| `0001-0009` 新视频（含 memstat/fdinfo） | TBD：尚未录制；须重新录制并登记新 SHA256，不得伪造 |
 | historical 视频 3 段 | 已记录为 earlier `0001-0005` / stage7-stage8 evidence |
 | 视频文件不入库 | 必须保持 |
 | 视频文件名 | 已记录 |
@@ -83,7 +83,7 @@
 | 检查项 | 状态 |
 | --- | --- |
 | 队友使用命令 | `bash scripts/xv6/teammate-verify.sh --full` |
-| copy-to-lead summary | `e8e2fb9` root 与 z2996 full PASS 已记录为 historical `0001-0007` checkpoint；含 memstat/fdinfo 的 `0001-0009` 队友 full verify 为 TBD；旧 `1ba9db6` 只作 historical evidence |
+| copy-to-lead summary | **current final：`db85947 / 0001-0009` 三方 full PASS 已登记**（rain/root/z2996，grade-summaries 解析 3/3 clean PASS）；`e8e2fb9 / 0001-0007` 与 `1ba9db6` 记录保留为 historical |
 | 失败时 cleanup 流程 | `bash scripts/xv6/cleanup-qemu.sh` |
 | 是否伪造队友结果 | 禁止；未知姓名/系统版本保持待补充 |
 
@@ -131,8 +131,7 @@ bash scripts/xv6/teammate-verify.sh --full
 
 ## 9. 当前剩余待补充
 
-- integrated `0001-0009`（含 memstat/fdinfo）的 rain/root/z2996 三方 full verify 重新复现，以及新 commit hash 登记（当前 TBD）。
-- 覆盖 `0001-0009` 的新演示视频录制与新 SHA256 登记（当前 TBD，不得伪造）。
+- current final 视频的时长/分辨率/帧率元数据（人工查看后补充，不猜测）。
 - 队友真实姓名和系统版本（如最终材料需要）。
 - 平台提交方式和最终隐私复核结论。
 - PPT 人工最终审阅和答辩排练。
@@ -140,4 +139,4 @@ bash scripts/xv6/teammate-verify.sh --full
 
 ## 10. 结论
 
-当前工程功能、验证链、`e8e2fb9 / 0001-0007` lead/root/z2996 full PASS 摘要（historical stable checkpoint）、`0001-0007` 视频元数据和 SHA256、技术报告 v1.0、PPT 源稿和 PPTX 成稿已经形成提交证据基础；stage11b 已把 integrated 扩展为 `0001-0009`（新增 memstat `0008` / fdinfo `0009`）并在队长本机 `local-verify --full` overall PASS。冲奖前仍必须完成 integrated `0001-0009` 的 rain/root/z2996 三方 full verify 重新复现、新视频录制与新 SHA256 登记（当前 TBD）、PPT 人工最终审阅/排练、平台提交方式确认、最终隐私复核、引用 URL/许可证核对和最终红队审核。
+current final 证据链已完整：`db85947 / 0001-0009` 的 rain/root/z2996 三方 full PASS（grade-summaries 3/3 clean）、新演示视频与 SHA256 均已真实登记，外部文件可用 `check-evidence-sha256.sh` 一键核验（14/14 matched）；`e8e2fb9 / 0001-0007` 证据保留为 historical stable checkpoint。冲奖前剩余事项：PPT 人工最终审阅/排练、平台提交方式确认、最终隐私复核、引用 URL/许可证核对和最终红队审核。

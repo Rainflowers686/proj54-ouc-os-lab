@@ -132,7 +132,7 @@ pgcounttest done
 - 教学点：`argaddr + copyout + struct ABI`——内核如何安全地把结构体写回用户缓冲区；`copyout` 失败返回 -1。
 - 验证：`bash scripts/xv6/run-xv6-command.sh memstattest "memstattest done"`，clean baseline round-trip 已通过（`page_size = 4096`、`mapped delta = 2`、`size delta = 8192`、`invalid pointer = -1`）。
 
-边界与状态：仍然是页表/地址空间**观察**实验，不是完整内存管理；independent 版 `SYS_memstat = 22` 与 `pgcount` 相同，两个 independent patch **不可叠加**，各自从 clean baseline 单独应用。stage11b 起 `memstat` **已进入** integrated `0008`（`patches/integrated-labs/0008-add-memstat-copyout-observation.patch`，`SYS_memstat = 29`），current integrated suite 为 `0001-0009`，队长本机 `local-verify --full` overall PASS（含 `memstattest`）。证据边界：`e8e2fb9 / 0001-0007` 三方 full PASS 是 historical stable checkpoint，**不覆盖** `0001-0009`；含 memstat 的 `0001-0009` 队友 full verify、新视频、新 SHA256 均为 TBD，待重新复现后填写，不得伪造。
+边界与状态：仍然是页表/地址空间**观察**实验，不是完整内存管理；independent 版 `SYS_memstat = 22` 与 `pgcount` 相同，两个 independent patch **不可叠加**，各自从 clean baseline 单独应用。stage11b 起 `memstat` **已进入** integrated `0008`（`patches/integrated-labs/0008-add-memstat-copyout-observation.patch`，`SYS_memstat = 29`），current integrated suite 为 `0001-0009`，队长本机 `local-verify --full` overall PASS（含 `memstattest`）。证据边界：含 memstat 的 `0001-0009` 已由 rain/root/z2996 三方在 current final commit `db85947` 上 full verify 全 PASS，新视频与 SHA256 已登记（stage14，见 `submissions/evidence_manifest.md`）；`e8e2fb9 / 0001-0007` 三方 PASS 保留为 historical stable checkpoint。
 
 ## 不要误解什么
 
