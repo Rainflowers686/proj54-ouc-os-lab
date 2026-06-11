@@ -276,6 +276,9 @@ current final 视频证据（覆盖 `db85947 / 0001-0009`，含 memstattest/fdin
 | --- | --- |
 | 文件名 | `20260611_final_integrated_0001_0009_demo.mp4` |
 | 大小 | `31,529,984 bytes` |
+| 时长 | `00:03:12` |
+| 分辨率 | `2560×1440` |
+| 帧率 | `60 fps` |
 | created / modified | `2026-06-11 08:26:36` / `2026-06-11 08:29:50` |
 | SHA256 | `2A2C9863C185846225A98AC874499867A71588CED2020A64249CBF99C7BC0365` |
 | scope | current final：integrated `0001-0009` verification demo for commit `db85947` |
@@ -292,9 +295,9 @@ current final 视频证据（覆盖 `db85947 / 0001-0009`，含 memstattest/fdin
 | 帧率 | `60 fps` |
 | SHA256 | `0FF2D3581552B3FD3A2630E827251CF46C36BC3BE8F8B9D9DDB691FC0668A93B` |
 
-旧三段视频和旧 `1ba9db6` 队友证据保留为 historical/superseded evidence，只能说明 earlier integrated `0001-0005` / stage7-stage8 workflow，不覆盖 final `e8e2fb9`。
+旧三段视频和旧 `1ba9db6` 队友证据保留为 historical/superseded evidence，只能说明 earlier integrated `0001-0005` / stage7-stage8 workflow，不覆盖 current final `db85947 / 0001-0009`。
 
-视频、截图、raw logs 和 summary 原件均保存在仓库外，仓库只记录元数据和 SHA256（外部文件可用 `check-evidence-sha256.sh` 核验）。外部资产目录 `proj54_submission_assets` 已整体上传百度网盘（链接 <https://pan.baidu.com/s/1Xt-G6VgP04eEAumqiMo7Uw?pwd=1234>，提取码 `1234`），内含 current final demo video、`db85947_final_0001_0009` 三方复现文件与 historical `e8e2fb9_final_0001_0007` 证据；网盘只是文件载体，证据索引与哈希以仓库内 manifest 和脚本为准。视频/截图最终隐私复核仍为 `pending final manual review`，平台提交方式也仍需最终确认。
+视频、截图、raw logs 和 summary 原件均保存在仓库外，仓库只记录元数据和 SHA256（外部文件可用 `check-evidence-sha256.sh` 核验）。外部资产目录 `proj54_submission_assets` 已整体上传百度网盘（链接 <https://pan.baidu.com/s/1Xt-G6VgP04eEAumqiMo7Uw?pwd=1234>，提取码 `1234`），内含 current final demo video、`db85947_final_0001_0009` 三方复现文件与 historical `e8e2fb9_final_0001_0007` 证据；网盘只是文件载体，证据索引与哈希以仓库内 manifest 和脚本为准。视频/截图隐私复核已由用户人工确认 OK，平台提交方式仍需最终确认。
 
 ## 14. 创新点与教学价值
 
@@ -355,7 +358,7 @@ uCore、rCore、YatSen OS、F-Tutorials 和往届 OS 竞赛作品只作为课程
 - current final 为 `db85947 / 0001-0009`：三方 full verify、新视频、新 SHA256 已于 stage14 登记；旧 `e8e2fb9 / 0001-0007` 三方 full PASS 与旧视频只作 historical stable checkpoint。
 - Lab5 是 capstone 综合复现实验，不是新增内核机制。
 - timeout/fast-exit 证据不等于长期稳定性测试。
-- 视频/截图最终隐私复核仍为 `pending final manual review`。
+- 视频/截图隐私复核已由用户人工确认 OK。
 - 平台提交方式仍需按比赛官方要求确认。
 - 队友真实姓名、系统版本如最终材料需要，仍需人工补充。
 - uCore/rCore/YatSen OS/F-Tutorials/往届作品的 URL 与许可证仍需最终核对。
@@ -363,6 +366,6 @@ uCore、rCore、YatSen OS、F-Tutorials 和往届 OS 竞赛作品只作为课程
 后续工作建议：
 
 1. 使用 `slides/final_ppt.md` 与 `slides/final_defense_ppt.pptx` 进行最终答辩排练和人工审阅。
-2. 完成平台提交方式确认与隐私复核。
+2. 完成平台提交方式确认与最终上传包检查。
 3. 对外部证据文件按 SHA256 逐项核验。
 4. 如课程后续继续使用，可增加学生骨架版、评分脚本和更多扩展实验。

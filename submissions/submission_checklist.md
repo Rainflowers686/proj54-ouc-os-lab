@@ -1,6 +1,6 @@
 # Submission Checklist
 
-> 维护时间：2026-06-07（stage10c final defense PPT and pre-submission materials）。
+> 维护时间：2026-06-11（stage16 final defense PPT redesign）。
 > 本 checklist 面向最终提交前自查，不包含报名信息、个人隐私、token、视频文件或大文件。
 
 ## 1. 平台提交合规
@@ -10,7 +10,7 @@
 | 官方主仓库 | 待最终确认 | 最终以比赛 GitLab / 平台要求为准，不修改 remote |
 | GitHub 使用边界 | 已说明 | GitHub 仅作私有备份/协作，不作为最终提交平台 |
 | 报名材料 | 禁止入库 | 姓名、学号、手机号、身份证等不进 Git |
-| 视频文件 | 禁止入库 | current final `0001-0009` 视频（`20260611_..._demo.mp4`，SHA256 已登记）与 historical `0001-0007` 视频、3 段更早历史视频的元数据均记录在 `submissions/demo_record.md`；视频本体在仓库外；平台提交方式和最终隐私复核待确认 |
+| 视频文件 | 禁止入库 | current final `0001-0009` 视频（`20260611_..._demo.mp4`，SHA256 已登记）与 historical `0001-0007` 视频、3 段更早历史视频的元数据均记录在 `submissions/demo_record.md`；视频本体在仓库外；视频/截图隐私复核已由用户确认 OK；平台提交方式仍待确认 |
 | 大文件/压缩包/截图 | 禁止入库 | `.mp4/.mov/.zip/.7z/.rar/.png/.jpg` 等均禁止提交 |
 | 外部证据资产包 | 已上传网盘 | 百度网盘目录 `proj54_submission_assets`（链接 <https://pan.baidu.com/s/1Xt-G6VgP04eEAumqiMo7Uw?pwd=1234>，提取码 `1234`）；内含 final `0001-0009` demo video、`db85947_final_0001_0009` 三方复现文件、historical `e8e2fb9_final_0001_0007` 证据等；哈希以 `submissions/evidence_manifest.md` + `scripts/check-evidence-sha256.sh` 为准 |
 
@@ -54,10 +54,10 @@
 | 引用与许可证声明 | `docs/final/10_reference_and_license_statement.md` | 已补充 xv6 MIT 与参考项目待核对项 |
 | 已知限制 | `docs/final/11_known_limits_and_future_work.md` | 已补充 |
 | 技术报告 v1.0 | `docs/final/technical_report_v1.0.md` | 已形成 judge-facing 草案 |
-| PPT 大纲 | `slides/final_ppt_outline.md` | 已形成 15 页答辩结构草案 |
-| PPT 源稿 | `slides/final_ppt.md` | 已形成 16 页正式答辩源稿 |
-| PPT 生成器 | `slides/generate_final_ppt.py` | 使用 Python 标准库生成 PPTX；不嵌入视频、截图或 raw logs |
-| PPT 成稿 | `slides/final_defense_ppt.pptx` | 已生成；16:9；16 张 slide 与 16 份 speaker notes；`63,695 bytes`；无 `ppt/media/` 文件；仍需人工最终审阅和排练 |
+| PPT 大纲 | `slides/final_ppt_outline.md` | stage16 已重写为 16 页最终答辩结构 |
+| PPT 源稿 | `slides/final_ppt.md` | stage16 已重写为 16 页正式答辩源稿 |
+| PPT 生成器 | `slides/generate_final_ppt.ps1` | 使用 PowerPoint COM 从 Markdown 源稿生成 PPTX；不嵌入视频、截图或 raw logs |
+| PPT 成稿 | `slides/final_defense_ppt.pptx` | stage16-redesign-with-ppt-skill 已生成；16:9；16 张 slide 与 16 份 speaker notes；`114,159 bytes`；无 `ppt/media/` 文件；仍需人工最终审阅和排练 |
 | 材料索引 | `submissions/draft-report-index.md` | 由 `scripts/collect-report.sh` 生成 |
 | 最终证据 manifest | `submissions/evidence_manifest.md` | 已记录 current final `db85947 / 0001-0009`（三方 PASS、grade-summaries 3/3、新视频+SHA256）、`e8e2fb9 / 0001-0007` historical stable checkpoint、外部目录和 non-committed evidence policy |
 | docs 导引 | `docs/README.md` | 已说明正式文档与过程文档边界 |
@@ -67,7 +67,7 @@
 
 | 检查项 | 状态 |
 | --- | --- |
-| `0001-0009` current final 视频（含 memstat/fdinfo） | **已录制并登记**：`20260611_final_integrated_0001_0009_demo.mp4`，31,529,984 bytes，SHA256 `2A2C9863...C7BC0365`；时长/分辨率/帧率待人工补充 |
+| `0001-0009` current final 视频（含 memstat/fdinfo） | **已录制并登记**：`20260611_final_integrated_0001_0009_demo.mp4`，`00:03:12`，`2560×1440`，`60 fps`，31,529,984 bytes，SHA256 `2A2C9863...C7BC0365` |
 | `0001-0007` 视频（historical stable checkpoint） | 已记录大小、时长、分辨率、帧率和 SHA256；只覆盖 `0001-0007` |
 | historical 视频 3 段 | 已记录为 earlier `0001-0005` / stage7-stage8 evidence |
 | 视频文件不入库 | 必须保持 |
@@ -75,7 +75,7 @@
 | 视频时长 | final 与 historical 视频均已记录 |
 | 外部存放位置 | 已记录；资产目录已整体上传百度网盘（链接见 `submissions/evidence_manifest.md`） |
 | 平台提交方式 | 待补充 |
-| 隐私/token/密码检查 | pending final manual review |
+| 隐私/token/密码检查 | 视频/截图隐私复核已确认 OK；提交平台账号页、表单页和最终上传包仍需提交前人工检查 |
 
 记录文件：`submissions/demo_record.md`。
 
@@ -132,12 +132,11 @@ bash scripts/xv6/teammate-verify.sh --full
 
 ## 9. 当前剩余待补充
 
-- current final 视频的时长/分辨率/帧率元数据（人工查看后补充，不猜测）。
 - 队友真实姓名和系统版本（如最终材料需要）。
-- 平台提交方式和最终隐私复核结论。
+- 平台提交方式最终确认。
 - PPT 人工最终审阅和答辩排练。
 - uCore/rCore/YatSen OS/F-Tutorials/往届资料的最终 URL 与许可证核对。
 
 ## 10. 结论
 
-current final 证据链已完整：`db85947 / 0001-0009` 的 rain/root/z2996 三方 full PASS（grade-summaries 3/3 clean）、新演示视频与 SHA256 均已真实登记，外部文件可用 `check-evidence-sha256.sh` 一键核验（14/14 matched）；`e8e2fb9 / 0001-0007` 证据保留为 historical stable checkpoint。冲奖前剩余事项：PPT 人工最终审阅/排练、平台提交方式确认、最终隐私复核、引用 URL/许可证核对和最终红队审核。
+current final 证据链已完整：`db85947 / 0001-0009` 的 rain/root/z2996 三方 full PASS（grade-summaries 3/3 clean）、新演示视频与 SHA256 均已真实登记，外部文件可用 `check-evidence-sha256.sh` 一键核验（14/14 matched）；视频/截图隐私复核已由用户确认 OK；`e8e2fb9 / 0001-0007` 证据保留为 historical stable checkpoint。冲奖前剩余事项：PPT 人工最终审阅/排练、平台提交方式确认、引用 URL/许可证核对和最终红队审核。

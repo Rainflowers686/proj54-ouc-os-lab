@@ -10,10 +10,10 @@
 | advanced optional patches（已进 integrated） | integrated 已完成，三方复现已完成 | `memstat`(独立 lab3 `0002`，也作 integrated `0008`，`SYS_memstat = 29`) 与 `fdinfo`(独立 lab4 `0002`，也作 integrated `0009`，`SYS_fdinfo = 30`) 教 `argaddr/argint + copyout + struct ABI`；final suite `0001-0009` 已由 rain/root/z2996 在 current final commit `db85947` 上 full verify 全 PASS（stage14 登记）。旧 `e8e2fb9 / 0001-0007` 三方 PASS 保留为 historical |
 | 长期稳定性测试 | 未完成 | 当前为 timeout 自动捕获 evidence |
 | 队友独立复现 | current final 已完成 | rain/root/z2996 三份 `db85947 / 0001-0009` full PASS 已登记（grade-summaries 3/3 clean，SHA256 见 evidence manifest）；`e8e2fb9 / 0001-0007` 与 `1ba9db6` 记录保留为 historical |
-| 视频提交信息 | current final 已录制 | `20260611_final_integrated_0001_0009_demo.mp4` 已登记大小与 SHA256（时长/分辨率/帧率待人工补充）；`0001-0007` 视频为 historical；平台提交方式和最终隐私复核待确认 |
+| 视频提交信息 | current final 已录制 | `20260611_final_integrated_0001_0009_demo.mp4` 已登记时长 `00:03:12`、分辨率 `2560×1440`、帧率 `60 fps`、大小与 SHA256；`0001-0007` 视频为 historical；视频/截图隐私复核已由用户确认 OK；平台提交方式待确认 |
 | 同类项目引用 URL | 待补充 | uCore/rCore/YatSen OS/F-Tutorials 等需最终核对 |
 | 技术报告 v1.0 | 草案已完成 | `docs/final/technical_report_v1.0.md` |
-| PPT | 大纲已完成，成稿待制作 | `slides/final_ppt_outline.md` 已给出 15 页结构 |
+| PPT | stage16 成稿已生成 | `slides/final_ppt.md`、`slides/final_ppt_outline.md` 与 `slides/final_defense_ppt.pptx` 已同步为 16 页最终答辩材料；仍需人工最终审阅和排练 |
 
 ## 不能夸大的内容
 
@@ -25,7 +25,7 @@
 - timeout evidence 不能写成长期稳定性测试。
 - 队长本机 PASS 不能写成队友独立复现；final 证据中 lead/root/z2996 必须分开记录。
 - 旧队友 PASS 只能按旧 commit `1ba9db6` 的 summary/截图摘要记录，不能覆盖 `e8e2fb9`（historical stable checkpoint）。
-- 已录制视频不能自动等同于已完成平台提交；还需确认平台提交方式和最终隐私复核。
+- 已录制视频不能自动等同于已完成平台提交；还需确认平台提交方式和最终上传包。
 - `memstat` / `fdinfo` 现有 independent 版（`SYS_*=22`）和 integrated 版（`0008`=`SYS_memstat 29` / `0009`=`SYS_fdinfo 30`）两条线；integrated 主线 `0001-0009` 已被 rain/root/z2996 在 `db85947` 上三方验证（stage14）。仍然**不能**写成旧 `e8e2fb9` 三方 full PASS 覆盖 `0001-0009`——旧三方 PASS 只覆盖 `0001-0007`，是 historical checkpoint。
 - `memstat` 仍是地址空间观察、不是完整内存管理；`fdinfo` 仍是 fd 元数据观察、不是完整文件系统；二者都不返回物理地址、宿主路径、inode 号或文件内容。
 
@@ -61,14 +61,14 @@
 ## 提交前必须补齐
 
 1. 队友真实姓名、系统版本（如最终材料需要）。
-2. 视频/截图最终隐私复核和平台提交方式。
-3. PPT 成稿。
+2. 平台提交方式最终确认。
+3. PPT 5-8 分钟人工排练。
 4. 技术报告 v1.0 最终人工校对。
 5. 参考来源 URL 和许可证核对。
 6. 最终 Git 卫生检查。
 
 ## 建议下一轮工作
 
-- 根据 `slides/final_ppt_outline.md` 制作 PPT 成稿。
+- 按 `submissions/submission_checklist.md` 做提交前最终全检。
 - 对 `docs/final/technical_report_v1.0.md` 做最终人工校对。
 - 最终提交前红队审核。

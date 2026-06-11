@@ -1,317 +1,460 @@
 # Final Defense PPT Source
 
-> Source for `slides/final_defense_ppt.pptx`.  
-> Scope: current final `db85947 / 0001-0009`（三方 full PASS + 新视频 + SHA256 已于 stage14 登记）。Historical stable checkpoint: integrated `0001-0007`, engineering commit `e8e2fb9`, evidence commit `03aad04`.
-> Boundary: this deck does not embed videos, screenshots, raw logs, teammate private material, or third-party images.
+> stage16-redesign-with-ppt-skill source for `slides/final_defense_ppt.pptx`.
+> The visible deck is Chinese-first. Commit ids, SHA256, commands, file names, and syscall names keep their original form.
+> The PPTX must not embed videos, screenshots, raw summaries, raw logs, or netdisk assets.
 
-## Slide 1. OUC xv6 Lab Kit
+## Slide 1. 从能跑，到能教
 
-**Key message**  
-我们不只是给 xv6 加了九个系统调用，而是把它们整理成了一个可学习、可复现、可验收的 OS 入门实验包。
+**Key message**
 
-**Bullet content**
-
-- 赛题：2026 全国大学生计算机系统能力大赛 OS 功能挑战赛道 proj54。
-- 队伍：中国海洋大学“蓝色系统队”。
-- current final commit：`db85947`（integrated `0001-0009`，rain/root/z2996 三方 full PASS + 新视频 + SHA256 已登记）。
-- historical stable checkpoint commit：`e8e2fb9`（integrated `0001-0007`，三方 full PASS；evidence commit `03aad04`）。
-- 核心成果：Lab0-Lab5、integrated `0001-0009`（含进阶 memstat/fdinfo）、可开课的任务书/教师材料、三方复现证据链。
-
-**Suggested visual**  
-标题页 + 三个证据标签：`Lab0-Lab5`、`integrated 0001-0009`、`rain/root/z2996 三方 full PASS（db85947）`。
-
-**Speaker notes**  
-开场用一句话讲清定位：九个 syscall 只是素材，真正的工作是把它们组织成学生能学、老师能布置、助教能验收、评委能复现的课程实验包；本项目不是内核实现赛道的 LTP 覆盖项目。
-
-## Slide 2. 赛题理解：教学型 OS 功能挑战
-
-**Key message**  
-proj54 的重点是课程实验设计、文档和复现闭环，不是盲目扩展内核或刷测试集。
+我们不只是给 xv6 加了九个系统调用，而是把它整理成一套可学习、可复现、可验收的 OS 入门实验包。
 
 **Bullet content**
 
-- 文档完整度 50%：正式文档体系、每个 lab 的教学说明、报告与提交材料。
-- 实现完整度 30%：系统调用、进程、页表、文件表和 capstone 复现。
-- 测试完整度 10%：脚本验证、QEMU 输出匹配、三方复现证据。
-- 创新性 10%：OUC 本校课程化组织、clean-baseline patch、evidence manifest。
-- 材料组织目标：学生能看懂、老师能布置、助教能验收、评委能复现。
+- 赛题：2026 OS 功能挑战赛道 proj54
+- 队伍：中国海洋大学“蓝色系统队”
+- 工程 commit：`db85947`
+- 集成补丁：`0001-0009`
+- 三方全量验证：rain / root / z2996 全通过
 
-**Suggested visual**  
-4 格评分权重图：文档 / 实现 / 测试 / 创新。
+**Visual labels**
 
-**Speaker notes**  
-解释为什么我们没有把目标设成大规模内核功能，也没有把 timeout 证据包装成长期稳定性测试。
+- OUC xv6 Lab Kit
+- 可学习
+- 可复现
+- 可验收
+- db85947
+- 0001-0009
+- 三方通过
 
-## Slide 3. 课程实验痛点
+**Speaker notes**
 
-**Key message**  
-OS 实验的真实难点经常不是“写不出一行代码”，而是环境、过程、验收和证据链断裂。
+开场要把主线说清楚：这不是一组零散系统调用展示，而是一套面向课程的 xv6-riscv 实验包。我们的重点是让学生能按阶段学习，让助教能按统一口径验收，让评委能从 干净基线复现。
 
-**Bullet content**
+## Slide 2. 评分口径决定路线
 
-- 环境工具链复杂：WSL2、RISC-V 工具链、QEMU、xv6 baseline。
-- 运行体验不稳定：QEMU 可能卡住，`Ctrl+Z` 是挂起而不是退出。
-- 学生难判断哪一步成功：make、boot、用户程序输出边界不清。
-- 助教难验收：单个 syscall demo 难形成课程体系。
-- 提交材料易混乱：本机验证、队友复现、视频证据和 raw logs 需要分层管理。
+**Key message**
 
-**Suggested visual**  
-痛点到解决方案的流程图：环境诊断 -> 一键 apply/make -> boot/run -> summary -> manifest。
-
-**Speaker notes**  
-这页把工程工具链和文档体系的价值讲清楚：它们不是附属物，而是教学项目能落地的基础设施。
-
-## Slide 4. 项目定位：OUC xv6-riscv 实验包
-
-**Key message**  
-本项目把 xv6-riscv 组织成面向 OUC OS 课程的分阶段实验包，而不是孤立的 syscall 样例集合。
+这个赛题不是 LTP 刷分赛道，官方评价把源代码执行、文档、答辩过程和演示材料放在同一条线上。
 
 **Bullet content**
 
-- 基于 xv6-riscv clean baseline，提交增量 patch、脚本、文档和证据摘要。
-- 学生路径：先复现，再修改，再解释机制。
-- 助教路径：可检查、可复现、可复用、可扩展。
-- 仓库边界清晰：`external/xv6-riscv/`、raw logs、视频和截图不入 Git。
-- 正式材料入口：`README.md`、`docs/final/`、`submissions/evidence_manifest.md`。
+- 初赛：项目/源代码执行展示 50%，文档展示 50%
+- 决赛：初赛 20%，决赛 80%
+- 决赛阶段：项目/源代码执行展示 15%，设计方案文档 25%，现场答辩/过程记录/源码分析/最终方案/PPT/演示视频 40%
+- 我们的路线：代码功能适度，文档体系完整，复现证据可核验
 
-**Suggested visual**  
-四层架构：baseline -> labs -> integrated patches -> verification/evidence。
+**Visual labels**
 
-**Speaker notes**  
-强调课程适配：降低入门门槛，同时保留对 user/kernel 边界、进程表、页表和文件表的真实理解。
+- 初赛
+- 源代码执行 50%
+- 文档展示 50%
+- 决赛
+- 初赛成绩 20%
+- 决赛表现 80%
+- 决赛阶段
+- 执行展示 15%
+- 设计文档 25%
+- 答辩/过程/源码/PPT/视频 40%
 
-## Slide 5. 实验体系总览：Lab0-Lab5
+**Speaker notes**
 
-**Key message**  
-实验主线从环境复现逐步推进到系统调用、进程、页表、文件表，最后汇总成 capstone 综合复现实验。
+这一页必须纠正旧版本的 50/30/10/10 表述。我们现在按官方口径讲：初赛看执行展示和文档，决赛还看现场答辩、过程记录、源码分析、最终方案、PPT 和演示视频。因此项目建设不能只做内核功能。
 
-**Bullet content**
+## Slide 3. 复现才是第一道坎
 
-- Lab0：baseline/build/boot，先确认环境可靠。
-- Lab1：`hello()` / `add2()`，建立 syscall 全链路。
-- Lab2：`pstate()` / `pcount()` / `pchildtest`，观察进程状态。
-- Lab3：`pgcount()`，观察页表映射数量和 eager/lazy allocation。
-- Lab4：`fcount()` / `fdcount()`，观察全局 file table 与当前进程 fd table。
-- Lab5：capstone 综合复现，不新增内核机制。
+**Key message**
 
-**Suggested visual**  
-横向路线图：Lab0 -> Lab1 -> Lab2 -> Lab3 -> Lab4 -> Lab5。
-
-**Speaker notes**  
-每个 lab 都对应一个课程知识点，Lab5 是复现与报告训练，不应被理解成新的内核功能。
-
-## Slide 6. Lab1：系统调用机制 hello/add2
-
-**Key message**  
-Lab1 用最小 syscall 和带参数 syscall 帮学生建立 user/kernel 调用链路。
+真实教学场景里，学生和队友最容易卡在环境、补丁顺序、QEMU、日志和验收口径。
 
 **Bullet content**
 
-- `hello()`：最小系统调用，适合建立路径感。
-- `add2(int, int)`：引入参数传递和 `argint()`。
-- 涉及 syscall number、dispatch table、user stub、kernel handler。
-- 测试输出稳定，适合作为后续实验的入门验收。
-- integrated 编号：`SYS_hello=22`，`SYS_add2=23`。
+- 环境：WSL、RISC-V 工具链、QEMU 版本
+- 过程：应用补丁、编译、启动、运行命令容易混在一起
+- 运行：Ctrl+Z 会挂起 QEMU，不是退出
+- 证据：截图不能替代摘要、命令和 SHA256
+- 解决：环境检查 -> 应用编译 -> 启动运行 -> 结果摘要 -> 证据索引
 
-**Suggested visual**  
-`user/hello.c -> usys.S -> syscall.c -> sysproc.c -> return` 箭头图。
+**Visual labels**
 
-**Speaker notes**  
-这不是为了增加一个有业务价值的 syscall，而是让学生第一次完整走通 xv6 系统调用机制。
+- 环境
+- 过程
+- 运行
+- 证据
+- 环境检查
+- 应用编译
+- 启动运行
+- 摘要
+- 证据索引
 
-## Slide 7. Lab2：进程观察 pstate/pcount/pchildtest
+**Speaker notes**
 
-**Key message**  
-Lab2 把系统调用和 `proc[]`、进程状态枚举、调度时序连接起来。
+这里讲真实痛点，不讲空话。队友复现里曾出现等待过久、误按 Ctrl+Z、不知道哪一步成功的问题，所以我们把“复现体验”作为工程目标来做。
 
-**Bullet content**
+## Slide 4. 项目定位：课程实验包
 
-- `pstate(pid)`：观察指定进程状态。
-- `pcount(state)`：统计某类状态的进程数量。
-- `pchildtest`：观察子进程状态，理解调度时序影响。
-- 不固定 `pcount(RUNNING)` 的绝对数字。
-- 不把 `pchildtest` 状态写成确定常量。
+**Key message**
 
-**Suggested visual**  
-简化 `proc[]` 表格，突出 `pid`、`state`、`lock`。
-
-**Speaker notes**  
-这里的教学价值是观察和解释，不是实现完整 `ps`，也不是修改调度器。
-
-## Slide 8. Lab3：页表映射与 eager/lazy allocation
-
-**Key message**  
-Lab3 用 `pgcount()` 区分“地址空间大小”和“实际页表映射数量”。
+同一套仓库要让学生能学、老师能布置、助教能验收、评委能复现。
 
 **Bullet content**
 
-- `pgcount()` 统计当前进程用户页表中 `PTE_V && PTE_U` 的页。
-- eager `sbrk(2*PGSIZE)`：真实计算 delta = 2。
-- lazy `sbrklazy(2*PGSIZE)`：touch 前 delta = 0。
-- touch one page 后 delta = 1；touch two pages 后 delta = 2。
-- 不输出物理地址，不修改 page fault/lazy allocation 逻辑。
+- 学生：README、lab README、student_tasks、预期输出
+- 老师：teacher guide、课程节奏、评分 rubrics
+- 助教：labctl、队友摘要、grade-summaries
+- 评委：docs/final、证据索引、最终演示元数据
+- 边界：external/xv6-riscv 不入库，raw evidence 不入库
 
-**Suggested visual**  
-两列对比：eager 立即映射 2 页；lazy 预留后按触碰映射 0/1/2 页。
+**Visual labels**
 
-**Speaker notes**  
-明确边界：`pgcount()` 是页表映射观察实验，不是完整内存管理实验。
+- 学生
+- 老师
+- 助教
+- 评委
+- OUC xv6 实验包
 
-## Slide 9. Lab4：文件表与 fd table 观察
+**Speaker notes**
 
-**Key message**  
-Lab4 帮学生区分当前进程 fd table 和全局 file table 两个层次。
+这个仓库不是只给开发者看的。学生、老师、助教和评委都有不同入口，所以我们把 README、docs/final、labs、scripts、submissions 分开组织。
 
-**Bullet content**
+## Slide 5. 证据从干净基线开始
 
-- `fcount()`：观察全局 file table 中引用计数大于 0 的 `struct file`。
-- `fdcount()`：观察当前进程 `ofile[]` 中非空 fd 数量。
-- `open` / `dup` / `close` 展示 fd 变化趋势。
-- `dup()` 会增加 fd 引用，但不等同于新增全局 file entry。
-- 进阶 `fdinfo(int fd, struct fdinfo*)`：用 `argint + argaddr + copyout` 把 `{type, readable, writable, ref}` 拷回用户态（只查自己的 `ofile[fd]`，不返回路径/inode/内容）。
-- integrated 编号：`SYS_fcount=26`，`SYS_fdcount=28`，进阶 `SYS_fdinfo=30`（integrated `0009`）。
+**Key message**
 
-**Suggested visual**  
-`proc.ofile[] -> struct file -> ftable` 关系图。
-
-**Speaker notes**  
-这页必须避免夸大：这是文件表和 fd 表观察，不是完整文件系统或 inode/磁盘布局实验。
-
-## Slide 10. Lab5：capstone 综合复现
-
-**Key message**  
-Lab5 把分散实验组织成一次可提交、可验收、可报告的综合复现实验。
+每次完整复现都从干净 xv6 baseline 出发，补丁、验证和证据文件之间有清晰链路。
 
 **Bullet content**
 
-- 从 clean xv6-riscv baseline 出发。
-- 顺序应用 integrated `0001-0009`。
-- 完成 make、boot 和所有用户程序验证。
-- 阅读每个 patch 对应的机制和边界。
-- 输出实验报告和复现摘要。
+- 干净 xv6 baseline
+- 独立实验补丁
+- 集成补丁 0001-0009
+- labctl / teammate-verify
+- 摘要 / grade-summaries
+- 证据索引 / SHA256
 
-**Suggested visual**  
-capstone checklist：baseline / apply / make / boot / tests / report。
+**Visual labels**
 
-**Speaker notes**  
-Lab5 是课程综合训练，不新增内核机制；它的价值是把工程复现和机制解释连起来。
+- 干净基线
+- 独立实验
+- 集成 0001-0009
+- labctl / 验证
+- 摘要 / 汇总
+- 证据索引
+- 不提交 external
+- 不提交原始证据
 
-## Slide 11. integrated-labs 0001-0009 与一键验证
+**Speaker notes**
 
-**Key message**  
-最终 integrated sequence 支持从 clean baseline 一键复现完整实验链。
+这一页讲工程可信度。第三方 xv6 源码不进 Git，补丁序列是仓库里的事实，验证脚本把 make、boot、用户程序和 summary 串起来，最后由 证据索引管理外部证据。
 
-**Bullet content**
+## Slide 6. Lab 矩阵：从环境到综合复现
 
-- `0001-0002`：Lab1 hello/add2。
-- `0003-0004`：Lab2 pstate/pcount/pchildtest。
-- `0005`：Lab4 fcount。
-- `0006`：Lab3 pgcount。
-- `0007`：Lab4 v0.2 fdcount。
-- `0008`：Lab3 进阶 memstat（`SYS 29`，argaddr+copyout+struct ABI）。
-- `0009`：Lab4 进阶 fdinfo（`SYS 30`，argint+argaddr+copyout+struct ABI）。
-- 推荐命令：`bash scripts/xv6/teammate-verify.sh --full`（现含 memstattest/fdinfotest）。
+**Key message**
 
-**Suggested visual**  
-patch sequence 表 + one-shot verification 命令框。
-
-**Speaker notes**  
-integrated patch 解决独立 patch 之间的 syscall number 冲突，并提供评委、队友和队长可复现的统一路径。
-
-## Slide 12. 三方复现证据：rain/root/z2996
-
-**Key message**  
-current final `db85947 / 0001-0009`（含 memstat/fdinfo）已完成 rain/root/z2996 三方 full verification PASS；更早的 `e8e2fb9 / 0001-0007` 三方 PASS 保留为 historical stable checkpoint。
+Lab0-Lab5 的设计目标是小步进入 OS 机制，每一阶段都有明确学习点和验收项。
 
 **Bullet content**
 
-- `rain`：team lead local full verification PASS。
-- `root`：teammate A full verification PASS。
-- `z2996`：teammate B full verification PASS。
-- current final：`db85947 / 0001-0009` 三方 full PASS，覆盖全部 10 个用户程序（含 memstattest/fdinfotest）。
-- 三份 summary 经 grade-summaries 批量核对 3/3 clean PASS；summary/screenshot SHA256 已登记并可一键核验。
-- historical：`e8e2fb9 / 0001-0007` 三方 PASS 保留为 checkpoint；raw summary/log/screenshot 不入 Git，仓库只记录摘要和 SHA256。
+- Lab0 | 环境与启动 | build / boot
+- Lab1 | 系统调用入口 | hello / add2
+- Lab2 | 进程状态观察 | pstate / pcount / pchildtest
+- Lab3 | 页表与 copyout | pgcount / memstat
+- Lab4 | fd 与 file | fcount / fdcount / fdinfo
+- Lab5 | 综合复现 | 全量验证
 
-**Suggested visual**  
-三张证据卡片：user、commit、mode、result。
+**Visual labels**
 
-**Speaker notes**  
-区分本机验证与队友复现；旧 `1ba9db6` 证据只作为 historical/superseded evidence。
+- 实验
+- 学什么
+- 验什么
+- 从环境到综合复现
 
-## Slide 13. 演示视频与 evidence manifest
+**Speaker notes**
 
-**Key message**  
-最终证据以 metadata + SHA256 管理，原始大文件保存在仓库外。
+Lab 矩阵要让评委一眼看到课程设计，而不是看到一堆 syscall 名字。每个 Lab 都有机制、用户程序、测试和文档。
 
-**Bullet content**
+## Slide 7. Lab1/2：先走通内核入口
 
-- `0001-0007` 视频（historical stable checkpoint）：`20260606_final_integrated_0001_0007_demo.mp4`。
-- 该视频 SHA256：`0FF2D3581552B3FD3A2630E827251CF46C36BC3BE8F8B9D9DDB691FC0668A93B`（只覆盖 `0001-0007`）。
-- current final 视频：`20260611_final_integrated_0001_0009_demo.mp4`（31,529,984 bytes），SHA256 `2A2C9863...C7BC0365` 已登记。
-- 外部资产包已上传百度网盘（目录 `proj54_submission_assets`，链接+提取码见 evidence manifest）；大文件不入 Git。
-- 中央索引：`submissions/evidence_manifest.md`；哈希核验：`scripts/check-evidence-sha256.sh`（实测 14/14 matched）。
-- historical videos 只覆盖 earlier `0001-0005`，不覆盖 `e8e2fb9`。
-- 隐私复核状态：`pending final manual review`。
+**Key message**
 
-**Suggested visual**  
-evidence manifest 结构图：final evidence / historical evidence / non-committed policy。
-
-**Speaker notes**  
-解释为什么不把视频、截图、raw logs 放进 Git：既控制仓库卫生，也避免隐私和大文件风险。
-
-## Slide 14. 同类项目对比与差异化
-
-**Key message**  
-uCore/rCore/YatSen/F-Tutorials 更偏完整课程或生态，本项目聚焦 OUC 本校 xv6-riscv 入门实验与提交友好复现。
+Lab1/2 让学生从最小系统调用进入内核，再观察进程表和调度带来的非固定输出。
 
 **Bullet content**
 
-- uCore/rCore：完整 OS 教学体系或 Rust OS 生态，本项目不重写其路线。
-- YatSen OS / F-Tutorials：可作为课程材料和展示组织参考。
-- 本项目差异：xv6-riscv clean-baseline patch、三方复现、QEMU 体验治理。
-- 证据差异：metadata + SHA256 + non-committed raw evidence policy。
-- URL/license 未最终核对的参考项保持“待核对”，不编造来源。
+- 用户程序 -> usys -> syscall -> sys_* -> kernel helper
+- hello：最小系统调用链路
+- add2：argint 参数读取
+- pstate / pcount：进程状态观察
+- pchildtest：调度时序导致输出不固定
 
-**Suggested visual**  
-对比表：项目 / 侧重点 / 本项目差异。
+**Visual labels**
 
-**Speaker notes**  
-这页的目标不是贬低同类项目，而是讲清本项目为何适合 proj54 和 OUC 课程语境。
+- 用户程序
+- usys
+- syscall
+- sys_*
+- kernel helper
+- 进程表快照
+- 状态受调度影响
 
-## Slide 15. 创新点与教学价值
+**Speaker notes**
 
-**Key message**  
-创新点集中在课程化组织、可复现验证和诚实证据边界，而不是盲目扩大内核功能。
+Lab1 是入口，Lab2 是第一个内核表观察。这里强调 pchildtest 输出受调度影响，这不是失败，而是 OS 课程里应该讲清楚的现象。
 
-**Bullet content**
+## Slide 8. Lab3：页表与 copyout
 
-- 分阶段实验体系覆盖 syscall、proc、pagetable、file/fd table，进阶 memstat/fdinfo 补上 copyout + struct ABI。
-- 可直接开课：每个 lab 有学生任务书（必做/选做/rubric），配教师指南、评分标准、troubleshooting。
-- clean-baseline patch workflow 便于教学、审查和复现。
-- full/quick teammate verification 降低队友复现门槛；QEMU timeout/cleanup 处理真实卡点。
-- AI 使用透明记录，真实验证不由 AI 替代。
+**Key message**
 
-**Suggested visual**  
-2x3 卡片：课程体系 / 任务书与教师材料 / patch workflow / teammate verify / evidence / AI transparency。
-
-**Speaker notes**  
-把创新性落到可维护、可教学、可验收的工程实践上，而不是夸大为完整内核系统。
-
-## Slide 16. 边界、未来工作与总结
-
-**Key message**  
-当前成果已经形成课程实验和验证闭环；剩余事项以人工确认和后续课程扩展为主。
+Lab3 通过 pgcount 和 memstat 区分“地址空间增长”和“真实用户页映射”。
 
 **Bullet content**
 
-- `pgcount()`/`memstat()` 不是完整内存管理；`fcount()`/`fdcount()`/`fdinfo()` 不是完整文件系统。
-- Lab5 是 capstone，不是新增内核机制。
-- timeout/QEMU 输出捕获不是长期稳定性测试。
-- 待确认：平台提交方式、最终隐私复核、队友真实姓名/系统版本、参考 URL/license。
-- 总结：学生能看懂、老师能布置、助教能验收、评委能复现。
+- pgcount：统计 PTE_V && PTE_U 的用户页映射
+- eager sbrk：申请 2 页后 delta = 2
+- lazy sbrklazy：touch 前 0，touch 后 1/2
+- memstat：argaddr + copyout + struct ABI
+- 边界：这是页表观察，不是完整内存管理
 
-**Suggested visual**  
-三栏总结：已完成 / 边界 / 后续。
+**Visual labels**
 
-**Speaker notes**  
-用诚实边界收尾：材料冲奖的关键不是说满，而是让评委相信每个结论都能追溯到真实证据。
+- eager sbrk
+- 立即映射 2 页
+- lazy sbrklazy
+- touch 前 0
+- touch 后 1 / 2
+- argaddr
+- copyout
+- struct memstat
+
+**Speaker notes**
+
+这一页是技术亮点。学生常把“申请地址空间”和“真实映射页面”混在一起。pgcount 和 lazy 对比把这个差异变成可观察结果；memstat 再引入结构化 copyout。
+
+## Slide 9. Lab4：fd 与 file 的关系
+
+**Key message**
+
+Lab4 把当前进程 fd table 和全局 file table 拆开观察，避免把文件系统讲成黑盒。
+
+**Bullet content**
+
+- fcount：观察全局 file table 使用趋势
+- fdcount：统计当前进程 ofile[] 非空项
+- fdinfo：返回单个 fd 的结构化元数据
+- open / dup / close：观察趋势，不依赖绝对数
+- 边界：这是文件表观察，不是完整文件系统
+
+**Visual labels**
+
+- 当前进程 ofile[]
+- fd 0 / 1 / 2 / 3
+- struct file
+- 全局 file table
+- fcount
+- fdcount
+- fdinfo
+
+**Speaker notes**
+
+这里要把 fd 和 file 的关系讲出来。fd 是进程视角，file table 是内核全局结构；open、dup、close 的趋势比绝对数更适合教学。
+
+## Slide 10. Lab5：把实验变成验收
+
+**Key message**
+
+Lab5 不新增内核机制，而是把 Lab0-Lab4 串成一次完整的干净基线到全量验证。
+
+**Bullet content**
+
+- 干净基线
+- 应用集成补丁 0001-0009
+- make
+- boot
+- 运行全部用户程序测试
+- 复制 summary 给队长/助教
+- 写清真实结果、失败记录和边界
+
+**Visual labels**
+
+- 干净基线
+- 应用 0001-0009
+- make
+- boot
+- 测试
+- 摘要
+- 报告
+- Lab5 = 综合复现
+
+**Speaker notes**
+
+Lab5 的定位要避免误解。它不是新系统调用，而是综合复现实验。学生最终要交的不只是“能跑”，还要说明如何验证、哪里失败过、边界是什么。
+
+## Slide 11. 工具链：从脚本到课程入口
+
+**Key message**
+
+工具链把复杂命令收束成课程入口，同时保留真实日志、摘要和可复核证据。
+
+**Bullet content**
+
+- labctl：课程统一入口
+- teammate-verify：全量 / 快速复现流程
+- cleanup-qemu：处理 Ctrl+C / Ctrl+Z 后的 QEMU 残留
+- grade-summaries：3 clean PASS / 0 needs attention
+- check-docs-consistency / check-evidence-sha256：防止状态漂移和证据失真
+
+**Visual labels**
+
+- labctl
+- teammate-verify
+- QEMU
+- 摘要
+- grade-summaries
+- 文档一致性
+- SHA256 核验
+- 课程入口
+
+**Speaker notes**
+
+这一页讲工具链升级。我们不是把脚本堆在一起，而是把它组织成课程入口、复现入口、验收入口和提交前门禁。
+
+## Slide 12. 三方复现证据
+
+**Key message**
+
+最终 HEAD 的结果不是单机截图，而是队长和两位队友的全量验证摘要。
+
+**Bullet content**
+
+- rain：全量验证通过
+- root：全量验证通过
+- z2996：全量验证通过
+- grade-summaries：3 clean PASS / 0 needs attention
+- evidence documentation commit：caf8ced
+
+**Visual labels**
+
+- rain
+- root
+- z2996
+- 全量验证通过
+- grade-summaries
+- 3 clean PASS
+- 0 needs attention
+- caf8ced
+
+**Speaker notes**
+
+这里保持克制：我们只说已经有 summary 和外部证据的事实，不编造队友真实姓名或系统版本。root 和 z2996 是终端 user。
+
+## Slide 13. 证据链可以重新计算
+
+**Key message**
+
+视频和截图不进 Git，但外部文件名、大小、时长、SHA256 和网盘位置都可以复核。
+
+**Bullet content**
+
+- 文件：20260611_final_integrated_0001_0009_demo.mp4
+- 时长/规格：00:03:12，2560×1440，60 fps
+- 大小：31,529,984 bytes
+- SHA256：2A2C9863C185846225A98AC874499867A71588CED2020A64249CBF99C7BC0365
+- 网盘：proj54_submission_assets，提取码 1234
+- 哈希检查：14/14 matched
+
+**Visual labels**
+
+- 最终视频
+- 元数据
+- SHA256
+- 网盘资产包
+- 14/14 matched
+- Git 只保存摘要
+
+**Speaker notes**
+
+这页解决“证据在哪里”和“如何证明没改过”。仓库不提交大文件，但记录了足够的元数据和 SHA256；下载外部资产后可以用脚本重新核验。
+
+## Slide 14. 与 uCore/rCore 的差异
+
+**Key message**
+
+本项目不是替代 uCore/rCore，而是面向 OUC 课程的轻量 xv6 入门实验包。
+
+**Bullet content**
+
+- uCore/rCore 等课程生态覆盖更广，适合完整 OS 课程体系
+- 本项目不试图替代它们，而是聚焦 OUC 的 xv6-riscv 入门实验
+- 左侧是完整课程生态：覆盖更广，学习周期更长
+- 右侧是本项目：更轻量，更适合入门实验和可复现验收
+- 重点是小步 patch workflow、clean baseline 复现、Lab0-Lab5 教学路径、三方 full verify 和证据 manifest
+
+**Visual labels**
+
+- 完整课程生态
+- 本项目
+- 覆盖更广
+- 更轻量
+- 学习周期更长
+- 可复现验收
+
+**Speaker notes**
+
+不要贬低同类项目，也不要在答辩页上放旁支引用说明。这里强调差异：本项目更轻、更贴近本校课程，更强调干净基线、三方复现和证据边界。
+
+## Slide 15. 创新在组织方式
+
+**Key message**
+
+创新不只在系统调用，而在实验组织、工具入口、复现证据和诚信边界同时可执行。
+
+**Bullet content**
+
+- 干净基线补丁流
+- copyout advanced labs：memstat / fdinfo
+- 课程材料：student_tasks、teacher guide、rubric
+- 复现工具：doctor、teammate-verify、cleanup-qemu
+- 验收证据：grade-summaries、证据索引、SHA256
+
+**Visual labels**
+
+- 基线补丁流
+- copyout 进阶实验
+- 课程材料
+- 复现工具
+- 验收证据
+- 可执行的组织创新
+
+**Speaker notes**
+
+这页不能写成“赋能”“闭环”。直接指向仓库里的东西：补丁序列、课程材料、验证脚本、摘要解析和证据索引。
+
+## Slide 16. 边界与总结
+
+**Key message**
+
+边界说清楚，可信度才站得住：它不是完整内核工程，但是真实、可复现、可教学。
+
+**Bullet content**
+
+- 已完成：integrated 0001-0009，Lab0-Lab5 课程实验体系
+- 已验证：rain / root / z2996 全量验证通过，14/14 SHA256 matched
+- 历史点：e8e2fb9 / 0001-0007 只作为历史检查点
+- 不夸大：pgcount/memstat 不是完整内存管理，fcount/fdcount/fdinfo 不是完整文件系统
+- 提交前最后确认：平台提交方式最终确认；PPT 5-8 分钟人工排练；按 submission_checklist 跑最终全检
+
+**Visual labels**
+
+- 已完成
+- 已验证
+- 历史点
+- 不夸大
+- 最后确认
+- 真实
+- 可复现
+- 可教学
+
+**Speaker notes**
+
+最后回到可信度。我们完成了课程实验包和证据链，但不把观察型实验包装成完整内核能力。答辩收束在“真实、可复现、可教学”。

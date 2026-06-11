@@ -52,10 +52,10 @@ It is not the final technical report, does not generate PDF, and does not includ
 | final reference and license statement | `docs/final/10_reference_and_license_statement.md` | exists | stage8a formal xv6 MIT license boundary and reference-project notes |
 | final limits and future work | `docs/final/11_known_limits_and_future_work.md` | exists | stage11b limits: pgcount/fdcount/memstat/fdinfo observation-only scope boundaries, integrated suite 0001-0009, e8e2fb9 evidence historical, new evidence/platform/privacy/reference items still pending |
 | technical report v1.0 | `docs/final/technical_report_v1.0.md` | exists | stage11b judge-facing technical report draft: positioning, labs, integrated 0001-0009 (memstat 0008/fdinfo 0009), e8e2fb9 0001-0007 evidence historical, new evidence TBD, teaching value, license/AI/limits |
-| submission checklist | `submissions/submission_checklist.md` | exists | stage15 submission checklist: current final db85947/0001-0009 three-way PASS + new video recorded; Baidu external-asset row added; e8e2fb9 0001-0007 historical; remaining items are video duration metadata, platform method, privacy review, PPT rehearsal |
-| demo video record | `submissions/demo_record.md` | exists | stage14: current final 0001-0009 video recorded with SHA256 (20260611 demo, db85947); old 0001-0007 video historical stable checkpoint; 3 earlier historical video records; no video files in Git |
+| submission checklist | `submissions/submission_checklist.md` | exists | stage16 submission checklist: current final db85947/0001-0009 three-way PASS + new video recorded; Baidu external-asset row added; video/screenshot privacy review confirmed OK; remaining items include platform method and final rehearsal |
+| demo video record | `submissions/demo_record.md` | exists | stage16: current final 0001-0009 video metadata recorded with duration/resolution/fps/size/SHA256 (20260611 demo, db85947); old 0001-0007 video is historical stable checkpoint; 3 earlier videos are historical; no video files in Git |
 | teammate reproduction record | `submissions/teammate_reproduction_record.md` | exists | stage14: current final db85947/0001-0009 three-way full PASS recorded with summary/screenshot SHA256 and grade-summaries 3/3 clean; e8e2fb9 and 1ba9db6 records historical; raw files not committed |
-| final evidence manifest | `submissions/evidence_manifest.md` | exists | stage15 central index: current final db85947/0001-0009 with three-way full PASS, grade-summaries 3/3 clean, new video + SHA256 recorded and hash-verified; External Asset Package section with Baidu pan link (proj54_submission_assets); e8e2fb9 0001-0007 historical stable checkpoint; non-committed evidence policy |
+| final evidence manifest | `submissions/evidence_manifest.md` | exists | stage16 central index: current final db85947/0001-0009 with three-way full PASS, grade-summaries 3/3 clean, final video metadata + SHA256, 14/14 hash verification, External Asset Package link, e8e2fb9 0001-0007 historical stable checkpoint, and non-committed evidence policy |
 | Technical report v0.1 | `docs/13_technical_report_v0.1.md` | exists | historical stage2c draft with stage8b obsolete notice; not final report |
 | Reproducibility package | `reproducibility/README.md` | exists | lab0/lab1/lab2/integrated-labs reproduction checklist and template |
 | lab0 environment guide | `labs/lab0-env-setup/README.md` | exists | xv6 baseline make succeeded; boot evidence found; manual interaction TODO |
@@ -113,11 +113,11 @@ It is not the final technical report, does not generate PDF, and does not includ
 | xv6 baseline metadata | `external/xv6-baseline-record.md` | exists | metadata generated; records make success and boot evidence; manual interaction TODO |
 | logs directory guide | `logs/README.md` | exists | raw logs ignored by default; current make log is not tracked |
 | reference directory guide | `references/README.md` | exists | placeholder |
-| PPT directory guide | `slides/README.md` | exists | stage10c guide for final PPT source, generator, PPTX output, and no-media boundary |
-| final PPT outline | `slides/final_ppt_outline.md` | exists | stage10b 15-slide final defense outline with key message, bullets, visual suggestion, and speaker notes |
-| final PPT source | `slides/final_ppt.md` | exists | stage15 16-slide final defense source: core story (lab kit, not just syscalls), current final db85947/0001-0009 three-way PASS, video + Baidu asset link, teaching-material innovation, honest boundaries |
-| final PPT generator | `slides/generate_final_ppt.py` | exists | stage10c standard-library OpenXML generator; reads slides/final_ppt.md and writes slides/final_defense_ppt.pptx without embedded media |
-| final PPTX | `slides/final_defense_ppt.pptx` | exists | stage10c generated 16:9 defense deck; 16 slides, speaker notes, no embedded video/screenshot media |
+| PPT directory guide | `slides/README.md` | exists | stage16 guide for final PPT source, outline, generator, PPTX sync policy, and no-media boundary |
+| final PPT outline | `slides/final_ppt_outline.md` | exists | stage16 16-slide high-impact defense outline: lab kit story, current db85947/0001-0009 facts, evidence cards, tooling map, comparison, and honest boundaries |
+| final PPT source | `slides/final_ppt.md` | exists | stage16 16-slide final defense source: core story (course lab kit, not just syscalls), current final db85947/0001-0009 three-way PASS, 00:03:12 final video, 14/14 evidence hash, Baidu asset package, teaching value, honest boundaries |
+| final PPT generator | `slides/generate_final_ppt.ps1` | exists | stage16 PowerPoint COM generator; reads slides/final_ppt.md and writes a self-drawn deep-blue/cyan 16:9 deck without embedded media |
+| final PPTX | `slides/final_defense_ppt.pptx` | exists | stage16 generated defense deck; 16 slides, 16 speaker notes, self-drawn shapes, no embedded video/screenshot media |
 | Demo video notes | `videos/README.md` | exists | records video policy and no-video-in-Git boundary |
 | Demo script draft | `videos/demo_script.md` | exists | historical 2-3 minute demo flow; final recorded video metadata is tracked in submissions/demo_record.md |
 | Final submission | `submissions/` | - | TODO: organize against official requirements |
@@ -129,7 +129,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 - xv6 baseline make, hardened boot evidence retry, lab1 patched make, hello output, add2 output, pstatetest output, pcounttest output, pchildtest output, fcounttest output, and integrated sequence evidence are summarized in docs/04_test_report.md.
 - lab1 now has two patch levels: 0001 hello minimal syscall and 0002 add2 argint extension.
 - lab2 has an independent pstate process observation patch from clean baseline.
-- lab3 has an independent pgcount patch, integrated 0006 pgcount, and an independent memstat patch also integrated as 0008; e8e2fb9 0001-0007 full verification by lead/root/z2996 is a historical stable checkpoint in submissions/evidence_manifest.md, and the 0001-0009 re-verification is TBD.
+- lab3 has an independent pgcount patch, integrated 0006 pgcount, and an independent memstat patch also integrated as 0008; e8e2fb9 0001-0007 full verification by lead/root/z2996 is a historical stable checkpoint in submissions/evidence_manifest.md, and current db85947 0001-0009 has lead/root/z2996 full PASS recorded as final evidence.
 - integrated-labs provides the verified comprehensive demo sequence with hello=22, add2=23, pstate=24, pcount=25, fcount=26, pgcount=27, fdcount=28, memstat=29, fdinfo=30.
 - The child-state demo command is pchildtest; the longer pstatechildtest name is not used because xv6 DIRSIZ caused a real mkfs failure.
 - scripts/xv6/apply-integrated-labs.sh is the recommended helper for final integrated demo reproduction and now applies integrated 0001-0009.
@@ -138,12 +138,12 @@ It is not the final technical report, does not generate PDF, and does not includ
 - scripts/xv6/local-verify.sh --quick is recommended for team-lead pre-recording checks.
 - scripts/xv6/cleanup-qemu.sh is the rescue command when QEMU is stuck or Ctrl+Z suspended a job.
 - stage12 reorganized the repo learner-first: README and docs/README route students/teachers/judges separately; every lab has a tutorial README plus a student_tasks.md assignment sheet; teacher_guide/grading_and_rubric/troubleshooting support running this as a course; submission evidence stays rigorous under submissions/ and docs/final/.
-- scripts/check-final-hygiene.sh and scripts/check-evidence-sha256.sh are the stage12 pre-submission gates; evidence hashes are verified in place outside Git and TBD 0001-0009 evidence is never faked.
+- scripts/check-final-hygiene.sh and scripts/check-evidence-sha256.sh are the pre-submission gates; evidence hashes are verified in place outside Git; current final db85947 evidence has a recorded 14/14 SHA256 match.
 - stage13 added scripts/labctl.sh (single course entry + per-lab test matrix), scripts/grade-summaries.sh (TA batch acceptance aid, not a grader), and scripts/check-docs-consistency.sh (mechanical drift gate); all three delegate to or check existing assets instead of reimplementing verification.
 - docs/final/ is the formal submission documentation portal for stage8a and should be the basis for technical report v1.0 and PPT.
 - docs/README.md explains the boundary between formal docs/final documentation and historical process records.
 - Technical report v1.0 draft is docs/final/technical_report_v1.0.md; technical report v0.1 is historical only.
-- Final PPT source is slides/final_ppt.md and current PPTX output is slides/final_defense_ppt.pptx; final human review and rehearsal are still required.
+- Final PPT source is slides/final_ppt.md and current PPTX output is slides/final_defense_ppt.pptx; stage16 rebuilt the deck with high-impact visual design using slides/generate_final_ppt.ps1; final human review and rehearsal are still required.
 - docs/13_technical_report_v0.1.md is explicitly marked as a historical draft superseded by docs/final and a future technical report v1.0.
 - Raw logs remain ignored by Git; do not submit logs/*.log.
 - boot-xv6.sh now defaults to 45s soft timeout, hard timeout max(timeout+15,75), and 2 attempts; QEMU long-running stability and manual interactive shell testing remain TODO.
@@ -152,5 +152,5 @@ It is not the final technical report, does not generate PDF, and does not includ
 - Teammate QEMU cleanup troubleshooting is documented in docs/22_teammate_reproduction_troubleshooting.md.
 - Plain-language teammate quickstart is documented in docs/23_teammate_quickstart.md; teammates should copy the COPY THIS SUMMARY TO TEAM LEAD block to the team lead.
 - Video files are not committed; final and historical video metadata plus SHA256 are recorded in submissions/demo_record.md.
-- e8e2fb9 lead/root/z2996 full PASS (integrated 0001-0007) is recorded as a historical stable checkpoint in submissions/teammate_reproduction_record.md; the stage11b integrated suite is 0001-0009 and its teammate re-verification is TBD; old 1ba9db6 records remain historical evidence only.
+- e8e2fb9 lead/root/z2996 full PASS (integrated 0001-0007) is recorded as a historical stable checkpoint in submissions/teammate_reproduction_record.md; current final db85947/0001-0009 lead/root/z2996 full PASS is recorded as final evidence; old 1ba9db6 records remain historical evidence only.
 - submissions/evidence_manifest.md is the central final evidence index and does not store raw evidence files.

@@ -4,7 +4,7 @@
 # Read-only. Exit 0 = all checks pass; exit 1 = at least one FAIL.
 #
 # Whitelist: slides/final_defense_ppt.pptx is the single allowed Office binary
-# (generated from tracked slides/final_ppt.md by slides/generate_final_ppt.py).
+# (generated from tracked slides/final_ppt.md by slides/generate_final_ppt.ps1).
 set -u
 
 fail=0
