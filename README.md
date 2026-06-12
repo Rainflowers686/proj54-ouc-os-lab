@@ -1,8 +1,15 @@
 # OUC xv6 Lab Kit：从零开始的操作系统实验
 
-这是一个用 xv6-riscv 学操作系统的教学实验包。它不假设你写过内核：从"把 xv6 跑起来"开始，一关一关带你看懂系统调用、进程、页表、文件表，最后你能自己给内核加一个系统调用，并解释它从用户态到内核态的完整路径。
+OUC xv6 Lab Kit 是一套面向 OS 课程的 xv6-riscv 入门实验包：按 Lab0-Lab5 一关一关走，逐步理解 syscall、进程、页表、fd/file 的关系，最后能从干净源码完成一次可复现的完整验证。它不假设你写过内核——做完之后，你能自己给内核加一个系统调用，并讲清它从用户态到内核态的完整路径。
 
-如果你第一次接触 xv6，可以直接从下面的 [Step 0](#从零开始怎么学) 开始，不需要先读完整个 README。
+## 如果你是第一次做 OS 实验，先看这里
+
+- 别想着把整个仓库读完再动手，那样大概率三天后还在读文档。
+- 先跑 Lab0：把 xv6 编译出来、在 QEMU 里启动、看到 `init: starting sh`。环境通了再谈别的。
+- 然后做 Lab1 的 `hello`/`add2`，把"用户程序 → 内核 → 返回"这条链路走通一次，后面所有实验都是这条路的变体。
+- 之后按顺序来：Lab2 看进程表，Lab3 看页表和 copyout，Lab4 看 fd/file 三层关系，Lab5 做综合复现。
+- 每关先读 `labs/<lab>/README.md`（教程），再做 `student_tasks.md`（作业和验收标准）。
+- 卡住了先查 [docs/troubleshooting.md](docs/troubleshooting.md)——里面是我们自己踩过的坑。不要上来就改 `patches/integrated-labs/` 里的最终集成补丁，那是全套验证的基线。
 
 ## 这是什么
 
@@ -51,6 +58,28 @@
 
 每个 lab 目录里有两个文件：`README.md` 是教程，`student_tasks.md` 是练习和验收标准。建议先读教程、跑通验证命令，再做任务。做完一关可以只测这一关：`bash scripts/labctl.sh test lab3`。
 
+## 做实验前建议补的知识
+
+不用全会再开始，缺哪补哪：
+
+- **C 语言**：指针、结构体、头文件和函数声明。Lab3/Lab4 进阶要读 `copyout` 相关代码，指针不熟会很痛苦。
+- **Linux shell / WSL**：能进目录、跑脚本、看日志输出。所有 make/QEMU 命令都在 WSL2 Ubuntu 里执行。
+- **make 和 QEMU**：知道 `make` 在干什么、QEMU 是模拟器就够，细节实验里会碰到。
+- **Git**：至少会 `clone`、`status`、`diff`、`apply`。我们的每个实验就是一个 patch。
+- **xv6 教材**：不用通读，跟着实验进度看系统调用、进程、页表、文件描述符对应章节即可。
+- **实验习惯**：一次只改一个点；失败了把现象记下来再动下一步；输出贴文本，不要拿截图当唯一证据。
+
+## 推荐阅读
+
+只放最常用的几个，每条都写了什么时候看。完整的分层清单（含往届作品、同学经验帖）在 [references/README.md](references/README.md)。
+
+- [proj0 赛题原文](https://github.com/oscomp/proj0-contest-and-lab-for-os-course?tab=readme-ov-file#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-1)：这个题本来就是"面向 OS 课程的竞赛和实验"——想理解本项目为什么做成实验包，先看它。
+- [MIT 6.1810（原 6.S081）](https://pdos.csail.mit.edu/6.1810/2025/)：xv6 的官方课程。做完 Lab1-Lab2 想系统学一遍时再去，别一开始就跳。
+- [xv6-riscv-book-CN](https://github.com/shzhxh/xv6-riscv-book-CN)：xv6 教材中文翻译，英文版读不动时的台阶。
+- [rCore Tutorial Book v3](https://rcore-os.github.io/rCore-Tutorial-Book-v3/)：想从"观察 OS"进阶到"从零写 OS"时看，完整得多的课程生态。
+- [LearningOS rCore 2025S](https://github.com/LearningOS/rCore-Tutorial-Guide-2025S) / [uCore 2025S](https://github.com/LearningOS/uCore-Tutorial-Guide-2025S)：想跟一个有作业有验收的完整开源课程时选一条路线。
+- [PKE 代理内核课程实验](https://gitee.com/hustos/pke-doc)：轻量实验设计思路，和我们"一个 patch 一关"的做法最接近，适合想自己设计实验的人。
+
 ## 如果你只想先跑起来
 
 整个课程有一个统一命令入口 `labctl`（它只是封装下面的现有脚本，不重复实现任何逻辑）。在 WSL2 Ubuntu 里：
@@ -68,13 +97,16 @@ bash scripts/labctl.sh verify        # 一键 full 验证（等价 teammate-veri
 
 卡住、报错、或者误按了 `Ctrl+Z`：先跑 `bash scripts/labctl.sh clean`，再看 [docs/troubleshooting.md](docs/troubleshooting.md)。`/mnt/` 路径下第一次 boot 偏慢是正常的。
 
-## 如果你是老师或助教
+## 如果你要把它拿去布置课程
 
-- [docs/teacher_guide.md](docs/teacher_guide.md)：怎么把这套实验拆成 2-5 次课、每次讲什么、怎么验收。
-- [docs/grading_and_rubric.md](docs/grading_and_rubric.md)：每个 lab 的评分建议和常见扣分点。
-- 学生交上来的验证结果统一用 `teammate-verify.sh --full` 输出的 `COPY THIS SUMMARY TO TEAM LEAD` 块；收齐后用 `bash scripts/grade-summaries.sh logs/student-summaries/` 批量解析，它会把 overall 不一致、缺新测试项（旧 suite）、内容雷同的文件标出来——注意这只是辅助验收，最终评分仍按 rubric 和抽查。
+- 教学顺序就按 Lab0-Lab5，2 次、3 次、5 次课的三种切法在 [docs/teacher_guide.md](docs/teacher_guide.md)，含每次课讲什么、怎么处理学生环境问题。
+- 评分用 [docs/grading_and_rubric.md](docs/grading_and_rubric.md)：每个 lab 的任务书自带 100 分细则和常见扣分点。
+- 复现验收统一收 `bash scripts/xv6/teammate-verify.sh --full` 输出的 `COPY THIS SUMMARY TO TEAM LEAD` 块；收齐后 `bash scripts/grade-summaries.sh logs/student-summaries/` 批量解析，它会把 overall 不一致、缺新测试项（旧 suite）、内容雷同的文件标出来——注意这只是辅助验收，最终评分仍按 rubric 和抽查。
+- 提前说清边界，免得学生期望错位：这是观察型/入门型实验包，不是完整 OS 子系统实现，也不改调度器和文件系统布局。
 
 ## 如果你是评委或在看提交材料
+
+为了方便评审和复现，集中入口如下：
 
 - 证据总索引：[submissions/evidence_manifest.md](submissions/evidence_manifest.md)
 - 技术报告：[docs/final/technical_report_v1.0.md](docs/final/technical_report_v1.0.md)
@@ -83,6 +115,21 @@ bash scripts/labctl.sh verify        # 一键 full 验证（等价 teammate-veri
 - 外部证据资产包（演示视频、三方复现 summary/截图等大文件，不入 Git）：百度网盘目录 `proj54_submission_assets`，链接 <https://pan.baidu.com/s/1Xt-G6VgP04eEAumqiMo7Uw?pwd=1234>（提取码 `1234`）。下载后可用 `XV6_EVIDENCE_BASE=<解压路径> bash scripts/check-evidence-sha256.sh` 逐文件核对哈希——以仓库内 manifest 和该脚本为准，网盘只是文件的存放处。
 
 比赛信息：2026 全国大学生计算机系统能力大赛 OS 设计赛（全国）OS 功能挑战赛道 proj54，中国海洋大学"蓝色系统队"。
+
+## 为什么目录看起来比较多？
+
+第一次打开仓库可能觉得目录不少，其实每个只管一件事：
+
+- `labs/`：学生学习路径，每关一个教程 + 一份任务书。
+- `patches/`：可回放的实现——每个实验就是一个能从干净源码 apply 的 patch。
+- `scripts/`：复现和验收工具（`labctl` 入口、验证脚本、三道提交门禁）。
+- `docs/`：课程文档、教师材料、排障和过程记录；`docs/final/` 是正式提交文档。
+- `submissions/`：提交清单和证据索引。
+- `slides/`：答辩材料（源稿 + 生成的 PPTX）。
+- `videos/`：只放视频说明，视频本体在网盘。
+- `external/`：只记录第三方源码来源和基线 commit，xv6 源码本体不入库。
+- `logs/`：只放说明，原始日志一律不提交。
+- `references/`：延伸阅读清单。
 
 ## 当前证据状态（诚实边界）
 

@@ -1061,3 +1061,18 @@
   - `scripts/collect-report.sh` descriptors for README/manifest/checklist/final_ppt updated; index regenerated.
 - Unchanged by design: all SHA256 values, the current/historical boundary (`db85947 / 0001-0009` current final; `e8e2fb9 / 0001-0007` historical), commit references (`db85947` engineering, `caf8ced` evidence-doc commit only), AI usage records, integrated patches, `scripts/xv6/`.
 - Validation: `check-evidence-sha256.sh` (expect 14/14), `check-final-hygiene.sh`, `check-docs-consistency.sh`, `collect-report.sh`, `git diff --check`, patch/xv6/external no-diff checks, `git ls-files` battery, PPTX zip inspection. Results in the final assistant response.
+
+## 2026-06-12: stage19 learner-first front door and references polish
+
+- Commit hash: TODO after commit
+- Goal: make the repository entrance serve students first (teachers/TAs second, judges via a clearly framed collected entry), and move the full link pool out of README into an annotated `references/README.md`.
+- Completed:
+  - `README.md` top restructured: one-sentence positioning; "第一次做 OS 实验，先看这里" orientation (run Lab0 first, do not start by editing `patches/integrated-labs/`); "做实验前建议补的知识" (C pointers/structs, shell/WSL, make/QEMU, Git basics, xv6 chapters on demand, lab habits incl. text-not-screenshot evidence); "推荐阅读" trimmed to six annotated entries with a pointer to `references/`; teacher section reframed as "拿去布置课程" with the observation-lab boundary stated; judge section kept but reworded to "为了方便评审和复现，集中入口如下"; new "为什么目录看起来比较多" directory tour; evidence-status and pothole-closing sections unchanged.
+  - `references/README.md` rewritten from TODO placeholder into a four-layer reading list (contest & submission requirements / xv6 entry / fuller OS course ecosystems / past-winner document-form references) using only team-provided links plus web-verified official pages. Every entry carries purpose, when-to-read, and an explicit "是否直接用于本项目" column; nothing is listed as an implementation source except the xv6-riscv baseline itself.
+  - Link verification notes (honest handling): MIT 6.1810 Fall 2025 URL confirmed by web search; `hm1229.top` is not search-indexed and was not page-verified, so it is flagged 个人站/未核对; the proj0 page fetch failed in-session, so its description states only what the link is; the duplicated ref-info URL from the collection list was deduped; the two eduxiji PDF links are described as past-contest document-structure references that may require login.
+  - `docs/README.md`: learner path now includes the references list; judge section gained the submission checklist entry; header bumped to stage19.
+  - `docs/final/10_reference_and_license_statement.md`: one sentence pointing to `references/README.md` as the collected-link list while keeping every license status 待核对 in this statement as the source of truth.
+  - `scripts/collect-report.sh` descriptors for README/docs-README/references updated; `submissions/draft-report-index.md` regenerated.
+  - `.github/` removal was requested this round but had already been done by commit `806a190`; verified `git ls-files .github` is empty, no further action.
+- Boundaries: no `patches/`, `scripts/xv6/`, SHA256, evidence fact, PPT deck, or current/historical wording changed; no fabricated links — only user-provided links and web-confirmed official pages; unverified pages are explicitly labeled.
+- Validation: three gates (`check-evidence-sha256.sh` 14/14, `check-final-hygiene.sh`, `check-docs-consistency.sh`), `collect-report.sh`, `git diff --check`, patch/scripts-xv6 no-diff checks, `git ls-files` battery incl. `.github`. Results in the final assistant response.

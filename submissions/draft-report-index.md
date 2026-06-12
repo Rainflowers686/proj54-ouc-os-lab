@@ -9,8 +9,8 @@ It is not the final technical report, does not generate PDF, and does not includ
 
 | Material | Path | File | Content status |
 | --- | --- | --- | --- |
-| Project homepage | `README.md` | exists | stage15 learner-first homepage: what/for-whom/learning path Step0-7, labctl quick run, teacher and judge pointers, Baidu external-asset link in the judge section, honest evidence status and real-pothole closing note last |
-| Documentation guide | `docs/README.md` | exists | stage12 reader routing: first-time learners, lab runners, teachers/TAs, judges, and historical process records (lowest priority for newcomers) |
+| Project homepage | `README.md` | exists | stage19 student-first front door: first-time orientation, prerequisite knowledge list, six curated readings (full pool in references/), learning path, labctl quick run, teacher section, judge entry moved lower with Baidu asset link, directory tour, honest evidence status and real-pothole closing note |
+| Documentation guide | `docs/README.md` | exists | stage19 reader routing: first-time learners (now incl. references reading list), lab runners, teachers/TAs, judges (incl. submission checklist), and historical process records (lowest priority for newcomers) |
 | teacher guide | `docs/teacher_guide.md` | exists | stage12: 2/3/5-session course plans, mandatory vs optional labs, acceptance via teammate-verify summary blocks, anti-fabrication spot checks, student environment handling |
 | grading and rubric | `docs/grading_and_rubric.md` | exists | stage12: four grading dimensions, per-lab focus, unified deduction table (hardcoded outputs = fabrication), bonus items, grade bands |
 | troubleshooting | `docs/troubleshooting.md` | exists | stage12: symptom/cause/fix/what-to-report for WSL, PATH, /mnt slowness, Ctrl+Z + cleanup-qemu, git apply order, usys.pl filemode warning, RWX warning, DIRSIZ, timeout semantics |
@@ -112,7 +112,7 @@ It is not the final technical report, does not generate PDF, and does not includ
 | external directory guide | `external/README.md` | exists | baseline management notes |
 | xv6 baseline metadata | `external/xv6-baseline-record.md` | exists | metadata generated; records make success and boot evidence; manual interaction TODO |
 | logs directory guide | `logs/README.md` | exists | raw logs ignored by default; current make log is not tracked |
-| reference directory guide | `references/README.md` | exists | placeholder |
+| reference reading list | `references/README.md` | exists | stage19 layered reading guide: contest pages, official xv6/MIT entries, rCore/uCore/PKE course ecosystems, past winning docs; every link annotated with purpose, when-to-read, and not-an-implementation-source boundary; unverified personal pages clearly flagged |
 | PPT directory guide | `slides/README.md` | exists | stage16 guide for final PPT source, outline, generator, PPTX sync policy, and no-media boundary |
 | final PPT outline | `slides/final_ppt_outline.md` | exists | stage16 16-slide high-impact defense outline: lab kit story, current db85947/0001-0009 facts, evidence cards, tooling map, comparison, and honest boundaries |
 | final PPT source | `slides/final_ppt.md` | exists | stage16 16-slide final defense source: core story (course lab kit, not just syscalls), current final db85947/0001-0009 three-way PASS, 00:03:12 final video, 14/14 evidence hash, Baidu asset package, teaching value, honest boundaries |

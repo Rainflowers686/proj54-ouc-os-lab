@@ -1,15 +1,16 @@
 # docs 导航：你该看哪个文件
 
-> 维护时间：2026-06-10（stage12 learner-first 重构）。current integrated suite 为 `0001-0009`。
+> 维护时间：2026-06-12（stage19 入口微调；结构自 stage12）。current integrated suite 为 `0001-0009`。
 
 docs 目录里既有教程、教师材料，也有比赛报告和大量过程记录。不同的人该看的东西不一样，按下面对号入座，不要从 `docs/00` 顺序读到 `docs/24`——那是给追溯历史的人准备的。
 
 ## 1. 第一次学 OS 实验：按这个顺序看
 
-1. 根目录 [README.md](../README.md)：学习路线总览（Step 0 到 Step 7）。
+1. 根目录 [README.md](../README.md)：学习路线总览（第 0 步到第 7 步），开头还有"建议补的知识"和精选阅读。
 2. [docs/final/01_environment_setup.md](final/01_environment_setup.md)：装环境。
 3. `labs/lab0` → `lab1` → `lab2` → `lab3` → `lab4` → `lab5`，每个目录先读 `README.md` 再做 `student_tasks.md`。
 4. 卡住了看 [docs/troubleshooting.md](troubleshooting.md)。
+5. 想补背景或往深里走：[references/README.md](../references/README.md)（赛题原文、xv6 官方、rCore/uCore/PKE、往届作品，都标了"什么时候看"）。
 
 学习阶段不需要读 `docs/final/` 的报告，也不需要读编号文档。
 
@@ -32,6 +33,7 @@ docs 目录里既有教程、教师材料，也有比赛报告和大量过程记
 - [submissions/evidence_manifest.md](../submissions/evidence_manifest.md)：证据总索引——current final（`db85947 / 0001-0009`：三方 full PASS + 新视频 + SHA256，stage14 已登记）与 historical checkpoint（`e8e2fb9 / 0001-0007`）分层记录。
 - [submissions/draft-report-index.md](../submissions/draft-report-index.md)：全部材料清单，由 `scripts/collect-report.sh` 生成。
 - [slides/final_ppt.md](../slides/final_ppt.md)：答辩 PPT 源稿。
+- [submissions/submission_checklist.md](../submissions/submission_checklist.md)：提交前自查清单（最后一节是全检命令块）。
 
 ## 5. 过程记录：历史在这里，新手别先读
 
