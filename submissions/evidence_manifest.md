@@ -3,7 +3,7 @@
 > 维护时间：2026-06-11，stage16 最终答辩 PPT 重做后同步。
 > 本文件是最终提交证据索引，不保存原始证据文件。视频、截图、console log、summary 原件均保存在仓库外，Git 仓库只保存文字摘要、外部位置、文件大小和 SHA256。
 
-## 记录目的
+## 目标
 
 本文件用于让评委、队友和队长快速定位最终证据集，同时避免把原始视频、截图、summary、console log 等大文件或隐私材料提交进 Git。这里记录：
 
@@ -13,6 +13,18 @@
 - 外部证据资产包位置；
 - historical evidence 的边界；
 - 不提交原始证据的仓库卫生策略。
+
+## 适用对象
+
+本文适用于评审、队长、队友、提交材料维护者和隐私复核人员。读者可通过本文确认 current final、外部证据资产包、SHA256 核验命令和 historical evidence 的使用边界。
+
+## 内容范围
+
+本文只记录证据索引和证据元数据，包括工程 commit、证据文档 commit、integrated suite、三方 full verification、最终视频、PPT 产物、外部资产包、历史证据和禁止入库材料。本文不保存视频、截图、summary 原件、console log 或外部 xv6 源码。
+
+## 结构规范
+
+证据条目必须包含范围、文件名、状态、外部位置和 SHA256；current final 与 historical evidence 必须分层；PPTX、视频和 summary 必须区分“展示材料”“原始证据”和“证据索引”。新增证据前，应同步检查 `scripts/check-evidence-sha256.sh`、`submissions/demo_record.md`、`submissions/teammate_reproduction_record.md` 和根 README 中的事实描述。
 
 ## 当前最终证据：`db85947 / 0001-0009`
 
@@ -150,3 +162,15 @@ historical `0001-0007` 视频 SHA256：
 - 视频和截图隐私复核：用户已人工确认 OK。
 - 队友真实姓名和系统版本：不编造，如官方要求再补充。
 - 最终 PPT 排练：答辩前仍需人工排练。
+
+## 语言风格
+
+本文使用证据管理语言，只记录可由命令、文件、哈希或人工确认支撑的事实。不得使用“长期稳定”“完全可靠”“完整内存管理”“完整文件系统”等超出证据范围的表述。
+
+## 质量标准
+
+本文应能支撑 README、技术报告、PPT、提交 checklist 和验收说明中的所有证据声明。任何 PASS、SHA256、视频元数据或队友复现结论都应能回到外部资产包或验证脚本输出。
+
+## 边界条件
+
+不提交 `external/xv6-riscv/`、raw logs、summary 原件、视频、截图、token、密码或隐私材料。不把 timeout evidence 写成长期稳定性测试。不把 `pgcount`/`memstat` 写成完整内存管理；不把 `fcount`/`fdcount`/`fdinfo` 写成完整文件系统；Lab5 不新增内核机制。

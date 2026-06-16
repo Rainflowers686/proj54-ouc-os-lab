@@ -1,95 +1,37 @@
 # 00 Project Overview
 
-## 一句话简介
+## 目标
 
-OUC xv6 Lab Kit 是面向中国海洋大学操作系统课程的 xv6-riscv 分阶段实验指导、参考实现与可复现验证体系。
+OUC xv6 Lab Kit 是面向中国海洋大学操作系统课程的 xv6-riscv 分阶段实验指导、参考实现与可复现验证体系。项目目标是把 syscall、进程、页表、文件表和 copyout 这几类入门关键概念组织成可教学、可复现、可验收的实验包。
 
-## 赛题定位
+## 适用对象
 
-本项目对应 2026 全国大学生计算机系统能力大赛 - 操作系统设计赛（全国）- OS 功能挑战赛道 proj54：面向操作系统课程的操作系统竞赛和实验。
+本项目面向低年级学生、操作系统课程助教、准备复现实验的队友和 OS 功能挑战赛评审。学生用它学习 xv6 入门机制，教师用它布置实验，评审用它查看课程价值和证据链。
 
-proj54 是教学型功能挑战，不是“内核实现赛道刷 LTP”项目。本项目的核心价值不是堆叠大量未验证内核功能，而是把低年级同学可以理解、可以复现、可以继续扩展的 OS 实验链条搭起来。
+## 内容范围
 
-## 面向对象
+项目包括 Lab0 到 Lab5、独立 lab patches、integrated `0001-0009`、验证脚本、教师材料、评分标准、排障手册、正式技术报告和提交证据索引。第三方 xv6 源码不进入仓库，本仓库只保存本队增量。
 
-- 中国海洋大学计算机相关专业低年级学生。
-- 第一次从 Linux/命令行进入 xv6 实验的同学。
-- 准备参加 OS 功能挑战赛、需要理解 syscall、进程表和文件表的同学。
-- 后续维护课程实验包的助教和队员。
+## 当前状态
 
-## 官方评分口径与本项目材料对应
+current final 为 `db85947 feat(course): add lab runner and grading helpers`，integrated suite 为 `0001-0009`。syscall 编号为 hello=22、add2=23、pstate=24、pcount=25、fcount=26、pgcount=27、fdcount=28、memstat=29、fdinfo=30。rain、root、z2996 三方 full verification 已登记为 PASS。
 
-| 阶段 | 官方评分项 | 占比 | 本项目对应材料 |
-| --- | --- | ---: | --- |
-| 初赛 | 项目/源代码执行展示 | 50% | integrated `0001-0009` patches、`labctl`、`teammate-verify.sh --full`、QEMU demo video、三方 full verification summary |
-| 初赛 | 文档展示 | 50% | `docs/final/`、各 lab 教程式 README、`student_tasks.md`、`docs/teacher_guide.md`、`docs/grading_and_rubric.md`、`docs/troubleshooting.md`、AI/许可证/边界说明 |
-| 决赛 | 初赛阶段成绩 | 20% | 以上初赛材料与 current final evidence 继续作为基础证据 |
-| 决赛 | 决赛阶段成绩 | 80% | 现场答辩、最终技术报告、最终 PPT、演示视频、提交过程记录、源码分析和最终方案说明 |
-| 决赛阶段 | 项目/源代码执行展示 | 15% | clean baseline apply、integrated `0001-0009`、`labctl`、full/quick verification、final demo video |
-| 决赛阶段 | 设计方案文档撰写 | 25% | `docs/final/technical_report_v1.0.md`、`docs/final/` 正式文档体系、lab 教学文档、教师指南和评分 rubric |
-| 决赛阶段 | 现场答辩/提交过程记录/源码分析/最终设计方案/答辩幻灯片/作品演示视频 | 40% | `slides/final_defense_ppt.pptx`、`submissions/evidence_manifest.md`、`submissions/demo_record.md`、`submissions/teammate_reproduction_record.md`、外部 demo video 与 SHA256 |
+## 项目价值
 
-## 当前完成状态
+项目价值不在于堆叠复杂内核功能，而在于把低年级学生能理解的最小机制变成一套课程路径。Lab1 建立系统调用链路，Lab2 引入进程表和锁，Lab3 区分页表映射与地址空间大小，Lab4 区分 fd、`struct file` 和全局 file table，`memstat`/`fdinfo` 补充结构体 copyout，Lab5 训练综合复现和证据表达。
 
-| 模块 | 状态 | 说明 |
-| --- | --- | --- |
-| lab0 | 已完成 | 环境检查、baseline metadata、make、boot evidence |
-| lab1 | 已完成 | `hello()` 与 `add2(int,int)` syscall |
-| lab2 | 已完成 | `pstate`、`pcount`、`pchildtest` |
-| lab3 | integrated 已完成 | `pgcount()` 页表映射数量观察；eager/lazy allocation 对比；integrated `0006`；stage11b 进阶 `memstat()` 进入 integrated `0008`（`SYS_memstat = 29`，argaddr + copyout + struct ABI） |
-| lab4 | v0.2 已完成 | `fcount()` 全局 file table 观察；`fdcount()` 当前进程 fd table 观察；stage11b 进阶 `fdinfo()` 进入 integrated `0009`（`SYS_fdinfo = 30`，argint + argaddr + copyout + struct ABI） |
-| lab5 | capstone 已完成 | 综合复现实验文档；不新增内核机制；workflow 基于 integrated `0001-0009` |
-| integrated-labs | `0001-0009`（current final `db85947`） | `0001-0009` 可从 clean baseline 顺序应用并 make；rain/root/z2996 三方 `teammate-verify.sh --full` 均 PASS（含 memstattest/fdinfotest） |
-| 一键验证 | 已更新 | doctor/local/teammate/cleanup 脚本；local/teammate 覆盖 pgcounttest、fdcounttest、memstattest 和 fdinfotest |
-| 视频 | current final 已录制 | `20260611_final_integrated_0001_0009_demo.mp4`（31,529,984 bytes，SHA256 已登记）覆盖 current final `db85947 / 0001-0009`；`0001-0007` 视频与旧三段视频保留为 historical evidence |
-| 队友独立复现 | current final 三方 PASS | rain/root/z2996 三份 `db85947 / 0001-0009` full PASS 已登记（summary/screenshot SHA256 见 `submissions/evidence_manifest.md`，grade-summaries 解析 3/3 clean）；`e8e2fb9 / 0001-0007` 与 `1ba9db6` 记录保留为 historical |
-| 教学材料（stage12） | 已完成 | 每个 lab 配教程式 README + `student_tasks.md`（必做/选做/rubric/扣分点）；`docs/teacher_guide.md`（2/3/5 次课排法与验收）、`docs/grading_and_rubric.md`、`docs/troubleshooting.md`；根 README 与 docs 导航改为学习者优先，比赛证据分层到 `submissions/` 与 `docs/final/` |
+## 质量标准
 
-## OUC 本校课程特色
+项目材料应能回答“怎么跑、为什么这样设计、证据在哪、边界是什么”。所有完成状态应能追溯到 patch、脚本、summary、视频元数据或 evidence manifest。
 
-本项目按“先会复现，再能修改，再理解设计”的课程路径组织：
+## 边界条件
 
-1. lab0 解决环境和 baseline，降低首次进入 OS 实验的门槛。
-2. lab1 从最小 syscall 到带整数参数 syscall，帮助学生理解 user/kernel 边界。
-3. lab2 把 syscall 连接到进程表、状态枚举和锁。
-4. lab3 把 syscall 连接到用户页表、`PTE_V/PTE_U` 和 eager/lazy allocation 观察。
-5. lab4 连接用户态 fd、内核 `struct file`、全局 file table 和引用计数。
-6. integrated-labs 让多个实验在同一构建中演示，避免“每个实验只能孤立跑”的问题。
+本项目不是 LTP 覆盖项目，不实现完整内存管理、文件系统或调度器。Lab5 不新增内核机制。historical `e8e2fb9 / 0001-0007` 只作为历史稳定检查点。
 
-这个组织方式更适合课程教学和竞赛入门，而不是单次功能冲刺。
+## 结构规范
 
-## 同类项目对比定位
+文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 current final。
 
-| 项目 | 主要价值 | 本项目借鉴方式 | 本项目差异 |
-| --- | --- | --- | --- |
-| xv6-riscv | 小型教学 OS，代码适合课堂讲解 | 作为实验主线与 baseline | 本仓库不提交上游源码，只提交 patch、脚本、文档和 metadata |
-| uCore | 国内课程 OS 实验体系代表 | 借鉴分阶段实验组织 | 本项目聚焦 OUC 本校 xv6-riscv 入门，不重写 uCore 体系 |
-| rCore | Rust OS 教学体系代表 | 借鉴文档结构和 step-by-step 叙事 | 本项目使用 C/xv6-riscv，面向低年级 syscall/进程/文件表入门 |
-| YatSen OS / F-Tutorials / 往届作品 | 竞赛材料组织与展示参考 | 作为报告、PPT、实验包对比对象 | 具体 URL、许可证和引用位置待最终补充 |
+## 语言风格
 
-以上对比用于项目定位，不表示复制其代码或文档。正式引用见 `docs/final/10_reference_and_license_statement.md`。
-
-## 外部证据资产包
-
-演示视频、三方复现 summary/截图等大文件本体不进入 Git，统一存放在外部目录 `proj54_submission_assets`，并已整体上传百度网盘：链接 <https://pan.baidu.com/s/1Xt-G6VgP04eEAumqiMo7Uw?pwd=1234>（提取码 `1234`）。内含 current final `0001-0009` demo video、`db85947_final_0001_0009` 三方复现文件、historical `e8e2fb9_final_0001_0007` 证据及更早的 historical videos。文件清单和 SHA256 以 `submissions/evidence_manifest.md` 与 `scripts/check-evidence-sha256.sh` 为准——网盘只是文件载体，核验在仓库内完成。
-
-## 关键边界
-
-- 不提交 `external/xv6-riscv/`。
-- 不提交 `logs/*.log`、`logs/*.summary.txt`、视频、大文件、隐私材料。
-- 不把旧 commit `1ba9db6` 的队友 PASS 写成 `e8e2fb9` 复现；旧记录只作为 historical/superseded evidence。
-- 不把 `e8e2fb9 / 0001-0007` 的三方 full PASS 和旧视频写成 current final；它们是 historical stable checkpoint。current final 是 `db85947 / 0001-0009`，其三方 full verify、新视频、新 SHA256 已于 stage14 真实登记。
-- 不把 `memstat()` 写成完整内存管理，不把 `fdinfo()` 写成完整文件系统；二者都是只读观察，不返回物理地址、路径、inode 号或文件内容。
-- 不把 Lab5 写成新的内核机制；它是 capstone 综合复现实验。
-- 不把 timeout 捕获写成长期稳定性测试。
-- 不把 lab4 `fcount()` / `fdcount()` 写成完整文件系统实验。
-- 不把队长本机验证写成队友独立复现；final 记录中队长本机、队友 root、队友 z2996 分开记录，未知真实姓名和系统版本保持待补充。
-- 不把本项目表述为 LTP 覆盖或内核实现赛道项目。
-
-## 下一步产出
-
-- 基于 `docs/final/` 整理技术报告 v1.0。
-- 基于 `docs/final/00`、`06`、`08` 制作 PPT。
-- 补充队友真实姓名和系统版本（如最终材料需要）。
-- 确认平台提交方式；视频/截图隐私复核已由用户确认 OK。
-- 最终核查参考来源 URL 与许可证。
+使用中文技术写作风格，命令、文件名、commit、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。

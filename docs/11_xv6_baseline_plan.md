@@ -1,109 +1,37 @@
 # xv6-riscv Baseline Plan
 
-## Purpose
+## 目标
 
-This document records the plan and current status for fetching the xv6-riscv baseline used by `proj54-ouc-os-lab`.
+本文说明 xv6 baseline 的选择、保存方式和复现边界，确保所有 patch 都能从同一个干净基底解释和验证。
 
-Current stage: `stage1b: fetch xv6 baseline and record metadata`.
+## 适用对象
 
-This stage is authorized to clone the upstream xv6-riscv repository into `external/xv6-riscv/`, but it is not authorized to run `make` yet. Build and QEMU boot verification remain TODO until the team lead explicitly confirms the next step.
+适用于维护 patch、运行复现脚本、审查贡献边界的队员和评审。
 
-## Baseline Source
+## baseline 信息
 
-| Item | Value |
-| --- | --- |
-| Upstream | `https://github.com/mit-pdos/xv6-riscv.git` |
-| Local source path | `external/xv6-riscv/` |
-| Metadata record | `external/xv6-baseline-record.md` |
-| Source submission policy | Do not commit `external/xv6-riscv/` |
-| Build status | Not built; pending real `make` |
+上游仓库为 `https://github.com/mit-pdos/xv6-riscv.git`，baseline commit 为 `74f84181a3404d1d6a6ff98d342233979066ebb8`。本地源码路径为 `external/xv6-riscv/`，该目录不进入 Git。
 
-## Scripts
+## 使用方式
 
-### `scripts/xv6/fetch-xv6.sh`
+自动路线使用 `bash scripts/xv6/apply-integrated-labs.sh --make --yes`，脚本会 reset、clean、按顺序应用 integrated `0001-0009` 并运行 make。手动路线必须先 reset 到 baseline，再按 patch README 中的顺序应用。
 
-Purpose: preview, fetch, inspect, and record xv6 baseline metadata.
+## 质量标准
 
-```bash
-bash scripts/xv6/fetch-xv6.sh
-bash scripts/xv6/fetch-xv6.sh --run
-bash scripts/xv6/fetch-xv6.sh --status
-```
+任何 patch 声称可复现，都应说明基底、应用顺序、构建命令和验证方式。baseline 元数据应与 `external/README.md` 和 `external/xv6-baseline-record.md` 保持一致。
 
-Behavior:
+## 边界条件
 
-- Default target: `external/xv6-riscv`
-- Default upstream: `https://github.com/mit-pdos/xv6-riscv.git`
-- Default metadata record: `external/xv6-baseline-record.md`
-- Preview mode does not download anything.
-- `--run` clones only if the target directory does not already exist.
-- Existing targets are never overwritten.
-- After clone or status inspection, the script records upstream URL, local path, commit hash, branch, remote URL, LICENSE presence, generation time, and build status.
+不要把第三方 xv6 源码提交到本仓库。不要在已经叠加其他 independent patch 的源码树上继续应用另一组 independent patch。组合演示只使用 integrated sequence。
 
-### `scripts/xv6/check-xv6-baseline.sh`
+## 内容范围
 
-Purpose: inspect local baseline structure and required tools.
+本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 current final、historical checkpoint、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
 
-```bash
-bash scripts/xv6/check-xv6-baseline.sh
-```
+## 结构规范
 
-Checks:
+文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 current final。
 
-- `external/xv6-riscv/`
-- `external/xv6-riscv/Makefile`
-- `external/xv6-riscv/LICENSE`
-- `qemu-system-riscv64`
-- `riscv64-unknown-elf-gcc`
-- `riscv64-linux-gnu-gcc`
+## 语言风格
 
-The script does not run `make` by default.
-
-Future build command, not authorized in this stage:
-
-```bash
-bash scripts/xv6/check-xv6-baseline.sh --make
-```
-
-If `--make` is used later, output must be saved to `logs/xv6-make-YYYYMMDD-HHMMSS.log`. Success and failure must both be recorded truthfully.
-
-## Git Policy
-
-- `external/xv6-riscv/` is ignored by `.gitignore` and must not be committed as third-party source code.
-- `external/README.md` is tracked.
-- `external/xv6-baseline-record.md` is tracked and may be committed as metadata.
-- Raw logs under `logs/*.log` are ignored by default.
-- `logs/README.md` is tracked.
-
-## Current Real Environment
-
-The WSL2 Ubuntu 24.04 environment has been checked with `bash scripts/check-env.sh`.
-
-Observed status:
-
-- `git`: OK
-- `bash`: OK
-- `make`: OK
-- `qemu-system-riscv64`: OK
-- `riscv64-linux-gnu-gcc`: OK
-- `riscv64-unknown-elf-gcc`: WARN
-
-At least one RISC-V compiler is available through `riscv64-linux-gnu-gcc`. This is enough to proceed to baseline structure checks, but not enough to claim xv6 has built or booted.
-
-## Acceptance Criteria for Stage1b
-
-Stage1b is complete only when:
-
-- `scripts/xv6/fetch-xv6.sh --run` has either cloned xv6 or reported an existing local clone without overwriting it.
-- `external/xv6-baseline-record.md` exists and records the real current commit hash.
-- `scripts/xv6/check-xv6-baseline.sh` has checked baseline structure and toolchain presence without running `make`.
-- `git status --ignored --short external` confirms `external/xv6-riscv/` is ignored.
-- No third-party xv6 source files are staged for commit.
-
-## Explicit Non-Goals
-
-- Do not run `make` in this stage.
-- Do not run QEMU in this stage.
-- Do not claim build success.
-- Do not commit `external/xv6-riscv/`.
-- Do not copy large external materials or LICENSE text into project docs; record references and metadata instead.
+使用中文技术写作风格，命令、文件名、commit、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。

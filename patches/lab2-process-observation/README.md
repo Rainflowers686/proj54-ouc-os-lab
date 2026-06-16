@@ -1,95 +1,39 @@
-# lab2 process state observation
+# Lab2 Patch Guide
 
-## 实验名称
+## 目标
 
-lab2 process state observation
+本目录保存 Lab2 independent patch，用于单独教学 `pstate(int)` 进程状态观察。
 
-## patch 文件
+## 适用对象
 
-```text
-patches/lab2-process-observation/0001-add-pstate-syscall.patch
-```
+适用于学习进程表和锁的学生、助教和维护者。
 
-## baseline
+## 内容范围
 
-| 字段 | 内容 |
-| --- | --- |
-| baseline repo | `https://github.com/mit-pdos/xv6-riscv.git` |
-| baseline commit | `74f84181a3404d1d6a6ff98d342233979066ebb8` |
-| 本地源码路径 | `external/xv6-riscv/` |
+patch 从 clean baseline 增加 `pstate`、用户声明、stub、测试程序和 Makefile 入口。integrated 中相关功能扩展为 `pstate=24`、`pcount=25`。
 
-该 patch 独立于 lab1 patch，从 clean baseline 直接应用。**不能直接叠加到 lab1 patch 之上**：`SYS_pstate` 与 lab1 `SYS_hello` 都用 22，且实测 `git apply --check` 在 lab1 之上返回 exit 1。若要综合演示，请使用已新增的 [../integrated-labs/README.md](../integrated-labs/README.md)，该序列将 `SYS_pstate` 调整为 24；策略说明见 [../../docs/16_patch_strategy_and_integration_plan.md](../../docs/16_patch_strategy_and_integration_plan.md)。
+## 结构规范
 
-## 修改文件列表
+说明应包含 baseline、应用方式、输出前缀和锁边界。
 
-- `kernel/syscall.h`
-- `kernel/syscall.c`
-- `kernel/sysproc.c`
-- `user/user.h`
-- `user/usys.pl`
-- `Makefile`
-- `user/pstatetest.c`
-
-## 应用方式
+## 验证命令
 
 ```bash
 cd external/xv6-riscv
 git reset --hard 74f84181a3404d1d6a6ff98d342233979066ebb8
 git clean -fdx
 git apply ../../patches/lab2-process-observation/0001-add-pstate-syscall.patch
-```
-
-## 构建方式
-
-```bash
 make
 ```
 
-## 运行方式
+## 语言风格
 
-```bash
-make qemu
-```
+不要把一次 `RUNNING` 输出写成固定规律。
 
-进入 xv6 shell 后运行：
+## 质量标准
 
-```text
-pstatetest
-```
+`pstatetest` 应输出 `pstate(self) =`，并能解释锁路径。
 
-## 自动验证方式
+## 边界条件
 
-从仓库根目录运行：
-
-```bash
-bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="
-bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
-```
-
-## 当前真实验证状态
-
-| 检查项 | 状态 |
-| --- | --- |
-| clean baseline apply | PASS |
-| `make` | PASS |
-| `pstate(self) =` 输出捕获 | PASS |
-| `RUNNING` 输出捕获 | PASS |
-| 长期稳定性测试 | TODO |
-| 人工交互录屏 | TODO |
-| 第二名队员复现 | TODO |
-
-实际观察到的输出包含：
-
-```text
-pstate(self) = 4 (RUNNING)
-```
-
-## 教学价值
-
-该实验让学生在 lab1 syscall 参数传递之后，第一次读取内核进程信息。通过 `pstate(pid)`，学生可以理解：
-
-- 用户态如何传入 pid。
-- 内核如何遍历 `proc[]`。
-- `struct proc` 中的 `state` 如何表示进程状态。
-- 为什么读取 `p->state` 时要持有 `p->lock`。
-- syscall 可以作为观察内核状态的教学接口。
+Lab2 independent patch 不可直接叠加到 Lab1 independent patch。不提交 `external/xv6-riscv/`、raw logs、summary 原件、视频、截图、token、密码或隐私材料。不把 timeout evidence 写成长期稳定性测试。不把 `pgcount`/`memstat` 写成完整内存管理；不把 `fcount`/`fdcount`/`fdinfo` 写成完整文件系统；Lab5 不新增内核机制。

@@ -1,50 +1,29 @@
-# lab2 测试记录
+# Lab2 Test Record
 
-## 测试目标
+## 目标
 
-lab2 测试用于验证进程观察类 syscall 是否能完成以下闭环：
+本文记录 Lab2 进程观察测试的证据范围和非固定输出边界。
 
-1. 从 clean baseline 应用 lab2 patch。
-2. 构建 xv6。
-3. 在 xv6 中运行 `pstatetest`、`pcounttest`、`pchildtest`。
-4. 捕获 `pstate(self) =` 输出。
-5. 捕获实际状态文本 `RUNNING`。
-6. 捕获 `pcount(RUNNING) =` 和 `pcount(99) = -1`。
-7. 捕获 `pstate(child) =`。
+## 适用对象
 
-## 已真实执行命令
+适用于助教、维护者和学生报告复查人员。
 
-| 目的 | 命令 | 结果 |
-| --- | --- | --- |
-| clean baseline apply | `git apply ../../patches/lab2-process-observation/0001-add-pstate-syscall.patch` | PASS |
-| 构建 patched xv6 | `cd external/xv6-riscv && make` | PASS |
-| 捕获 pstatetest 前缀 | `bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="` | PASS |
-| 捕获 RUNNING | `bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"` | PASS |
-| integrated 0001-0004 构建 | `bash scripts/xv6/apply-integrated-labs.sh --make --yes` | PASS |
-| 捕获 pcount RUNNING 前缀 | `bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(RUNNING) ="` | PASS |
-| 捕获 pcount 负向测试 | `bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(99) = -1"` | PASS |
-| 捕获子进程状态前缀 | `bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="` | PASS |
+## 内容范围
 
-## 证据摘要
+记录覆盖 `pstatetest`、`pcounttest` 和 `pchildtest`。`pcount(RUNNING)` 与 child 状态不固定，只验证稳定前缀。
 
-| 证据 | 状态 | 说明 |
-| --- | --- | --- |
-| patch apply | PASS | lab2 patch 独立应用到 baseline commit |
-| make | PASS | 仍有已知 linker RWX warning |
-| pstatetest output | PASS | 实际观察到 `pstate(self) = 4 (RUNNING)` |
-| pcounttest output | PASS | 实际观察到 `pcount(RUNNING) = 1` 和 `pcount(99) = -1`；RUNNING 数字不固定承诺 |
-| pchildtest output | PASS | 实际观察到 `pstate(child) = ...`；状态受调度时序影响 |
+## 结构规范
 
-原始日志被 Git 忽略，不应提交。
+测试记录应说明命令、匹配文本和调度不确定性。
 
-## 尚未覆盖
+## 语言风格
 
-- TODO: 长期 QEMU 稳定性测试。
-- TODO: 人工交互 shell 测试与录屏。
-- TODO: 第二名队员独立复现。
-- TODO: 锁遗漏、syscall number 冲突等负向教学用例。
-- TODO: 与 lab1 patch 合并后的 syscall number 规划。
+避免把一次输出写成必然规律。
 
-## 与测试报告的关系
+## 质量标准
 
-正式摘要记录在 `docs/04_test_report.md`。lab2 复现审查见 `docs/15_lab2_process_observation_review.md`。本文件保留 lab2 专项测试说明，不复制完整日志。
+记录应与 Lab2 README、student tasks 和 verification 脚本一致。
+
+## 边界条件
+
+不提交 `external/xv6-riscv/`、raw logs、summary 原件、视频、截图、token、密码或隐私材料。不把 timeout evidence 写成长期稳定性测试。不把 `pgcount`/`memstat` 写成完整内存管理；不把 `fcount`/`fdcount`/`fdinfo` 写成完整文件系统；Lab5 不新增内核机制。

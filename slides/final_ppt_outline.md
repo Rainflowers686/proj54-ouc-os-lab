@@ -2,6 +2,22 @@
 
 > 本文件是 stage16-redesign-with-ppt-skill 的最终答辩结构说明，与 `slides/final_ppt.md` 和重新生成的 `slides/final_defense_ppt.pptx` 保持一致。
 
+## 目标
+
+本文定义最终答辩 PPT 的 16 页结构、证据锚点、讲解节奏和边界表达，使展示材料与技术报告、证据清单和生成后的 PPTX 保持一致。
+
+## 适用对象
+
+本文适用于答辩讲者、PPT 维护者、指导教师和提交材料复核人员。讲者可据此安排 5-8 分钟口头报告，维护者可据此检查 `slides/final_ppt.md` 和 `slides/final_defense_ppt.pptx` 是否偏离事实。
+
+## 内容范围
+
+大纲覆盖项目定位、评分口径、复现痛点、Lab0-Lab5 体系、工具链、三方复现、视频和 SHA256 证据、同类项目差异、组织创新和边界总结。本文不包含完整讲稿，也不保存视频、截图或 raw summaries。
+
+## 结构规范
+
+每一页必须有一个核心观点、一个主要图示任务和可回溯的证据来源。页序调整后，应同步修改 `slides/final_ppt.md`、`slides/generate_final_ppt.ps1` 生成结果和 `submissions/evidence_manifest.md` 中的 PPT 产物描述。
+
 ## 设计原则
 
 - 先给结论：每页只有一个短标题和一个核心观点。
@@ -54,3 +70,15 @@
 | 实验体系和技术亮点 | 5-10 | 3 分钟 |
 | 工具链与证据 | 11-13 | 1.5 分钟 |
 | 对比、创新和收束 | 14-16 | 1.5 分钟 |
+
+## 语言风格
+
+PPT 大纲使用答辩规划语言，短句优先，证据优先，不使用宣传口号替代事实。commit id、SHA256、命令、文件名和 syscall 名保持原样。
+
+## 质量标准
+
+大纲应与 PPT 源稿、生成 PPTX、技术报告和证据清单一致。所有数字、PASS 结论、视频元数据和边界表述必须可追溯；答辩前仍需人工检查版式、时间和讲稿。
+
+## 边界条件
+
+不提交 `external/xv6-riscv/`、raw logs、summary 原件、视频、截图、token、密码或隐私材料。不把 timeout evidence 写成长期稳定性测试。不把 `pgcount`/`memstat` 写成完整内存管理；不把 `fcount`/`fdcount`/`fdinfo` 写成完整文件系统；Lab5 不新增内核机制。

@@ -1,128 +1,44 @@
-# 队友复现故障排查：QEMU 卡住、Ctrl+Z 和清理
+# 队友复现故障排查
 
-> 维护时间：2026-06-06（stage7a2）。
-> 本文用于排查队友复现 integrated-labs 时的卡住问题；正式测试优先看 `docs/23_teammate_quickstart.md`。
+## 目标
 
-## 1. apply + make 成功后不要继续等
+本文面向队友复现时的高频故障，说明 QEMU 卡住、`Ctrl+Z` 挂起、timeout 和路径性能问题的处理方式。
 
-运行：
+## 适用对象
 
-```bash
-bash scripts/xv6/apply-integrated-labs.sh --make --yes
-```
+适用于运行 `teammate-verify.sh --full` 的队友、助教和验收人员。
 
-如果已经看到：
+## 快速处理
 
-```text
-[OK] make completed successfully
-```
-
-说明 apply + make 阶段已经完成。它不是交互式 QEMU，不需要继续等待。后续可以运行：
+遇到异常先运行：
 
 ```bash
-bash scripts/xv6/teammate-verify.sh --quick
-```
-
-## 2. boot 和命令验证正常耗时
-
-`boot-xv6.sh` 正常应在 1-2 分钟内返回；`run-xv6-command.sh` 每个用户程序验证通常应在 30 秒内返回（一旦捕获到 expected output 就会尽快终止 QEMU，不再等待完整 timeout）。超过 5 分钟应按：
-
-```text
-Ctrl+C
-```
-
-不要用 `Ctrl+Z` 当退出方式。`boot-xv6.sh` 和 `run-xv6-command.sh` 都有 soft timeout、hard timeout、cleanup trap 和 **快速退出机制**；如果仍卡住，按本文清理残留进程。
-
-## 3. Ctrl+Z 不是退出
-
-`Ctrl+C` = interrupt，表示中断前台命令。
-
-`Ctrl+Z` = suspend，表示挂起前台命令；它不是退出。误按后可能把 `bash`、`timeout`、`make qemu` 或 `qemu-system-riscv64` 留在后台，下一次复现就可能继续卡。
-
-## 4. 推荐清理命令
-
-优先使用仓库脚本：
-
-```bash
+bash scripts/xv6/doctor.sh
 bash scripts/xv6/cleanup-qemu.sh
 ```
 
-它会先列出相关进程，再执行 rescue-level `pkill` 清理，最后再次列出剩余进程。注意：`pkill` 可能影响同一 WSL 实例里的其他 xv6/QEMU 运行。
+若同一终端里按过 `Ctrl+Z`，再运行 `jobs -l` 查看挂起任务，并用 `kill %<job>` 清理。
 
-如果你在同一个 shell 里误按过 `Ctrl+Z`，也可以手工检查 job：
+## 常见原因
 
-```bash
-jobs -l
-kill %1
-```
+仓库位于 `/mnt/d/...` 时，第一次 make 或 boot 可能偏慢，这是 drvfs 性能和 mtime 行为导致的常见现象。`Ctrl+Z` 不是退出 QEMU，而是挂起进程，后续脚本可能遇到残留进程。期望文本过窄也会导致 `COMMAND_EVIDENCE_NOT_FOUND`。
 
-如果 job 编号不是 `%1`，按 `jobs -l` 显示的实际编号修改。
+## 质量标准
 
-救援级手工命令如下：
+报告故障时应提供 doctor 输出、执行命令、失败日志尾部和是否按过 `Ctrl+Z`。不要只发截图，不要手工改 summary。
 
-```bash
-pkill -f qemu-system-riscv64 || true
-pkill -f "make qemu" || true
-```
+## 边界条件
 
-清理后可检查：
+排障文档不替代 full verification。清理 QEMU 只能修复本地残留进程，不能证明项目通过。
 
-```bash
-pgrep -af 'qemu-system-riscv64|make.*qemu' || echo "(OK: no qemu/make qemu process)"
-```
+## 内容范围
 
-## 5. 如何继续复现
+本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 current final、historical checkpoint、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
 
-第一次正式复现：
+## 结构规范
 
-```bash
-bash scripts/xv6/teammate-verify.sh --full
-```
+文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 current final。
 
-已经 make 成功后的二次重测：
+## 语言风格
 
-```bash
-bash scripts/xv6/teammate-verify.sh --quick
-```
-
-如果机器较慢，或仓库在 `/mnt/d` 下首次 boot 较慢，可临时提高 timeout：
-
-```bash
-XV6_BOOT_TIMEOUT_SECONDS=90 XV6_BOOT_RETRIES=2 XV6_COMMAND_TIMEOUT_SECONDS=90 XV6_COMMAND_RETRIES=2 bash scripts/xv6/teammate-verify.sh --quick
-```
-
-成功必须来自脚本在真实 QEMU 日志里匹配到预期输出，不能手写或伪造。
-
-## 6. 反馈给队长
-
-优先复制 `teammate-verify.sh` 最后打印的：
-
-```text
-COPY THIS SUMMARY TO TEAM LEAD
-...
-END SUMMARY
-```
-
-也可以复制对应 summary 文件内容：
-
-```text
-logs/teammate-verify-YYYYMMDD-HHMMSS.summary.txt
-```
-
-失败时请补充：
-
-- 运行的是 `--full` 还是 `--quick`；
-- 是否看到 `[OK] make completed successfully`；
-- 是否按过 `Ctrl+Z`；
-- 是否运行过 `cleanup-qemu.sh`；
-- 失败步骤附近的终端输出；
-- 当前目录是否在 `/mnt/` 下。
-
-## 7. 安全边界
-
-- 不提交 `external/xv6-riscv/`。
-- 不提交 `logs/*.log`。
-- 不提交 `logs/teammate-verify-*.summary.txt`。
-- 不发 token、密码、cookie、报名材料或隐私截图。
-- 不把 timeout 自动捕获说成人工交互录屏。
-- 不把失败结果改写成成功。
+使用中文技术写作风格，命令、文件名、commit、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。

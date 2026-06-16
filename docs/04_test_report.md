@@ -1,417 +1,47 @@
 # 测试报告
 
-本文档记录 `proj54-ouc-os-lab` 已真实执行的测试与验证结果。
+## 目标
 
-记录原则：
+本文汇总 OUC xv6 Lab Kit 的验证范围、测试命令、当前证据状态和不可夸大的边界。正式证据索引以 `submissions/evidence_manifest.md` 为准，本文用于解释测试体系如何覆盖项目目标。
 
-- 只记录真实执行过的命令和结果。
-- 原始 `logs/*.log` 默认不提交，只在文档中记录路径和关键信息。
-- 不将 `make` 成功写成 QEMU boot 成功。
-- 不将 timeout 自动捕获写成长期稳定性或人工交互测试。
-- 不伪造 lab1/lab2/lab4 syscall 输出。
+## 适用对象
 
-## 测试记录
+适合评审、队友复现人员、助教和项目维护者。学生完成作业时可参考命令，但最终仍按各 lab 任务书提交。
 
-### xv6-riscv baseline build test
+## 测试范围
 
-| 字段 | 内容 |
-| --- | --- |
-| 测试名称 | xv6-riscv baseline build test |
-| 日期时间 | 2026-06-03 23:50:03 +08:00 |
-| 命令 | `bash scripts/xv6/check-xv6-baseline.sh --make` |
-| baseline 路径 | `external/xv6-riscv/` |
-| baseline commit | `74f84181a3404d1d6a6ff98d342233979066ebb8` |
-| 结果 | `make` 成功 |
-| 日志文件 | `logs/xv6-make-20260603-235003.log` |
-| 原始日志是否提交 | 否，`logs/*.log` 被 `.gitignore` 忽略 |
+current final 为 `db85947 / integrated 0001-0009`。full verification 覆盖 doctor、baseline、apply+make、boot、`hello`、`add2test`、`pstatetest`、`pcounttest`、`pchildtest`、`fcounttest`、`pgcounttest`、`fdcounttest`、`memstattest`、`fdinfotest` 和 overall。
 
-环境与工具链摘要：
-
-| 项目 | 状态 |
-| --- | --- |
-| baseline directory | OK |
-| `Makefile` | OK |
-| `LICENSE` | OK |
-| `qemu-system-riscv64` | OK |
-| `riscv64-linux-gnu-gcc` | OK |
-| `riscv64-unknown-elf-gcc` | WARN: 当前环境缺失 |
-
-构建证据摘要：
-
-- 构建过程中使用了 `riscv64-linux-gnu-gcc` 和 `riscv64-linux-gnu-ld`。
-- 生成了 kernel 相关构建产物。
-- linker 出现 `LOAD segment with RWX permissions` warning。
-- 尽管存在该 warning，`make` 退出成功。
-
-### xv6-riscv baseline boot evidence test
-
-| 字段 | 内容 |
-| --- | --- |
-| 测试名称 | xv6-riscv baseline boot evidence test |
-| 日期时间 | 2026-06-04 |
-| 命令 | `bash scripts/xv6/boot-xv6.sh` |
-| baseline 路径 | `external/xv6-riscv/` |
-| 结果 | baseline boot evidence found |
-| 关键文本 | `xv6 kernel is booting`，`init: starting sh` |
-| 原始日志是否提交 | 否，`logs/*.log` 被 `.gitignore` 忽略 |
-
-边界说明：
-
-- 本验证使用 timeout 自动退出 QEMU。
-- 该结果只记录 boot evidence，不等同于长期稳定性测试。
-- 尚未做人工长期交互测试。
-
-### stage6c boot evidence timeout/retry hardening
-
-| 字段 | 内容 |
-| --- | --- |
-| 测试/变更名称 | stage6c boot evidence timeout/retry hardening |
-| 日期 | 2026-06-05 |
-| 脚本 | `scripts/xv6/boot-xv6.sh` |
-| 默认 timeout | 45 秒/次 |
-| 默认 attempts | 2 次 |
-| 环境变量覆盖 | `XV6_BOOT_TIMEOUT_SECONDS=<seconds>`，`XV6_BOOT_RETRIES=<attempts>` |
-| 日志命名 | `logs/xv6-boot-YYYYMMDD-HHMMSS-attemptN.log` |
-| 成功条件 | 同一次尝试日志中同时检测到 `xv6 kernel is booting` 和 `init: starting sh` |
-| 失败条件 | 所有尝试均未检测到完整 boot evidence，脚本非 0 退出 |
-
-背景：stage6a/stage6b 已真实发现 clean build 后首次 `boot-xv6.sh` 可能因 `fs.img` 补建、`/mnt/d` mtime skew 或构建耗时，在原 20 秒 timeout 内未捕获 boot evidence；第二次运行成功。stage6c 将默认 timeout 加长并增加自动 retry，以降低这种假失败风险。
-
-边界：
-
-- timeout 返回 124 不一定代表 boot 永久失败，需要结合日志关键文本判断。
-- 脚本只捕获 boot evidence，不代表长期稳定性测试。
-- 不声称人工交互录屏或第二名队员复现已完成。
-- 原始 `logs/*.log` 仍不提交。
-
-stage6c 真实验证结果（2026-06-05，WSL2 Ubuntu）：
-
-| 命令 | 结果 | 日志 |
-| --- | --- | --- |
-| `bash scripts/xv6/apply-integrated-labs.sh --make --yes` | PASS，clean baseline + integrated `0001-0005` apply 成功，`make` 成功 | `logs/integrated-make-20260605-080220.log`，ignored |
-| `bash scripts/xv6/boot-xv6.sh` | PASS，默认 45s / 2 attempts，第 1 次尝试捕获 boot evidence | `logs/xv6-boot-20260605-080231-attempt1.log`，ignored |
-| `XV6_BOOT_TIMEOUT_SECONDS=60 XV6_BOOT_RETRIES=2 bash scripts/xv6/boot-xv6.sh` | PASS，环境变量覆盖生效，显示 60s / 2 attempts，第 1 次尝试捕获 boot evidence | `logs/xv6-boot-20260605-080433-attempt1.log`，ignored |
-| `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"` | PASS | ignored log |
-| `bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"` | PASS | ignored log |
-| `bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="` | PASS | ignored log |
-| `bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(RUNNING) ="` | PASS | ignored log |
-| `bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="` | PASS | ignored log |
-| `bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"` | PASS | ignored log |
-
-### lab1 hello syscall patch test
-
-| 字段 | 内容 |
-| --- | --- |
-| 测试名称 | lab1 hello syscall patch test |
-| baseline commit | `74f84181a3404d1d6a6ff98d342233979066ebb8` |
-| patch 文件 | `patches/lab1-system-call/0001-add-hello-syscall.patch` |
-| patch 目标 | 新增最小 `hello()` syscall，返回整数 `2026` |
-| `make` 结果 | 成功 |
-| hello 验证命令 | `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"` |
-| hello 输出结果 | 成功检测到预期输出 |
-| 原始日志是否提交 | 否，`logs/*.log` 被 `.gitignore` 忽略 |
-
-检测到的用户程序输出：
-
-```text
-hello syscall returned 2026
-```
-
-实现范围：
-
-- `kernel/syscall.h`: 增加 `SYS_hello 22`。
-- `kernel/syscall.c`: 注册 `sys_hello`。
-- `kernel/sysproc.c`: 实现 `sys_hello()`。
-- `user/user.h`: 声明 `hello()`。
-- `user/usys.pl`: 增加 `entry("hello")`。
-- `Makefile`: 将 `_hello` 加入 `UPROGS`。
-- `user/hello.c`: 新增用户态测试程序。
-
-### lab1 add2 argint syscall extension test
-
-| 字段 | 内容 |
-| --- | --- |
-| 测试名称 | lab1 add2 argint syscall extension test |
-| baseline commit | `74f84181a3404d1d6a6ff98d342233979066ebb8` |
-| patch 序列 | `0001-add-hello-syscall.patch` 后应用 `0002-add-argint-add2-syscall.patch` |
-| patch 目标 | 新增 `add2(int a, int b)` syscall，使用 `argint()` 获取两个整数参数 |
-| 预期输出 | `add2(20, 6) returned 26` |
-| clean apply | 成功 |
-| `make` 命令 | `cd external/xv6-riscv && make` |
-| `make` 结果 | 成功 |
-| hello 回归命令 | `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"` |
-| hello 回归结果 | 成功检测到预期输出 |
-| add2 验证命令 | `bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"` |
-| add2 验证结果 | 成功检测到预期输出 |
-| 原始日志是否提交 | 否，`logs/*.log` 被 `.gitignore` 忽略 |
-
-实现范围：
-
-- `kernel/syscall.h`: 增加 `SYS_add2 23`。
-- `kernel/syscall.c`: 注册 `sys_add2`。
-- `kernel/sysproc.c`: 实现 `sys_add2()`，调用 `argint(0, &a)` 和 `argint(1, &b)`。
-- `user/user.h`: 声明 `add2(int, int)`。
-- `user/usys.pl`: 增加 `entry("add2")`。
-- `Makefile`: 将 `_add2test` 加入 `UPROGS`。
-- `user/add2test.c`: 新增用户态测试程序。
-
-过程问题记录：
-
-- 直接在 PowerShell 中运行 `make` 失败，因为 Windows shell 找不到 `make`；后续使用 WSL/bash 运行 `make` 成功。
-- 第一版手写 `0002` patch 因 hunk 计数错误无法应用；后续使用 WSL Git 重新生成干净增量 patch。
-- 曾出现 Windows Git / WSL Git 行尾差异风险；最终 `0002` 已重新生成为小型增量 patch。
-
-边界说明：
-
-- 该记录证明 `argint()` 进阶 syscall patch 可构建并捕获输出。
-- timeout 自动捕获不等同于长期稳定性测试。
-- 人工交互 Demo 和第二名队员独立复现仍为 TODO。
-
-### lab2 pstate process observation test
-
-| 字段 | 内容 |
-| --- | --- |
-| 测试名称 | lab2 pstate process observation test |
-| baseline commit | `74f84181a3404d1d6a6ff98d342233979066ebb8` |
-| patch 文件 | `patches/lab2-process-observation/0001-add-pstate-syscall.patch` |
-| patch 目标 | 新增 `pstate(int pid)` syscall，观察单个进程状态 |
-| patch 依赖 | 独立 patch，从 clean baseline 直接应用，不依赖 lab1 |
-| clean apply | 成功 |
-| `make` 命令 | `cd external/xv6-riscv && make` |
-| `make` 结果 | 成功 |
-| pstatetest 验证命令 | `bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="` |
-| pstatetest 验证结果 | 成功检测到预期前缀 |
-| RUNNING 验证命令 | `bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"` |
-| RUNNING 验证结果 | 成功检测到 `RUNNING` |
-| 实际观察输出 | `pstate(self) = 4 (RUNNING)` |
-| 原始日志是否提交 | 否，`logs/*.log` 被 `.gitignore` 忽略 |
-
-实现范围：
-
-- `kernel/syscall.h`: 增加 `SYS_pstate 22`。
-- `kernel/syscall.c`: 注册 `sys_pstate`。
-- `kernel/sysproc.c`: 实现 `sys_pstate()`，遍历 `proc[]` 并在持有 `p->lock` 时读取 `p->state`。
-- `user/user.h`: 声明 `pstate(int)`。
-- `user/usys.pl`: 增加 `entry("pstate")`。
-- `Makefile`: 将 `_pstatetest` 加入 `UPROGS`。
-- `user/pstatetest.c`: 新增用户态测试程序。
-
-边界说明：
-
-- 只观察单个 pid。
-- 不实现完整 `ps`。
-- 不修改调度算法。
-- timeout 自动捕获不等同于长期稳定性测试。
-- 第二名队员独立复现仍为 TODO。
-- lab2 patch 独立于 lab1 patch；若后续合并，需要重新规划 syscall number。
-
-### integrated lab1+lab2 patch sequence test
-
-| 字段 | 内容 |
-| --- | --- |
-| 测试名称 | integrated lab1+lab2 patch sequence test |
-| 日期时间 | 2026-06-04 |
-| baseline commit | `74f84181a3404d1d6a6ff98d342233979066ebb8` |
-| patch 序列 | `patches/integrated-labs/0001-add-hello-syscall.patch` → `0002-add-argint-add2-syscall.patch` → `0003-add-pstate-syscall.patch` |
-| patch 目标 | 在同一个 xv6 构建中同时演示 `hello`、`add2test` 和 `pstatetest` |
-| syscall 号 | `SYS_hello 22`，`SYS_add2 23`，`SYS_pstate 24` |
-| helper 预览命令 | `bash scripts/xv6/apply-integrated-labs.sh` |
-| helper 预览结果 | 成功；只输出状态和计划，不 reset、不 apply、不 make |
-| helper 构建命令 | `bash scripts/xv6/apply-integrated-labs.sh --make --yes` |
-| helper 构建日志 | `logs/integrated-make-20260604-163022.log` |
-| clean apply | 成功 |
-| `make` 命令 | 由 `apply-integrated-labs.sh --make --yes` 执行 |
-| `make` 结果 | 成功 |
-| boot 验证命令 | `bash scripts/xv6/boot-xv6.sh` |
-| boot 验证结果 | 成功检测到 `xv6 kernel is booting` 和 `init: starting sh` |
-| hello 验证命令 | `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"` |
-| hello 验证结果 | 成功检测到预期输出 |
-| add2 验证命令 | `bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"` |
-| add2 验证结果 | 成功检测到预期输出 |
-| pstatetest 验证命令 | `bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="` |
-| pstatetest 验证结果 | 成功检测到预期前缀 |
-| RUNNING 验证命令 | `bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"` |
-| RUNNING 验证结果 | 成功检测到 `RUNNING` |
-| 原始日志是否提交 | 否，`logs/*.log` 被 `.gitignore` 忽略 |
-
-实现范围：
-
-- integrated `0001` 与 lab1 `0001` 一致，新增 `hello()`。
-- integrated `0002` 与 lab1 `0002` 一致，新增 `add2(int, int)`。
-- integrated `0003` 在 integrated `0001`+`0002` 之上新增 `pstate(int)`，并使用 `SYS_pstate 24` 避免与 `SYS_hello 22` 冲突。
-- `scripts/xv6/apply-integrated-labs.sh` 默认预览；`--make --yes` 会 reset/clean ignored 的 `external/xv6-riscv/`，顺序应用 integrated patch sequence，并运行 `make`。
-
-边界说明：
-
-- integrated patch sequence 是综合演示路径，不替代 lab1/lab2 independent patch。
-- timeout 自动捕获不等同于长期稳定性测试。
-- 人工交互录屏和第二名队员独立复现仍为 TODO。
-- `make` 仍出现已知 `LOAD segment with RWX permissions` linker warning，但本次 `make` 退出成功。
-- helper 只操作 ignored 的 `external/xv6-riscv/` 和 ignored 的 `logs/*.log`，不修改主仓库 tracked 文件。
-
-### lab4 file table observation test
-
-| 字段 | 内容 |
-| --- | --- |
-| 测试名称 | lab4 file table observation test |
-| 日期时间 | 2026-06-04 |
-| baseline commit | `74f84181a3404d1d6a6ff98d342233979066ebb8` |
-| independent patch | `patches/lab4-file-table-observation/0001-add-fcount-syscall.patch` |
-| integrated patch | `patches/integrated-labs/0005-add-file-table-observation.patch` |
-| independent syscall 号 | `SYS_fcount 22` |
-| integrated syscall 号 | `SYS_fcount 26` |
-| 用户程序 | `fcounttest` |
-| independent clean apply | 成功 |
-| independent `make` | 成功 |
-| integrated `0001-0005` clean apply | 成功 |
-| integrated `make` | 成功 |
-| 原始日志是否提交 | 否，`logs/*.log` 被 `.gitignore` 忽略 |
-
-真实验证命令摘要：
+## 核心命令
 
 ```bash
-make -C external/xv6-riscv
-bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
+bash scripts/xv6/doctor.sh
 bash scripts/xv6/apply-integrated-labs.sh --make --yes
 bash scripts/xv6/boot-xv6.sh
-bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(before) ="
-bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_open) ="
-bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_close) ="
-bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
+bash scripts/xv6/teammate-verify.sh --full
+bash scripts/labctl.sh verify
 ```
 
-已捕获的稳定输出前缀：
+## 当前结果
 
-```text
-fcount(before) =
-fcount(after_open) =
-fcount(after_close) =
-fcounttest done
-```
+rain、root、z2996 三方在 current final 上 full verification 均已登记为 PASS，`grade-summaries` 解析为 3 clean PASS。最终演示视频 `20260611_final_integrated_0001_0009_demo.mp4` 的大小、时长、分辨率、帧率和 SHA256 已记录在 evidence manifest。`e8e2fb9 / 0001-0007` 只作为 historical checkpoint，不覆盖 `memstat` 和 `fdinfo`。
 
-本地一次真实输出中观察到：
+## 质量标准
 
-```text
-fcount(before) = 1
-fcount(after_open) = 2
-fcount(after_close) = 1
-fcounttest done
-```
+测试记录必须同时说明命令、匹配文本、commit、suite 和证据位置。对易变输出只匹配稳定前缀或由测试程序内部计算 delta，不把一次观察值写成必然值。summary 和 raw logs 默认不入 Git。
 
-说明：上述数字只作为一次真实观察样例，不作为固定验收标准。文件表引用数量可能受 shell、console、init 和调度时序影响。真正稳定的是差值方向：`open` 使计数 +1、`close` 使计数 −1（stage6b 在 independent 与 integrated 两种构建中均实测到 `1 → 2 → 1`）。
+## 边界条件
 
-stage6b 红队复审重验（2026-06-05，WSL2 Ubuntu-24.04）：independent lab4 patch 与 integrated `0005` 均未改动代码；两条 clean-baseline 路径重新跑通——independent（apply + make + boot + `fcounttest done`）与 integrated `0001-0005`（`apply-integrated-labs.sh --make --yes` + boot + hello/add2test/pstatetest/pcounttest/pchildtest/fcounttest）。`make` 仅出现 baseline 自带的 `ld ... LOAD segment with RWX permissions` 警告（与 fcount 无关），无编译错误。日志 `logs/integrated-make-20260605-071545.log`（ignored）。
+timeout 捕获不是长期稳定性测试。QEMU fast exit 只说明脚本已匹配预期文本。队长本机 PASS、队友 PASS、视频证据和 historical evidence 必须分层记录，不能互相替代。
 
-实现范围：
+## 内容范围
 
-- `kernel/file.c` 新增 `filecount()`，持有 `ftable.lock` 后遍历 `ftable.file[]`。
-- `kernel/defs.h` 声明 `filecount()`。
-- syscall 层新增 `sys_fcount()`、syscall number、dispatch table entry 和用户态 stub。
-- `user/fcounttest.c` 观察临时文件打开前、打开后、关闭后的文件表引用数量。
+本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 current final、historical checkpoint、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
 
-边界说明：
+## 结构规范
 
-- 这是文件表观察实验，不是完整文件系统实验。
-- 不观察 inode，不修改文件系统布局。
-- timeout 自动捕获不等同于长期稳定性测试。
-- 人工交互录屏和第二名队员独立复现仍为 TODO。
-- stage6a 最终复验中，`apply-integrated-labs.sh --make --yes` 后第一次运行 `boot-xv6.sh` 未捕获 boot evidence，原因是 `make qemu` 在 20 秒 timeout 内仍在补建 `fs.img` 相关用户程序；第二次运行 `boot-xv6.sh` 成功捕获 `xv6 kernel is booting` 和 `init: starting sh`。该失败不写成成功，保留为真实边界记录。
+文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 current final。
 
-### integrated lab1+lab2+lab4 patch sequence test
+## 语言风格
 
-| 字段 | 内容 |
-| --- | --- |
-| 测试名称 | integrated lab1+lab2+lab4 patch sequence test |
-| 日期时间 | 2026-06-04 |
-| patch 序列 | integrated `0001` → `0002` → `0003` → `0004` → `0005` |
-| syscall 号 | `hello=22`，`add2=23`，`pstate=24`，`pcount=25`，`fcount=26` |
-| helper 构建命令 | `bash scripts/xv6/apply-integrated-labs.sh --make --yes` |
-| `make` 结果 | 成功 |
-| boot evidence | 成功 |
-| 回归命令 | `hello`、`add2test`、`pstatetest`、`pcounttest`、`pchildtest`、`fcounttest` |
-| 回归结果 | 均成功捕获预期关键文本 |
-
-已真实捕获：
-
-- `hello syscall returned 2026`
-- `add2(20, 6) returned 26`
-- `pstate(self) =`
-- `pcount(RUNNING) =`
-- `pcount(99) = -1`
-- `pstate(child) =`
-- `fcounttest done`
-
-## 当前风险与后续动作
-
-### integrated lab2 v0.2 process observation extension test
-
-| 字段 | 内容 |
-| --- | --- |
-| 测试名称 | integrated lab2 v0.2 process observation extension test |
-| 日期时间 | 2026-06-04 |
-| baseline commit | `74f84181a3404d1d6a6ff98d342233979066ebb8` |
-| patch 序列 | integrated `0001` → `0002` → `0003` → `0004-extend-process-observation.patch` |
-| patch 目标 | 在同一个 xv6 构建中保留 lab1/lab2 v0.1，并新增 `pcount(int state)`、`pcounttest`、`pchildtest` |
-| syscall 号 | `SYS_hello 22`，`SYS_add2 23`，`SYS_pstate 24`，`SYS_pcount 25` |
-| helper 预览命令 | `bash scripts/xv6/apply-integrated-labs.sh` |
-| helper 预览结果 | 成功；预览模式只读，不 reset、不 apply、不 make |
-| helper 构建命令 | `bash scripts/xv6/apply-integrated-labs.sh --make --yes` |
-| helper 构建日志 | `logs/integrated-make-20260604-213013.log`，原始日志 ignored，不提交 |
-| clean apply | 成功 |
-| `make` 结果 | 成功 |
-| boot evidence | 成功检测到 `xv6 kernel is booting` 和 `init: starting sh` |
-| hello 回归 | 成功检测到 `hello syscall returned 2026` |
-| add2test 回归 | 成功检测到 `add2(20, 6) returned 26` |
-| pstatetest 回归 | 成功检测到 `pstate(self) =` |
-| pcounttest 计数 | 成功检测到 `pcount(RUNNING) =`；本地日志中观察到 `pcount(RUNNING) = 1`，但数值不固定承诺 |
-| pcounttest 负向输入 | 成功检测到 `pcount(99) = -1` |
-| 子进程状态观察 | 成功检测到 `pstate(child) =` |
-| 原始日志是否提交 | 否，`logs/*.log` 被 `.gitignore` 忽略 |
-
-实现范围：
-
-- integrated `0004` 在 integrated `0001-0003` 之后应用，不改动原有 independent patch。
-- `pcount(int state)` 使用 `argint()` 获取状态编号；无效状态返回 `-1`；遍历 `proc[]` 时对每个 `proc` 持有 `p->lock` 后读取 `p->state`。
-- `pcounttest` 覆盖一个正向观察前缀和一个负向输入：`pcount(RUNNING) = <n>`、`pcount(99) = -1`。
-- `pchildtest` 通过 `fork()` 创建子进程并调用 `pstate(child_pid)`，输出 `pstate(child) = <state> (<STATE_NAME>)`。
-
-过程问题与真实修正：
-
-- 原计划命令名 `pstatechildtest` 在 xv6 fs image 构建阶段触发真实 `mkfs` 失败，因为 `_pstatechildtest` 超过 xv6 `DIRSIZ` 文件名限制。
-- 修正为较短命令名 `pchildtest`；输出文本仍保留 `pstate(child) = ...`，便于教学和自动验证。
-- 子进程状态受调度时序影响，本地日志中观察到过 `RUNNABLE` 和 `SLEEPING`；自动验证只匹配稳定前缀，不伪造固定状态。
-
-边界说明：
-
-- 该记录证明 integrated `0001-0004` 可从 clean baseline 构建并捕获关键输出。
-- 该记录不等同于长期稳定性测试，不等同于人工交互录屏。
-- lab2 v0.2 仍是进程状态观察实验，不是完整 `ps` 工具，不修改调度器。
-
-stage5b 红队复审重验（2026-06-04，WSL2 Ubuntu-24.04）：
-
-- `0004` patch 未做任何代码改动；本轮为独立重新复现 + 文档补全。
-- 从 clean baseline 重新 `apply 0001-0004 + make`：PASS。日志 `logs/integrated-make-20260604-220936.log`（ignored）。
-- 重验实测值：`pstate(self) = 4 (RUNNING)`、`pcount(RUNNING) = 1`（不固定承诺）、`pcount(99) = -1`；`pchildtest` 在**同一次 boot** 内观察到 `3 (RUNNABLE)` 与 `2 (SLEEPING)` 混合，`pstate(-1) = -1`。
-- 已知无害现象：从 clean baseline `git apply` 时每个 patch 都打印 `warning: user/usys.pl has type 100644, expected 100755`；patch 仍成功应用、`make` 仍成功。成因是 `/mnt/d`（NTFS over WSL）`core.filemode=false` 不保留可执行位，环境相关，详见 `docs/19`。
-
-| 风险 | 状态 / 处理 |
-| --- | --- |
-| 仓库路径包含空格 | 当前命令已在该路径下运行成功；后续大量实验仍建议优先考虑 WSL-native 路径。 |
-| `riscv64-unknown-elf-gcc` 缺失 | 当前 baseline 和 lab1 构建使用 `riscv64-linux-gnu-gcc` 成功；若 Makefile 或工具链策略变化需复查。 |
-| linker RWX warning | 当前不阻塞 build，但需要在技术报告中解释。 |
-| QEMU 只做 evidence 捕获 | 已检测到 boot 关键文本、hello/add2test/pstatetest/pcounttest/pchildtest/fcounttest 关键输出，但未做长期稳定性和完整人工交互测试。 |
-| patch baseline 依赖 | lab1 与 lab2 patch 均应用于 `74f84181a3404d1d6a6ff98d342233979066ebb8`；baseline 变化时需重新验证。 |
-| lab1/lab2/lab4 syscall number 合并 | independent patch 仍不能直接叠加；integrated-labs 已提供统一序列，使用 `hello=22/add2=23/pstate=24/pcount=25/fcount=26` 并完成真实验证。 |
-
-## 后续记录模板
-
-| 字段 | 内容 |
-| --- | --- |
-| 测试名称 | TODO |
-| 日期时间 | TODO |
-| 命令 | TODO |
-| 环境 | TODO |
-| 结果 | TODO |
-| 日志或输出位置 | TODO |
-| 风险 | TODO |
-| 后续动作 | TODO |
+使用中文技术写作风格，命令、文件名、commit、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。

@@ -4,6 +4,22 @@
 > 可见页面以中文为主；commit id、SHA256、命令、文件名和 syscall 名保留原样。
 > PPTX 不嵌入视频、截图、raw summaries、raw logs 或网盘资产。
 
+## 目标
+
+本文提供最终答辩 PPT 的页面文案、可视化标签和讲稿备注，使 `slides/generate_final_ppt.ps1` 能生成与项目证据链一致的 `slides/final_defense_ppt.pptx`。
+
+## 适用对象
+
+本文适用于答辩讲者、PPT 维护者、指导教师和提交材料复核人员。讲者使用 speaker notes 控制叙述边界，维护者使用页面标题和标签检查生成 PPTX 的结构一致性。
+
+## 内容范围
+
+本文覆盖 16 页最终答辩内容，包括项目定位、评分口径、复现痛点、Lab0-Lab5 学习矩阵、工具链、三方复现、视频和 SHA256 证据、同类项目差异、组织创新和边界总结。本文不保存视频、截图、summary 原件或 raw logs。
+
+## 结构规范
+
+每页使用 `Key message`、`Bullet content`、`Visual labels` 和 `Speaker notes` 四个字段。`Key message` 负责结论，`Bullet content` 负责可见页面内容，`Visual labels` 负责生成器绘图标签，`Speaker notes` 负责口头解释和边界提醒。事实更新时，应同步修改 `submissions/evidence_manifest.md` 和 `slides/final_ppt_outline.md`。
+
 ## Slide 1. 从能跑，到能教
 
 **Key message**
@@ -458,3 +474,15 @@ Lab5 的定位要避免误解。它不是新系统调用，而是综合复现实
 **Speaker notes**
 
 最后回到可信度。我们完成了课程实验包和证据链，但不把观察型实验包装成完整内核能力。答辩收束在“真实、可复现、可教学”。
+
+## 语言风格
+
+答辩文案应简洁、证据导向、避免口号化表达。页面可见文字使用短句，speaker notes 可略口语化，但不得扩大验证结论或省略 historical/current final 的区分。
+
+## 质量标准
+
+生成 PPTX 后，应检查 16 页结构、16 条 speaker notes、无嵌入视频/截图/raw logs、关键事实与 evidence manifest 一致，并在答辩前完成人工排练。
+
+## 边界条件
+
+不提交 `external/xv6-riscv/`、raw logs、summary 原件、视频、截图、token、密码或隐私材料。不把 timeout evidence 写成长期稳定性测试。不把 `pgcount`/`memstat` 写成完整内存管理；不把 `fcount`/`fdcount`/`fdinfo` 写成完整文件系统；Lab5 不新增内核机制。

@@ -1,74 +1,39 @@
 # 11 Known Limits and Future Work
 
+## 目标
+
+本文列出项目已知限制和后续可扩展方向，防止正式材料夸大当前成果。
+
+## 适用对象
+
+适用于评审、教师、队伍成员和后续维护者。
+
 ## 已知限制
 
-| 项目 | 当前状态 | 说明 |
-| --- | --- | --- |
-| lab3 memory/pagetable | integrated 已完成 | `pgcount()` 页表映射数量观察已进入 integrated `0006`；不是完整内存管理实验 |
-| lab4 file system | v0.2 已完成 | `fcount()` file table 与 `fdcount()` fd table 观察；不是完整文件系统实验 |
-| lab5 capstone | 已完成文档闭环 | 综合复现实验；不新增内核机制 |
-| advanced optional patches（已进 integrated） | integrated 已完成，三方复现已完成 | `memstat`(独立 lab3 `0002`，也作 integrated `0008`，`SYS_memstat = 29`) 与 `fdinfo`(独立 lab4 `0002`，也作 integrated `0009`，`SYS_fdinfo = 30`) 教 `argaddr/argint + copyout + struct ABI`；final suite `0001-0009` 已由 rain/root/z2996 在 current final commit `db85947` 上 full verify 全 PASS（stage14 登记）。旧 `e8e2fb9 / 0001-0007` 三方 PASS 保留为 historical |
-| 长期稳定性测试 | 未完成 | 当前为 timeout 自动捕获 evidence |
-| 队友独立复现 | current final 已完成 | rain/root/z2996 三份 `db85947 / 0001-0009` full PASS 已登记（grade-summaries 3/3 clean，SHA256 见 evidence manifest）；`e8e2fb9 / 0001-0007` 与 `1ba9db6` 记录保留为 historical |
-| 视频提交信息 | current final 已录制 | `20260611_final_integrated_0001_0009_demo.mp4` 已登记时长 `00:03:12`、分辨率 `2560×1440`、帧率 `60 fps`、大小与 SHA256；`0001-0007` 视频为 historical；视频/截图隐私复核已由用户确认 OK；平台提交方式待确认 |
-| 同类项目引用 URL | 待补充 | uCore/rCore/YatSen OS/F-Tutorials 等需最终核对 |
-| 技术报告 v1.0 | 草案已完成 | `docs/final/technical_report_v1.0.md` |
-| PPT | stage16 成稿已生成 | `slides/final_ppt.md`、`slides/final_ppt_outline.md` 与 `slides/final_defense_ppt.pptx` 已同步为 16 页最终答辩材料；仍需人工最终审阅和排练 |
+`pgcount()` 只观察用户页表映射数量，不是完整内存管理。`memstat()` 只返回地址空间统计，不返回物理地址，也不实现分配策略。`fcount()`、`fdcount()` 和 `fdinfo()` 只观察 file/fd 状态，不是完整文件系统。Lab5 是 capstone 综合复现，不新增内核机制。
 
-## 不能夸大的内容
+timeout 自动捕获只说明一次匹配成功，不代表长期稳定性。final video 已登记，但平台提交方式仍需按官方要求确认。PPT 已生成，但答辩前仍需人工审阅和排练。外部参考 URL 与许可证应在最终发布前继续核对。
 
-- `fcount()` / `fdcount()` 不能写成完整文件系统实验。
-- `pcount(RUNNING)` 不能写成固定数值。
-- `pchildtest` 不能写成固定状态。
-- `pgcount()` 不能写成完整内存管理实验；只能写页表映射数量观察。
-- Lab5 不能写成新的内核机制；它是综合复现和报告实验。
-- timeout evidence 不能写成长期稳定性测试。
-- 队长本机 PASS 不能写成队友独立复现；final 证据中 lead/root/z2996 必须分开记录。
-- 旧队友 PASS 只能按旧 commit `1ba9db6` 的 summary/截图摘要记录，不能覆盖 `e8e2fb9`（historical stable checkpoint）。
-- 已录制视频不能自动等同于已完成平台提交；还需确认平台提交方式和最终上传包。
-- `memstat` / `fdinfo` 现有 independent 版（`SYS_*=22`）和 integrated 版（`0008`=`SYS_memstat 29` / `0009`=`SYS_fdinfo 30`）两条线；integrated 主线 `0001-0009` 已被 rain/root/z2996 在 `db85947` 上三方验证（stage14）。仍然**不能**写成旧 `e8e2fb9` 三方 full PASS 覆盖 `0001-0009`——旧三方 PASS 只覆盖 `0001-0007`，是 historical checkpoint。
-- `memstat` 仍是地址空间观察、不是完整内存管理；`fdinfo` 仍是 fd 元数据观察、不是完整文件系统；二者都不返回物理地址、宿主路径、inode 号或文件内容。
+## 后续工作
 
-## 后续可扩展实验
+课程侧可以增加学生骨架版、更多自动评分脚本、扩展挑战和课堂讲解素材。技术侧可设计更深入但安全的页表、进程生命周期或文件系统观察实验。提交侧应继续保持 evidence manifest、SHA256 核验和仓库卫生检查。
 
-### lab1 扩展
+## 质量标准
 
-- 指针参数：`argaddr()`。
-- 字符串参数：`argstr()`。
-- 错误输入与返回值约定。
-- 学生骨架版和评分 rubric。
+后续工作应与当前边界区分清楚。未完成事项不得写成已完成，扩展设想不得混入 current final 功能列表。
 
-### lab2 扩展
+## 边界条件
 
-- ps-like summary。
-- 更明确的进程生命周期观察。
-- scheduler trace，但不轻易修改调度策略。
-- wait/exit 状态观察。
+本文件承认限制，不降低 current final 已验证部分的有效性。current final 仍以 `db85947 / 0001-0009` 三方 full verification 和 evidence manifest 为准。
 
-### lab3 后续计划
+## 内容范围
 
-- 在技术报告 v1.0 中补充 Lab3 final 章节。
-- 设计学生骨架版和扩展问题。
-- 必须先设计安全的最小实验，不应临时堆功能。
+本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 current final、historical checkpoint、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
 
-### lab4 扩展
+## 结构规范
 
-- per-process fd table 观察。
-- inode 引用观察。
-- open file summary。
-- 文件系统布局讲解。
+文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 current final。
 
-## 提交前必须补齐
+## 语言风格
 
-1. 队友真实姓名、系统版本（如最终材料需要）。
-2. 平台提交方式最终确认。
-3. PPT 5-8 分钟人工排练。
-4. 技术报告 v1.0 最终人工校对。
-5. 参考来源 URL 和许可证核对。
-6. 最终 Git 卫生检查。
-
-## 建议下一轮工作
-
-- 按 `submissions/submission_checklist.md` 做提交前最终全检。
-- 对 `docs/final/technical_report_v1.0.md` 做最终人工校对。
-- 最终提交前红队审核。
+使用中文技术写作风格，命令、文件名、commit、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。
