@@ -10,14 +10,14 @@
 
 ## 内容范围
 
-本文覆盖 current final `20260611_final_integrated_0001_0009_demo.mp4`、historical `0001-0007` 视频和更早历史视频。视频原件位于外部证据资产包。
+本文覆盖 当前正式验证范围 `20260611_final_integrated_0001_0009_demo.mp4`、historical `0001-0007` 视频和更早历史视频。视频原件位于外部证据资产包。
 
 ## Current Final Video
 
 | 字段 | 内容 |
 | --- | --- |
 | file | `20260611_final_integrated_0001_0009_demo.mp4` |
-| scope | `db85947 / integrated 0001-0009` |
+| scope | `integrated 0001-0009` |
 | duration | `00:03:12` |
 | resolution | `2560x1440` |
 | frame rate | `60 fps` |

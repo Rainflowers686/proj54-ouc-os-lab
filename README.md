@@ -2,13 +2,13 @@
 
 OUC xv6 Lab Kit 是面向操作系统课程的 xv6-riscv 分阶段实验包。项目把环境准备、系统调用、进程观察、页表观察、文件表观察和综合复现组织成一条可运行、可讲解、可验收的课程路线。它服务于 2026 全国大学生计算机系统能力大赛 OS 设计赛（全国）OS 功能挑战赛道 proj54，核心目标是把“面向操作系统课程的操作系统竞赛和实验”落实为文档、patch、脚本和证据链。
 
-current final 为 `db85947 feat(course): add lab runner and grading helpers`，integrated suite 为 `0001-0009`。该版本统一提供 `hello`、`add2`、`pstate`、`pcount`、`fcount`、`pgcount`、`fdcount`、`memstat` 和 `fdinfo`，syscall 编号为 22 到 30。rain、root、z2996 三方 `teammate-verify.sh --full` 已登记为 PASS，最终演示视频和 SHA256 记录在 [submissions/evidence_manifest.md](submissions/evidence_manifest.md)。
+当前正式版本采用 integrated suite `0001-0009`。该版本统一提供 `hello`、`add2`、`pstate`、`pcount`、`fcount`、`pgcount`、`fdcount`、`memstat` 和 `fdinfo`，syscall 编号为 22 到 30。rain、root、z2996 三方 `teammate-verify.sh --full` 已登记为 PASS，最终演示视频和 SHA256 记录在 [submissions/evidence_manifest.md](submissions/evidence_manifest.md)。
 
 本仓库不保存第三方 xv6 源码本体。`external/xv6-riscv/` 是本地工作目录并被 Git 忽略，仓库只保存本队编写的 lab 文档、patch、脚本、提交材料和证据索引。
 
 ## 项目定位
 
-本项目面向四类读者。学生可以按 Lab0 到 Lab5 学习 xv6 入门机制；教师和助教可以使用教程、任务书、评分标准和排障手册布置课程；队友复现人员可以用一条脚本从 clean baseline 验证 current final；评审可以通过正式报告、证据清单和复现脚本审查项目事实。
+本项目面向四类读者。学生可以按 Lab0 到 Lab5 学习 xv6 入门机制；教师和助教可以使用教程、任务书、评分标准和排障手册布置课程；队友复现人员可以用一条脚本从 clean baseline 验证当前正式 integrated suite；评审可以通过正式报告、证据清单和复现脚本审查项目事实。
 
 项目不把 xv6 改造成复杂内核，也不声称 LTP 覆盖。`pgcount()` 和 `memstat()` 是内存与页表观察接口，不是完整内存管理；`fcount()`、`fdcount()` 和 `fdinfo()` 是 file/fd 观察接口，不是完整文件系统；Lab5 是 capstone 综合复现实验，不新增内核机制。
 
@@ -57,7 +57,7 @@ Lab1 让学生看到用户程序如何通过 `user/usys.pl` 生成的 stub、`ec
 
 单 lab 教学可使用 `patches/lab*/` 下的 independent patch。最终综合演示和队友复现使用 [patches/integrated-labs/](patches/integrated-labs/) 中的 `0001-0009`。不要把多个 independent patch 直接叠加，因为它们常为单关教学复用 syscall 编号。
 
-integrated sequence 的 xv6 baseline 为 `74f84181a3404d1d6a6ff98d342233979066ebb8`。
+integrated sequence 使用 `scripts/xv6/apply-integrated-labs.sh` 中声明的 clean xv6 baseline。baseline 元数据见 [external/xv6-baseline-record.md](external/xv6-baseline-record.md)，文档正文只说明复现入口，不展开机器参数。
 
 | Patch | 内容 | syscall | 用户程序 |
 | --- | --- | --- | --- |
@@ -93,21 +93,20 @@ doctor/check-env/baseline/apply+make/boot/hello/add2test/pstatetest/pcounttest/p
 bash scripts/xv6/teammate-verify.sh --full
 ```
 
-`scripts/labctl.sh verify` 是同一验证入口的课程化封装。`scripts/grade-summaries.sh` 可批量解析 summary，标记 overall 与单项矛盾、缺新测试项、commit 不符和内容雷同等风险。它是助教验收辅助工具，不自动打分。
+`scripts/labctl.sh verify` 是同一验证入口的课程化封装。`scripts/grade-summaries.sh` 可批量解析 summary，标记 overall 与单项矛盾、缺新测试项、验证身份不符和内容雷同等风险。它是助教验收辅助工具，不自动打分。
 
 ## 当前证据状态
 
 | 项目 | 状态 |
 | --- | --- |
-| current final | `db85947 / integrated 0001-0009` |
-| 证据文档 commit | `caf8ced docs: record final db85947 evidence` |
+| 当前正式验证范围 | `integrated 0001-0009` |
 | full verification | rain、root、z2996 三方 PASS |
 | grade-summaries | 3 clean PASS，0 needs attention |
 | final video | `20260611_final_integrated_0001_0009_demo.mp4`，SHA256 已登记 |
 | evidence hash check | `14/14 matched` |
-| historical checkpoint | `e8e2fb9 / 0001-0007`，只作历史证据 |
+| 历史证据范围 | `historical integrated 0001-0007`，只作历史证据 |
 
-证据边界必须保持清楚：`e8e2fb9 / 0001-0007` 不覆盖 `memstat` 和 `fdinfo`；`caf8ced` 是证据文档登记提交，不是工程复现基准；最终工程复现仍以 `db85947 / 0001-0009` 为准。
+证据边界必须保持清楚：`historical integrated 0001-0007` 不覆盖 `memstat` 和 `fdinfo`；证据文档只登记外部资产和哈希，不定义新的工程复现基准；最终工程复现仍以 `integrated 0001-0009` 为准。
 
 ## 教师与助教入口
 
@@ -140,7 +139,7 @@ XV6_EVIDENCE_BASE=<local path>/proj54_submission_assets bash scripts/check-evide
 
 [docs/README.md](docs/README.md) 是文档导航，说明学生、教师、评审和历史追溯人员该读哪些文件。[docs/documentation_standard.md](docs/documentation_standard.md) 是本项目文档写作规范。`docs/final/` 是正式提交文档，`docs/00` 到 `docs/25` 主要是历史计划、审查和过程记录。
 
-后续维护文档时，应先确认当前工程事实，再更新正式文档和历史记录。旧阶段文档只能解释“当时为什么这样做”，不能覆盖 current final。
+后续维护文档时，应先确认当前工程事实，再更新正式文档和历史记录。旧阶段文档只能解释“当时为什么这样做”，不能覆盖当前正式验证范围。
 
 ## 仓库结构
 

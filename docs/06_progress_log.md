@@ -2,7 +2,7 @@
 
 ## 目标
 
-本文保留项目开发过程的压缩版记录，用于追溯关键决策、阶段变化和证据边界。它不是 current final 的唯一依据，当前状态应以 `submissions/evidence_manifest.md`、`docs/final/` 和仓库文件为准。
+本文保留项目开发过程的压缩版记录，用于追溯关键决策、阶段变化和证据边界。它不是 当前正式验证范围 的唯一依据，当前状态应以 `submissions/evidence_manifest.md`、`docs/final/` 和仓库文件为准。
 
 ## 适用对象
 
@@ -14,7 +14,7 @@
 
 ## 当前结论
 
-current final 为 `db85947 / 0001-0009`，覆盖 syscall 编号 22 到 30。rain、root、z2996 三方 full verification 已登记为 PASS。最终视频与 SHA256 已登记。historical `e8e2fb9 / 0001-0007` 保留为稳定检查点，但不覆盖 `memstat` 和 `fdinfo`。
+当前正式版本采用 integrated suite `0001-0009`，覆盖 syscall 编号 22 到 30。rain、root、z2996 三方 full verification 已登记为 PASS。最终视频与 SHA256 已登记。historical `0001-0007` 保留为稳定检查点，但不覆盖 `memstat` 和 `fdinfo`。
 
 ## 经验记录
 
@@ -30,12 +30,12 @@ current final 为 `db85947 / 0001-0009`，覆盖 syscall 编号 22 到 30。rain
 
 ## 内容范围
 
-本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 current final、historical checkpoint、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
+本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 当前正式验证范围、历史证据、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
 
 ## 结构规范
 
-文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 current final。
+文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 当前正式验证范围。
 
 ## 语言风格
 
-使用中文技术写作风格，命令、文件名、commit、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。
+使用中文技术写作风格，命令、文件名、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。

@@ -10,7 +10,7 @@
 
 ## 内容范围
 
-sequence 覆盖 `0001-0009`：`hello`、`add2`、`pstate`、`pcount`、`fcount`、`pgcount`、`fdcount`、`memstat`、`fdinfo`。baseline 为 xv6-riscv commit `74f84181a3404d1d6a6ff98d342233979066ebb8`。
+sequence 覆盖 `0001-0009`：`hello`、`add2`、`pstate`、`pcount`、`fcount`、`pgcount`、`fdcount`、`memstat`、`fdinfo`。baseline 由 `scripts/xv6/apply-integrated-labs.sh` 声明，并由 `external/xv6-baseline-record.md` 记录元数据；本教学文档只说明复现入口。
 
 ## 结构规范
 

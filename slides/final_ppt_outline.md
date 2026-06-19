@@ -22,7 +22,7 @@
 
 - 先给结论：每页只有一个短标题和一个核心观点。
 - 先给证据图：内容页使用流水线、矩阵、架构图、证据卡、对比表或时间线，不堆长段文字。
-- 中文优先：可见标签以中文为主；commit id、SHA256、命令、文件名、syscall 名和 PASS 类证据词保留英文。
+- 中文优先：可见标签以中文为主；版本标识、SHA256、命令、文件名、syscall 名和 PASS 类证据词保留英文。
 - 深海视觉系统：深蓝、青色高亮、白色/浅色内容页和高对比字体形成统一风格。
 - 无可见制作痕迹：页面里不出现 `source:`、`self-drawn`、`generator`、占位符或工具水印。
 - 证据边界清晰：不嵌入视频、截图或 raw summaries，只引用元数据和 SHA256。
@@ -42,7 +42,7 @@
 | 9 | Lab4：fd 与 file 的关系 | 区分当前进程 fd table 和全局 file table。 | ofile[] -> struct file -> file table |
 | 10 | Lab5：把实验变成验收 | Lab5 是综合复现实验，不是新增内核机制。 | 综合复现验收阶梯 |
 | 11 | 工具链：从脚本到课程入口 | labctl、verify、summary、hash check 组成课程工具链。 | 工具链架构图 |
-| 12 | 三方复现证据 | rain/root/z2996 的全量验证共同支撑工程复现 commit `db85947`。 | 三方证据卡 + 工程复现 commit |
+| 12 | 三方复现证据 | rain/root/z2996 的全量验证共同支撑 `integrated 0001-0009` 工程复现范围。 | 三方证据卡 + 工程复现范围 |
 | 13 | 证据链可以重新计算 | 外部资产不进 Git，但 SHA256 可重新核验。 | 视频元数据 + SHA256 证据链 |
 | 14 | 与 uCore/rCore 的差异 | 完整课程生态覆盖更广，本项目聚焦 OUC+xv6 的轻量入门实验和可复现验收。 | 左右对比：完整课程生态 vs 本项目 |
 | 15 | 创新在组织方式 | 创新落在 patch workflow、课程材料、复现工具和证据边界。 | 五块创新拼图 |
@@ -50,10 +50,10 @@
 
 ## 固定证据事实
 
-- 最终工程 commit: `db85947`
-- 证据文档 commit: `caf8ced`
+- 最终工程范围: `integrated 0001-0009`
+- 证据文档：最终证据索引已同步
 - 当前 suite: integrated `0001-0009`
-- 历史检查点: `e8e2fb9 / 0001-0007`
+- 历史检查点: `historical integrated 0001-0007`
 - 三方 full verify: `rain / root / z2996` 全部 PASS
 - grade-summaries: `3 clean PASS / 0 needs attention`
 - evidence hash check: `14/14 matched`
@@ -73,7 +73,7 @@
 
 ## 语言风格
 
-PPT 大纲使用答辩规划语言，短句优先，证据优先，不使用宣传口号替代事实。commit id、SHA256、命令、文件名和 syscall 名保持原样。
+PPT 大纲使用答辩规划语言，短句优先，证据优先，不使用宣传口号替代事实。版本标识、SHA256、命令、文件名和 syscall 名保持原样。
 
 ## 质量标准
 

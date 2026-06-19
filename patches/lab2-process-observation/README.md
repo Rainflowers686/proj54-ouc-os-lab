@@ -20,11 +20,14 @@ patch 从 clean baseline 增加 `pstate`、用户声明、stub、测试程序和
 
 ```bash
 cd external/xv6-riscv
-git reset --hard 74f84181a3404d1d6a6ff98d342233979066ebb8
+BASELINE_COMMIT="<use the baseline identity declared in scripts/xv6/apply-integrated-labs.sh>"
+git reset --hard "$BASELINE_COMMIT"
 git clean -fdx
 git apply ../../patches/lab2-process-observation/0001-add-pstate-syscall.patch
 make
 ```
+
+`BASELINE_COMMIT` 应与 `scripts/xv6/apply-integrated-labs.sh` 中声明的 baseline 保持一致。教学文档只说明参数来源；如需机器化复现，优先使用项目脚本准备 clean baseline。
 
 ## 语言风格
 

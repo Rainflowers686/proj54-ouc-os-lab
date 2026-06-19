@@ -25,7 +25,7 @@ git status --short
 
 ## 当前提交状态
 
-current final 为 `db85947 / 0001-0009`，rain/root/z2996 三方 full PASS，final video 与 SHA256 已登记，外部资产包已上传并可按 SHA256 核验。平台提交方式、最终 PPT 人工审阅、答辩排练和外部引用许可证核对仍需人工确认。
+当前正式版本采用 integrated suite `0001-0009`，rain/root/z2996 三方 full PASS，final video 与 SHA256 已登记，外部资产包已上传并可按 SHA256 核验。平台提交方式、最终 PPT 人工审阅、答辩排练和外部引用许可证核对仍需人工确认。
 
 ## 结构规范
 
@@ -37,7 +37,7 @@ current final 为 `db85947 / 0001-0009`，rain/root/z2996 三方 full PASS，fin
 
 ## 质量标准
 
-提交前不得存在未解释的 FAIL、stale current final 描述或禁止入库文件。
+提交前不得存在未解释的 FAIL、过期的当前正式验证范围 描述或禁止入库文件。
 
 ## 边界条件
 

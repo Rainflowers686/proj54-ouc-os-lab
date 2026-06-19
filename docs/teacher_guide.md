@@ -18,7 +18,7 @@
 
 ## 作业与验收
 
-每个 lab 的 `student_tasks.md` 可直接布置。统一验收建议收 `bash scripts/xv6/teammate-verify.sh --full` 输出中的 summary 块，并用 `bash scripts/grade-summaries.sh --expect-commit <commit> <summary-dir>` 批量解析。批量解析只辅助抽查，不替代教师评分。
+每个 lab 的 `student_tasks.md` 可直接布置。统一验收建议收 `bash scripts/xv6/teammate-verify.sh --full` 输出中的 summary 块，并用 `bash scripts/grade-summaries.sh <summary-dir>` 批量解析。批量解析只辅助抽查，不替代教师评分；正式验收重点看 suite、检查项和 overall 是否自洽。
 
 ## 评分关注
 
@@ -34,8 +34,8 @@
 
 ## 结构规范
 
-文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 current final。
+文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 当前正式验证范围。
 
 ## 语言风格
 
-使用中文技术写作风格，命令、文件名、commit、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。
+使用中文技术写作风格，命令、文件名、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。

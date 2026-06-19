@@ -30,7 +30,7 @@ bash scripts/xv6/teammate-verify.sh --full
 
 ## 质量标准
 
-合格报告应包含 commit、baseline、patch 顺序、summary、失败记录、证据边界和不提交 raw evidence 的说明。
+合格报告应包含 suite、baseline、patch 顺序、summary、失败记录、证据边界和不提交 raw evidence 的说明。
 
 ## 边界条件
 

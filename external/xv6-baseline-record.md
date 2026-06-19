@@ -10,11 +10,11 @@
 
 ## 内容范围
 
-baseline repo 为 `https://github.com/mit-pdos/xv6-riscv.git`，baseline commit 为 `74f84181a3404d1d6a6ff98d342233979066ebb8`。本文件只记录元数据，不保存上游源码。
+baseline repo 为 `https://github.com/mit-pdos/xv6-riscv.git`，baseline 版本由 `scripts/xv6/apply-integrated-labs.sh` 和 `external/xv6-baseline-record.md` 记录。本文件只记录元数据，不保存上游源码。
 
 ## 结构规范
 
-baseline 记录应包含 repo、commit、检查命令和生成时间说明。
+baseline 记录应包含 repo、baseline 身份、检查命令和生成时间说明。具体机器参数由复现脚本维护，普通教学文档只引用本记录。
 
 ## 语言风格
 
@@ -22,7 +22,7 @@ baseline 记录应包含 repo、commit、检查命令和生成时间说明。
 
 ## 质量标准
 
-baseline commit 应与 patch README、Lab0 和 technical report 一致。
+baseline 身份应与 patch README、Lab0 和 technical report 一致。
 
 ## 边界条件
 

@@ -20,11 +20,11 @@
 
 ## 当前工程事实
 
-current final 是 `db85947 / integrated 0001-0009`，覆盖 `hello`、`add2`、`pstate`、`pcount`、`fcount`、`pgcount`、`fdcount`、`memstat` 和 `fdinfo`，syscall 编号为 22 到 30。rain、root、z2996 三方 full verification 已登记为 PASS。`e8e2fb9 / 0001-0007` 只作为 historical stable checkpoint。
+当前正式版本采用 integrated suite `0001-0009`，覆盖 `hello`、`add2`、`pstate`、`pcount`、`fcount`、`pgcount`、`fdcount`、`memstat` 和 `fdinfo`，syscall 编号为 22 到 30。rain、root、z2996 三方 full verification 已登记为 PASS。`historical integrated 0001-0007` 只作为 historical stable checkpoint。
 
 ## 质量标准
 
-引用本目录内容时应同时说明 commit、suite、验证命令和证据位置。旧阶段文档只能用于解释“当时为什么这么做”，不能覆盖 current final。正式提交和评审以 `docs/final/` 与 `submissions/evidence_manifest.md` 为准。
+引用本目录内容时应同时说明 suite、验证命令和证据位置。旧阶段文档只能用于解释“当时为什么这么做”，不能覆盖 当前正式验证范围。正式提交和评审以 `docs/final/` 与 `submissions/evidence_manifest.md` 为准。
 
 ## 边界条件
 
@@ -32,8 +32,8 @@ current final 是 `db85947 / integrated 0001-0009`，覆盖 `hello`、`add2`、`
 
 ## 结构规范
 
-文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 current final。
+文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 当前正式验证范围。
 
 ## 语言风格
 
-使用中文技术写作风格，命令、文件名、commit、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。
+使用中文技术写作风格，命令、文件名、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。

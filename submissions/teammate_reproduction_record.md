@@ -2,7 +2,7 @@
 
 ## 目标
 
-本文记录队长和队友 full verification 的摘要索引，说明 current final 与 historical reproduction 的边界。
+本文记录队长和队友 full verification 的摘要索引，说明 当前正式验证范围 与 历史复现 的边界。
 
 ## 适用对象
 
@@ -10,7 +10,7 @@
 
 ## 内容范围
 
-本文记录 `db85947 / 0001-0009` 的 rain/root/z2996 full PASS，以及 `e8e2fb9 / 0001-0007` 和更早 `1ba9db6` 的 historical 记录。
+本文记录 `integrated 0001-0009` 的 rain/root/z2996 full PASS，以及 `historical integrated 0001-0007` 和更早 `earlier workflow evidence` 的 historical 记录。
 
 ## Current Final Summary
 
@@ -22,7 +22,7 @@
 
 ## 结构规范
 
-记录必须包含 user、commit、suite、mode、result 和外部证据路径。raw summary 原件不入 Git。
+记录必须包含 user、suite、mode、result 和外部证据路径。raw summary 原件不入 Git。
 
 ## 语言风格
 

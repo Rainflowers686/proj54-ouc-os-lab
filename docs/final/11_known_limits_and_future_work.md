@@ -20,20 +20,20 @@ timeout 自动捕获只说明一次匹配成功，不代表长期稳定性。fin
 
 ## 质量标准
 
-后续工作应与当前边界区分清楚。未完成事项不得写成已完成，扩展设想不得混入 current final 功能列表。
+后续工作应与当前边界区分清楚。未完成事项不得写成已完成，扩展设想不得混入 当前正式验证范围 功能列表。
 
 ## 边界条件
 
-本文件承认限制，不降低 current final 已验证部分的有效性。current final 仍以 `db85947 / 0001-0009` 三方 full verification 和 evidence manifest 为准。
+本文件承认限制，不降低 当前正式验证范围 已验证部分的有效性。当前正式验证仍以 integrated suite `0001-0009` 的三方 full verification 和 evidence manifest 为准。
 
 ## 内容范围
 
-本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 current final、historical checkpoint、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
+本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 当前正式验证范围、历史证据、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
 
 ## 结构规范
 
-文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 current final。
+文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 当前正式验证范围。
 
 ## 语言风格
 
-使用中文技术写作风格，命令、文件名、commit、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。
+使用中文技术写作风格，命令、文件名、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。

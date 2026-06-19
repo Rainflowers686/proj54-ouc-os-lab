@@ -10,7 +10,7 @@
 
 ## 内容范围
 
-记录覆盖 `pgcounttest` 和 `memstattest`，包括 eager/lazy delta、page size 和结构体 copyout 观察。current final 三方复现以 evidence manifest 为准。
+记录覆盖 `pgcounttest` 和 `memstattest`，包括 eager/lazy delta、page size 和结构体 copyout 观察。当前正式验证范围 三方复现以 evidence manifest 为准。
 
 ## 结构规范
 

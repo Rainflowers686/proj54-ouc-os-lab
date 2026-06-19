@@ -52,10 +52,10 @@ index 7fa325a..2dda6d5 100644
  #define SYS_fcount 26
 +#define SYS_pgcount 27
 diff --git a/kernel/sysproc.c b/kernel/sysproc.c
-index d9e896b..0e1ef1c 100644
+index ea507fc..f88cae5 100644
 --- a/kernel/sysproc.c
 +++ b/kernel/sysproc.c
-@@ -171,3 +171,10 @@ sys_pcount(void)
+@@ -175,3 +175,11 @@ sys_pcount(void)
  
    return count;
  }
@@ -64,6 +64,7 @@ index d9e896b..0e1ef1c 100644
 +sys_pgcount(void)
 +{
 +  struct proc *p = myproc();
++  // p->sz is address-space size. uvmpagecount() counts present user mappings.
 +  return uvmpagecount(p->pagetable, p->sz);
 +}
 diff --git a/kernel/vm.c b/kernel/vm.c
@@ -94,10 +95,10 @@ index 6bc3730..a83e258 100644
  void
 diff --git a/user/pgcounttest.c b/user/pgcounttest.c
 new file mode 100644
-index 0000000..bb15d67
+index 0000000..bf98786
 --- /dev/null
 +++ b/user/pgcounttest.c
-@@ -0,0 +1,110 @@
+@@ -0,0 +1,114 @@
 +#include "kernel/types.h"
 +#include "kernel/stat.h"
 +#include "kernel/riscv.h"
@@ -122,6 +123,8 @@ index 0000000..bb15d67
 +  }
 +}
 +
++// xv6 sbrk() allocates physical pages immediately in the baseline kernel.
++// pgcount should therefore grow as soon as the address space grows.
 +static void
 +test_eager(void)
 +{
@@ -152,6 +155,8 @@ index 0000000..bb15d67
 +  printf("pgcount eager delta after free = %d\n", after_free - before);
 +}
 +
++// sbrklazy() reserves virtual address space and maps pages only when touched.
++// This test separates "address exists" from "PTE_V && PTE_U mapping exists".
 +static void
 +test_lazy(void)
 +{

@@ -38,10 +38,10 @@ index 0000000..b42dcf4
 +  int ref;       // struct file reference count (observation only)
 +};
 diff --git a/kernel/file.c b/kernel/file.c
-index 9857b4f..642870b 100644
+index c416a7b..845919b 100644
 --- a/kernel/file.c
 +++ b/kernel/file.c
-@@ -117,6 +117,18 @@ filestat(struct file *f, uint64 addr)
+@@ -118,6 +118,20 @@ filestat(struct file *f, uint64 addr)
    return -1;
  }
  
@@ -49,6 +49,8 @@ index 9857b4f..642870b 100644
 +void
 +fileinfo(struct file *f, int *type, int *readable, int *writable, int *ref)
 +{
++  // Only copy scalar metadata for this teaching syscall. Paths, inode numbers,
++  // and file contents stay hidden from the observation interface.
 +  acquire(&ftable.lock);
 +  *type = f->type;
 +  *readable = f->readable;

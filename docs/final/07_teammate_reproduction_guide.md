@@ -2,7 +2,7 @@
 
 ## 目标
 
-本文说明队友如何独立复现 current final，并提交可审查 summary。
+本文说明队友如何独立复现 当前正式验证范围，并提交可审查 summary。
 
 ## 适用对象
 
@@ -26,7 +26,7 @@ bash scripts/xv6/teammate-verify.sh --full
 
 ## 质量标准
 
-summary 应包含 user、commit、suite、mode、各项 PASS/FAIL 和 overall。队长可用 `scripts/grade-summaries.sh` 批量检查。
+summary 应包含 user、suite、mode、各项 PASS/FAIL 和 overall。队长可用 `scripts/grade-summaries.sh` 批量检查。
 
 ## 边界条件
 
@@ -34,12 +34,12 @@ summary 应包含 user、commit、suite、mode、各项 PASS/FAIL 和 overall。
 
 ## 内容范围
 
-本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 current final、historical checkpoint、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
+本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 当前正式验证范围、历史证据、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
 
 ## 结构规范
 
-文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 current final。
+文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 当前正式验证范围。
 
 ## 语言风格
 
-使用中文技术写作风格，命令、文件名、commit、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。
+使用中文技术写作风格，命令、文件名、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。

@@ -14,7 +14,7 @@
 
 ## 演示流程
 
-1. 展示 README 中项目定位和 current final。
+1. 展示 README 中项目定位和 当前正式验证范围。
 2. 展示 `patches/integrated-labs/README.md` 的 `0001-0009`。
 3. 运行或展示 `teammate-verify.sh --full` summary。
 4. 展示 `submissions/evidence_manifest.md` 的视频 SHA256 和三方复现。

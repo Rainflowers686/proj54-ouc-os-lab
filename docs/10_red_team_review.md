@@ -10,11 +10,11 @@
 
 ## 审查范围
 
-红队审查覆盖四类风险：代码与文档不一致，current final 与 historical evidence 混淆，观察型实验被夸大为完整子系统，验证命令无法支撑文档声称。
+红队审查覆盖四类风险：代码与文档不一致，当前正式验证范围 与 历史证据 混淆，观察型实验被夸大为完整子系统，验证命令无法支撑文档声称。
 
 ## 关键结论
 
-当前必须坚持 `db85947 / 0001-0009` 为 final identity，`e8e2fb9 / 0001-0007` 只能作为 historical checkpoint。`memstat` 和 `fdinfo` 已在 current final 中验证，但仍只是结构体 copyout 观察接口。timeout evidence 不能写成长期稳定性。
+当前必须坚持 `integrated 0001-0009` 为 final identity，`historical integrated 0001-0007` 只能作为 历史证据。`memstat` 和 `fdinfo` 已在 当前正式验证范围 中验证，但仍只是结构体 copyout 观察接口。timeout evidence 不能写成长期稳定性。
 
 ## 审查方法
 
@@ -30,12 +30,12 @@
 
 ## 内容范围
 
-本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 current final、historical checkpoint、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
+本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 当前正式验证范围、历史证据、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
 
 ## 结构规范
 
-文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 current final。
+文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 当前正式验证范围。
 
 ## 语言风格
 
-使用中文技术写作风格，命令、文件名、commit、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。
+使用中文技术写作风格，命令、文件名、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。

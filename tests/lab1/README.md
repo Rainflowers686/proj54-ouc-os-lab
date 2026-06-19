@@ -10,7 +10,7 @@
 
 ## 内容范围
 
-记录覆盖 `hello syscall returned 2026` 和 `add2(20, 6) returned 26`。正式 current final 覆盖以 `submissions/evidence_manifest.md` 为准。
+记录覆盖 `hello syscall returned 2026` 和 `add2(20, 6) returned 26`。正式 当前正式验证范围 覆盖以 `submissions/evidence_manifest.md` 为准。
 
 ## 结构规范
 

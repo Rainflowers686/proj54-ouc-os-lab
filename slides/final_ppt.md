@@ -1,7 +1,7 @@
 # 最终答辩 PPT 源稿
 
 > stage16-redesign-with-ppt-skill 的 PPT 文案源，用于生成 `slides/final_defense_ppt.pptx`。
-> 可见页面以中文为主；commit id、SHA256、命令、文件名和 syscall 名保留原样。
+> 可见页面以中文为主；版本标识、SHA256、命令、文件名和 syscall 名保留原样。
 > PPTX 不嵌入视频、截图、raw summaries、raw logs 或网盘资产。
 
 ## 目标
@@ -30,7 +30,7 @@
 
 - 赛题：2026 OS 功能挑战赛道 proj54
 - 队伍：中国海洋大学“蓝色系统队”
-- 工程 commit：`db85947`
+- 工程范围：`integrated 0001-0009`
 - 集成补丁：`0001-0009`
 - 三方全量验证：rain / root / z2996 全通过
 
@@ -40,7 +40,7 @@
 - 可学习
 - 可复现
 - 可验收
-- db85947
+- integrated 0001-0009
 - 0001-0009
 - 三方通过
 
@@ -347,7 +347,7 @@ Lab5 的定位要避免误解。它不是新系统调用，而是综合复现实
 - root：全量验证通过
 - z2996：全量验证通过
 - grade-summaries：3 clean PASS / 0 needs attention
-- 工程复现 commit：db85947
+- 工程复现范围：integrated 0001-0009
 
 **Visual labels**
 
@@ -358,11 +358,11 @@ Lab5 的定位要避免误解。它不是新系统调用，而是综合复现实
 - grade-summaries
 - 3 clean PASS
 - 0 needs attention
-- 工程复现 commit：db85947
+- 工程复现范围：integrated 0001-0009
 
 **Speaker notes**
 
-这里保持克制：我们只说已经有 summary 和外部证据的事实，不编造队友真实姓名或系统版本。root 和 z2996 是终端 user。三方 full verification summary 的 current commit 是 db85947；caf8ced 只是 evidence documentation commit，用于记录 final demo、三方复现、SHA256 和外部资产索引。
+这里保持克制：我们只说已经有 summary 和外部证据的事实，不编造队友真实姓名或系统版本。root 和 z2996 是终端 user。三方 full verification summary 共同支撑 `integrated 0001-0009` 的工程复现范围；证据文档只登记 final demo、三方复现、SHA256 和外部资产索引。
 
 ## Slide 13. 证据链可以重新计算
 
@@ -456,7 +456,7 @@ Lab5 的定位要避免误解。它不是新系统调用，而是综合复现实
 
 - 已完成：integrated 0001-0009，Lab0-Lab5 课程实验体系
 - 已验证：rain / root / z2996 全量验证通过，14/14 SHA256 matched
-- 历史点：e8e2fb9 / 0001-0007 只作为历史检查点
+- 历史点：historical integrated 0001-0007 只作为历史检查点
 - 不夸大：pgcount/memstat 不是完整内存管理，fcount/fdcount/fdinfo 不是完整文件系统
 - 提交前最后确认：平台提交方式最终确认；PPT 5-8 分钟人工排练；按 submission_checklist 跑最终全检
 
@@ -477,7 +477,7 @@ Lab5 的定位要避免误解。它不是新系统调用，而是综合复现实
 
 ## 语言风格
 
-答辩文案应简洁、证据导向、避免口号化表达。页面可见文字使用短句，speaker notes 可略口语化，但不得扩大验证结论或省略 historical/current final 的区分。
+答辩文案应简洁、证据导向、避免口号化表达。页面可见文字使用短句，speaker notes 可略口语化，但不得扩大验证结论或省略历史证据与当前正式验证范围的区分。
 
 ## 质量标准
 

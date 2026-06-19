@@ -10,7 +10,7 @@
 
 ## 内容范围
 
-复现包覆盖 Lab0、Lab1、Lab2、Lab3、Lab4、Lab5 和 integrated `0001-0009`。正式 current final 以 `teammate-verify.sh --full` 和 evidence manifest 为准。
+复现包覆盖 Lab0、Lab1、Lab2、Lab3、Lab4、Lab5 和 integrated `0001-0009`。正式 当前正式验证范围 以 `teammate-verify.sh --full` 和 evidence manifest 为准。
 
 ## 结构规范
 
