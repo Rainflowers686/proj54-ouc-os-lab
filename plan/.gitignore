@@ -1,0 +1,4 @@
+# Local planning workspace.
+# Keep task packets, scratch notes, and progress drafts outside the repository.
+*
+!.gitignore

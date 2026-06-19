@@ -1,0 +1,4 @@
+# code-review-graph cache directory.
+# graph.db contains absolute paths and code structure metadata.
+*
+!.gitignore

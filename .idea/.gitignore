@@ -1,0 +1,8 @@
+# JetBrains local workspace state.
+# Root .gitignore ignores .idea/; this file is a local safety net.
+shelf/
+workspace.xml
+httpRequests/
+queries/
+dataSources/
+dataSources.local.xml
