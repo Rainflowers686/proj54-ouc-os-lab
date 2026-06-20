@@ -40,7 +40,7 @@ index 454d1b4..ae8119d 100644
  #define SYS_close  21
 +#define SYS_pstate 22
 diff --git a/kernel/sysproc.c b/kernel/sysproc.c
-index 73ff1f3..3fed479 100644
+index 73ff1f3..6904f13 100644
 --- a/kernel/sysproc.c
 +++ b/kernel/sysproc.c
 @@ -7,6 +7,8 @@
@@ -52,11 +52,13 @@ index 73ff1f3..3fed479 100644
  uint64
  sys_exit(void)
  {
-@@ -107,3 +109,27 @@ sys_uptime(void)
+@@ -107,3 +109,29 @@ sys_uptime(void)
    release(&tickslock);
    return xticks;
  }
 +
++// Look up one process by pid and return its current enum procstate value.
++// Each proc entry has its own lock. Release it before every return.
 +uint64
 +sys_pstate(void)
 +{
@@ -80,35 +82,53 @@ index 73ff1f3..3fed479 100644
 +
 +  return -1;
 +}
-diff --git a/user/pstatetest.c b/user/pstatetest.c
+diff --git a/user/labproc.h b/user/labproc.h
 new file mode 100644
-index 0000000..eaf355e
+index 0000000..9553e57
 --- /dev/null
-+++ b/user/pstatetest.c
-@@ -0,0 +1,38 @@
-+#include "kernel/types.h"
-+#include "user/user.h"
++++ b/user/labproc.h
+@@ -0,0 +1,32 @@
++// Shared user-side names for xv6 process states used by Lab2 tests.
++//
++// xv6 keeps enum procstate in kernel/proc.h, which is a kernel-internal
++// header. The tests only need stable names for printed observations, so keep
++// this tiny mirror in user space instead of including kernel/proc.h.
++#define LAB_PROC_UNUSED   0
++#define LAB_PROC_USED     1
++#define LAB_PROC_SLEEPING 2
++#define LAB_PROC_RUNNABLE 3
++#define LAB_PROC_RUNNING  4
++#define LAB_PROC_ZOMBIE   5
 +
 +static char *
-+state_name(int state)
++lab_proc_state_name(int state)
 +{
 +  switch (state) {
-+  case 0:
++  case LAB_PROC_UNUSED:
 +    return "UNUSED";
-+  case 1:
++  case LAB_PROC_USED:
 +    return "USED";
-+  case 2:
++  case LAB_PROC_SLEEPING:
 +    return "SLEEPING";
-+  case 3:
++  case LAB_PROC_RUNNABLE:
 +    return "RUNNABLE";
-+  case 4:
++  case LAB_PROC_RUNNING:
 +    return "RUNNING";
-+  case 5:
++  case LAB_PROC_ZOMBIE:
 +    return "ZOMBIE";
 +  default:
 +    return "UNKNOWN";
 +  }
 +}
+diff --git a/user/pstatetest.c b/user/pstatetest.c
+new file mode 100644
+index 0000000..a727fec
+--- /dev/null
++++ b/user/pstatetest.c
+@@ -0,0 +1,18 @@
++#include "kernel/types.h"
++#include "user/labproc.h"
++#include "user/user.h"
 +
 +int
 +main(void)
@@ -121,7 +141,7 @@ index 0000000..eaf355e
 +    exit(1);
 +  }
 +
-+  printf("pstate(self) = %d (%s)\n", state, state_name(state));
++  printf("pstate(self) = %d (%s)\n", state, lab_proc_state_name(state));
 +  exit(0);
 +}
 diff --git a/user/user.h b/user/user.h

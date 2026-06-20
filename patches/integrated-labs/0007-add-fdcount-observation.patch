@@ -66,10 +66,10 @@ index aae9061..4341784 100644
  sys_link(void)
 diff --git a/user/fdcounttest.c b/user/fdcounttest.c
 new file mode 100644
-index 0000000..30b35a6
+index 0000000..45cab49
 --- /dev/null
 +++ b/user/fdcounttest.c
-@@ -0,0 +1,85 @@
+@@ -0,0 +1,93 @@
 +#include "kernel/types.h"
 +#include "kernel/fcntl.h"
 +#include "user/user.h"
@@ -143,6 +143,8 @@ index 0000000..30b35a6
 +  printf("fcount delta after close one = %d\n", after_close_one_file - before_file);
 +  printf("fcount delta after close two = %d\n", after_close_two_file - before_file);
 +
++  // fdcount follows per-process fd slots. fcount follows global struct file
++  // objects, so dup(fd) should not allocate another global file entry.
 +  if (after_open_fd - before_fd != 1)
 +    fail("expected fd delta after open 1");
 +  if (after_dup_fd - before_fd != 2)
@@ -151,6 +153,12 @@ index 0000000..30b35a6
 +    fail("expected fd delta after close one 1");
 +  if (after_close_two_fd - before_fd != 0)
 +    fail("expected fd delta after close two 0");
++  if (after_open_file - before_file != 1)
++    fail("expected file delta after open 1");
++  if (after_dup_file - before_file != 1)
++    fail("expected file delta after dup 1");
++  if (after_close_two_file != before_file)
++    fail("expected file count to return after closing both fds");
 +
 +  printf("fdcounttest done\n");
 +  exit(0);

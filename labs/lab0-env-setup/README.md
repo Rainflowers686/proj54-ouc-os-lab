@@ -1,169 +1,37 @@
-# lab0: 环境搭建与 baseline 验证
+# Lab0 环境与 Baseline 建立
 
-## 实验目标
+## 目标
 
-lab0 面向第一次接触 OS 实验的低年级同学，目标是完成基础环境检查、获取 xv6-riscv baseline metadata，并记录可复现的 baseline build 与 boot evidence。
+Lab0 用于建立可信实验环境。学生应在修改 xv6 前完成工具链检查、baseline 识别、clean build 和 boot evidence 捕获，确认后续实验不是建立在不确定环境上。
 
-本实验不要求修改 xv6 内核代码。
+## 适用对象
 
-## 推荐环境
+本实验适用于第一次运行 OUC xv6 Lab Kit 的学生、助教和复现人员。未完成 Lab0 前，不建议继续 Lab1 到 Lab5。
 
-当前目标环境：
+## 内容范围
 
-- Windows 11 + WSL2 Ubuntu 24.04
-- Git
-- bash
-- make
-- QEMU RISC-V
-- RISC-V cross compiler
+Lab0 覆盖 WSL2 Ubuntu 或 Linux 环境、`git`、`make`、QEMU、RISC-V gcc、xv6-riscv baseline 版本 和 boot evidence。它不修改内核源码，不新增 syscall。
 
-## 当前已验证工具状态
+## 学习结构
 
-`bash scripts/check-env.sh` 已在 WSL2 Ubuntu 24.04 中真实运行。
+先运行 `bash scripts/labctl.sh doctor` 做只读诊断，再通过 `bash scripts/labctl.sh setup --yes` 准备 clean xv6 和 integrated patches，最后运行 `bash scripts/labctl.sh boot` 捕获 `xv6 kernel is booting` 与 `init: starting sh`。需要底层命令时，可使用 `scripts/xv6/doctor.sh`、`check-xv6-baseline.sh` 和 `boot-xv6.sh`。
 
-观察结果：
-
-| 工具 | 状态 | 说明 |
-| --- | --- | --- |
-| `git` | OK | WSL2 中可用 |
-| `bash` | OK | WSL2 中可用 |
-| `make` | OK | WSL2 中可用 |
-| `qemu-system-riscv64` | OK | WSL2 中可用 |
-| `riscv64-linux-gnu-gcc` | OK | WSL2 中可用 |
-| `riscv64-unknown-elf-gcc` | WARN | 当前缺失，但已有 `riscv64-linux-gnu-gcc` |
-
-## 手动检查命令
+## 验证命令
 
 ```bash
-git --version
-bash --version
-make --version
-qemu-system-riscv64 --version
-riscv64-linux-gnu-gcc --version
-riscv64-unknown-elf-gcc --version
+bash scripts/labctl.sh doctor
+bash scripts/labctl.sh setup --yes
+bash scripts/labctl.sh boot
 ```
 
-## 获取 xv6 baseline
+## 语言风格
 
-预览获取命令：
+报告应直接记录环境、命令、输出和失败处理，不使用“环境应该没问题”这类无法验证的判断。
 
-```bash
-bash scripts/xv6/fetch-xv6.sh
-```
+## 质量标准
 
-经队长授权后获取 baseline：
+合格报告需要包含系统环境、baseline 版本、make 结果、boot 关键文本和遇到故障时的排查过程。若在 `/mnt` 路径运行，应说明首次 boot 可能较慢。
 
-```bash
-bash scripts/xv6/fetch-xv6.sh --run
-```
+## 边界条件
 
-查看本地 baseline metadata：
-
-```bash
-bash scripts/xv6/fetch-xv6.sh --status
-```
-
-本地源码目录：
-
-```text
-external/xv6-riscv/
-```
-
-该目录被 Git 忽略，不应提交第三方源码。
-
-可提交 metadata 文件：
-
-```text
-external/xv6-baseline-record.md
-```
-
-## baseline 结构检查
-
-```bash
-bash scripts/xv6/check-xv6-baseline.sh
-```
-
-该命令检查：
-
-- `external/xv6-riscv/`
-- `external/xv6-riscv/Makefile`
-- `external/xv6-riscv/LICENSE`
-- `qemu-system-riscv64`
-- `riscv64-unknown-elf-gcc`
-- `riscv64-linux-gnu-gcc`
-
-默认不运行 `make`。
-
-## baseline build 真实记录
-
-队长已真实运行：
-
-```bash
-bash scripts/xv6/check-xv6-baseline.sh --make
-```
-
-结果：
-
-| 项目 | 结果 |
-| --- | --- |
-| 日期时间 | 2026-06-03 23:50:03 +08:00 |
-| 结果 | `make` 成功 |
-| 使用 compiler | `riscv64-linux-gnu-gcc` |
-| 使用 linker | `riscv64-linux-gnu-ld` |
-| QEMU 工具 | `qemu-system-riscv64` 已检测到 |
-| warning | linker `LOAD segment with RWX permissions` |
-| 日志文件 | `logs/xv6-make-20260603-235003.log` |
-| 测试报告 | `docs/04_test_report.md` |
-
-该记录只证明 baseline build 成功，不证明 boot 成功。
-
-## baseline boot evidence 真实记录
-
-已真实运行：
-
-```bash
-bash scripts/xv6/boot-xv6.sh
-```
-
-结果：
-
-| 项目 | 结果 |
-| --- | --- |
-| 日期时间 | 2026-06-04 00:17:36 +08:00 |
-| 结果 | baseline boot evidence found |
-| 检测到 | `xv6 kernel is booting` |
-| 检测到 | `init: starting sh` |
-| 日志文件 | `logs/xv6-boot-20260604-001736.log` |
-
-该记录只证明脚本捕获到 boot 关键文本；尚未做长期稳定性测试，也尚未做人工 shell 交互测试。
-
-## 当前状态
-
-- xv6-riscv baseline fetch: 已完成，本地目录为 `external/xv6-riscv/`。
-- xv6-riscv `make`: 已成功。
-- xv6-riscv boot evidence: 已捕获关键文本。
-- 原始日志: 被 Git 忽略，不提交 `logs/*.log`。
-- lab1 syscall: 已在后续 lab1 生成 patch 并验证 hello 输出，详见 `labs/lab1-system-call/README.md`。
-- TODO: 完成长期 QEMU 稳定性测试和人工交互测试。
-
-## 常见问题
-
-### Windows 路径包含空格
-
-当前仓库路径包含空格，现有命令已在该路径下运行成功。后续大量构建、调试和脚本自动化时，仍建议优先考虑 WSL-native 路径，例如 `~/workspace/proj54-ouc-os-lab`。
-
-### `riscv64-unknown-elf-gcc` 缺失
-
-当前 WSL2 环境已有 `riscv64-linux-gnu-gcc`，baseline 和 lab1 构建均已成功。若后续修改 xv6 Makefile 或工具链策略，需要重新检查。
-
-### QEMU 命令不存在
-
-如果 `qemu-system-riscv64` 缺失，`scripts/check-env.sh` 会输出 WARN。安装方式需根据 WSL2 Ubuntu 版本确认，未确认前不要写成已解决。
-
-### shell 脚本换行问题
-
-如果脚本出现 `$'\r': command not found`，优先检查行尾是否为 LF。本仓库使用 `.gitattributes` 和 `.editorconfig` 约束文本文件换行。
-
-### boot evidence 与完整测试不同
-
-`scripts/xv6/boot-xv6.sh` 使用 timeout 自动退出 QEMU。它用于捕获关键文本，不代表长期稳定性或完整交互测试。
+Lab0 只证明环境和 baseline 可用，不证明后续 syscall 已存在。不提交 `external/xv6-riscv/`、raw logs、summary 原件、视频、截图、token、密码或隐私材料。不把 timeout evidence 写成长期稳定性测试。不把 `pgcount`/`memstat` 写成完整内存管理；不把 `fcount`/`fdcount`/`fdinfo` 写成完整文件系统；Lab5 不新增内核机制。

@@ -1,58 +1,41 @@
 # Reference and License Record
 
-## Principles
+## 目标
 
-- Do not copy large blocks of external documentation, source code, papers, slides, or tutorials into this repository.
-- Record the name, URL, license, usage location, and modification notes for every external reference.
-- Keep third-party source code separate from team-owned docs, scripts, and lab materials.
-- Do not claim ownership of upstream xv6-riscv code.
-- If third-party source is fetched locally, commit only metadata and project notes unless the team explicitly chooses a compliant tracked import strategy.
+本文说明项目参考来源、许可证边界和本队增量贡献。正式提交时应与 `docs/final/10_reference_and_license_statement.md` 保持一致。
 
-## Current Third-Party Baseline
+## 适用对象
 
-| Name | URL | License | Local path | Metadata record | Current status |
-| --- | --- | --- | --- | --- | --- |
-| xv6-riscv | `https://github.com/mit-pdos/xv6-riscv.git` | MIT License, confirmed from local upstream `LICENSE` on 2026-06-06 | `external/xv6-riscv/` | `external/xv6-baseline-record.md` | metadata generated; source tree ignored |
+适用于评审、队伍成员、指导教师和后续维护者。
 
-`external/xv6-baseline-record.md` is the canonical project record for the local baseline commit, branch, remote URL, LICENSE presence, generation time, and build status. Current recorded commit: `74f84181a3404d1d6a6ff98d342233979066ebb8`.
+## 上游来源
 
-Do not copy the full upstream LICENSE text into this document. Keep the upstream LICENSE file in the local ignored source tree and record its presence in the metadata file.
+本项目基于 MIT PDOS 的 `xv6-riscv`，baseline 版本由 `scripts/xv6/apply-integrated-labs.sh` 和 `external/xv6-baseline-record.md` 记录。上游源码放在本地 `external/xv6-riscv/`，不提交到本仓库。
 
-## Planned References
+## 参考范围
 
-| Name | URL | License | Planned usage | Notes |
-| --- | --- | --- | --- | --- |
-| xv6-riscv book | TODO | TODO | Background reading for xv6 code paths | Do not copy large sections |
-| uCore Tutorial / uCore OS Lab | TODO | TODO | Course organization reference | Reference structure only; verify URL/license before final report/PPT |
-| rCore Tutorial | TODO | TODO | Course organization reference | Reference structure only; verify URL/license before final report/PPT |
-| YatSen OS | TODO | TODO | Comparable course/contest material reference | Verify URL/license before final report/PPT |
-| F-Tutorials | TODO | TODO | Tutorial organization reference | Verify URL/license before final report/PPT |
-| Prior OS contest works | TODO | TODO | Step-by-step process and teaching design reference | Record all adaptation details |
+MIT 6.1810、xv6-riscv book、uCore、rCore、PKE、YatSen OS、F-Tutorials 和往届 OS 竞赛材料只作为课程组织、教学表达和提交材料结构参考。未核对许可证前，不复制其代码、图片、PPT 或大段文本。
 
-## Pending Verification List
+## 本队增量
 
-Do not invent unchecked URLs. Before final report or PPT publication, verify:
+本队贡献包括 Lab1-Lab4 独立 patch、integrated `0001-0009`、Lab5 综合复现、`labctl` 与 xv6 验证脚本、教师/学生文档、评分标准、排障手册、正式技术报告和证据索引。
 
-- uCore Tutorial / uCore OS Lab URL and license.
-- rCore Tutorial URL and license.
-- YatSen OS URL and license.
-- F-Tutorials URL and license.
-- xv6-riscv MIT License citation format.
-- Prior OS contest repository URLs and licenses.
+## 质量标准
 
-Confirmed now: xv6-riscv is the upstream baseline, its local upstream LICENSE is MIT License, and the source tree under `external/xv6-riscv/` is ignored and not submitted.
+引用外部项目时应写清名称、用途和边界。涉及许可证的正式材料应避免模糊归属，不把上游源码写成本队原创。
 
-Team-owned incremental contributions are the OUC teaching organization, patch sequence, one-shot verification workflow, teammate reproduction process, and formal documentation system.
+## 边界条件
 
-## License Checklist for xv6-riscv
+不提交第三方源码，不复制外部项目实质内容，不用 AI 生成无法核验的引用信息。
 
-- Upstream repository URL is recorded in `external/xv6-baseline-record.md`.
-- Fetched commit hash is recorded in `external/xv6-baseline-record.md`.
-- Upstream LICENSE type is MIT License, confirmed from `external/xv6-riscv/LICENSE`.
-- Preserve upstream copyright notices in the local ignored source tree.
-- Document any future modifications separately from pristine baseline metadata.
-- Ensure `external/xv6-riscv/` is not staged or committed.
+## 内容范围
 
-## Current Repository Status
+本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 当前正式验证范围、历史证据、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
 
-The project currently tracks only project-owned docs/scripts and baseline metadata. The xv6-riscv source tree, when fetched under `external/xv6-riscv/`, is ignored and should not be submitted as part of this repository.
+## 结构规范
+
+文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 当前正式验证范围。
+
+## 语言风格
+
+使用中文技术写作风格，命令、文件名、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。

@@ -2,11 +2,27 @@
 
 > 本文件是 stage16-redesign-with-ppt-skill 的最终答辩结构说明，与 `slides/final_ppt.md` 和重新生成的 `slides/final_defense_ppt.pptx` 保持一致。
 
+## 目标
+
+本文定义最终答辩 PPT 的 16 页结构、证据锚点、讲解节奏和边界表达，使展示材料与技术报告、证据清单和生成后的 PPTX 保持一致。
+
+## 适用对象
+
+本文适用于答辩讲者、PPT 维护者、指导教师和提交材料复核人员。讲者可据此安排 5-8 分钟口头报告，维护者可据此检查 `slides/final_ppt.md` 和 `slides/final_defense_ppt.pptx` 是否偏离事实。
+
+## 内容范围
+
+大纲覆盖项目定位、评分口径、复现痛点、Lab0-Lab5 体系、工具链、三方复现、视频和 SHA256 证据、同类项目差异、组织创新和边界总结。本文不包含完整讲稿，也不保存视频、截图或 raw summaries。
+
+## 结构规范
+
+每一页必须有一个核心观点、一个主要图示任务和可回溯的证据来源。页序调整后，应同步修改 `slides/final_ppt.md`、`slides/generate_final_ppt.ps1` 生成结果和 `submissions/evidence_manifest.md` 中的 PPT 产物描述。
+
 ## 设计原则
 
 - 先给结论：每页只有一个短标题和一个核心观点。
 - 先给证据图：内容页使用流水线、矩阵、架构图、证据卡、对比表或时间线，不堆长段文字。
-- 中文优先：可见标签以中文为主；commit id、SHA256、命令、文件名、syscall 名和 PASS 类证据词保留英文。
+- 中文优先：可见标签以中文为主；版本标识、SHA256、命令、文件名、syscall 名和 PASS 类证据词保留英文。
 - 深海视觉系统：深蓝、青色高亮、白色/浅色内容页和高对比字体形成统一风格。
 - 无可见制作痕迹：页面里不出现 `source:`、`self-drawn`、`generator`、占位符或工具水印。
 - 证据边界清晰：不嵌入视频、截图或 raw summaries，只引用元数据和 SHA256。
@@ -26,7 +42,7 @@
 | 9 | Lab4：fd 与 file 的关系 | 区分当前进程 fd table 和全局 file table。 | ofile[] -> struct file -> file table |
 | 10 | Lab5：把实验变成验收 | Lab5 是综合复现实验，不是新增内核机制。 | 综合复现验收阶梯 |
 | 11 | 工具链：从脚本到课程入口 | labctl、verify、summary、hash check 组成课程工具链。 | 工具链架构图 |
-| 12 | 三方复现证据 | rain/root/z2996 的全量验证共同支撑工程复现 commit `db85947`。 | 三方证据卡 + 工程复现 commit |
+| 12 | 三方复现证据 | rain/root/z2996 的全量验证共同支撑 `integrated 0001-0009` 工程复现范围。 | 三方证据卡 + 工程复现范围 |
 | 13 | 证据链可以重新计算 | 外部资产不进 Git，但 SHA256 可重新核验。 | 视频元数据 + SHA256 证据链 |
 | 14 | 与 uCore/rCore 的差异 | 完整课程生态覆盖更广，本项目聚焦 OUC+xv6 的轻量入门实验和可复现验收。 | 左右对比：完整课程生态 vs 本项目 |
 | 15 | 创新在组织方式 | 创新落在 patch workflow、课程材料、复现工具和证据边界。 | 五块创新拼图 |
@@ -34,10 +50,10 @@
 
 ## 固定证据事实
 
-- 最终工程 commit: `db85947`
-- 证据文档 commit: `caf8ced`
+- 最终工程范围: `integrated 0001-0009`
+- 证据文档：最终证据索引已同步
 - 当前 suite: integrated `0001-0009`
-- 历史检查点: `e8e2fb9 / 0001-0007`
+- 历史检查点: `historical integrated 0001-0007`
 - 三方 full verify: `rain / root / z2996` 全部 PASS
 - grade-summaries: `3 clean PASS / 0 needs attention`
 - evidence hash check: `14/14 matched`
@@ -54,3 +70,15 @@
 | 实验体系和技术亮点 | 5-10 | 3 分钟 |
 | 工具链与证据 | 11-13 | 1.5 分钟 |
 | 对比、创新和收束 | 14-16 | 1.5 分钟 |
+
+## 语言风格
+
+PPT 大纲使用答辩规划语言，短句优先，证据优先，不使用宣传口号替代事实。版本标识、SHA256、命令、文件名和 syscall 名保持原样。
+
+## 质量标准
+
+大纲应与 PPT 源稿、生成 PPTX、技术报告和证据清单一致。所有数字、PASS 结论、视频元数据和边界表述必须可追溯；答辩前仍需人工检查版式、时间和讲稿。
+
+## 边界条件
+
+不提交 `external/xv6-riscv/`、raw logs、summary 原件、视频、截图、token、密码或隐私材料。不把 timeout evidence 写成长期稳定性测试。不把 `pgcount`/`memstat` 写成完整内存管理；不把 `fcount`/`fdcount`/`fdinfo` 写成完整文件系统；Lab5 不新增内核机制。

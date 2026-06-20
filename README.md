@@ -1,144 +1,181 @@
-# OUC xv6 Lab Kit：从零开始的操作系统实验
+# OUC xv6 Lab Kit
 
-OUC xv6 Lab Kit 是一套面向 OS 课程的 xv6-riscv 入门实验包：按 Lab0-Lab5 一关一关走，逐步理解 syscall、进程、页表、fd/file 的关系，最后能从干净源码完成一次可复现的完整验证。它不假设你写过内核——做完之后，你能自己给内核加一个系统调用，并讲清它从用户态到内核态的完整路径。
+OUC xv6 Lab Kit 是面向操作系统课程的 xv6-riscv 分阶段实验包。项目把环境准备、系统调用、进程观察、页表观察、文件表观察和综合复现组织成一条可运行、可讲解、可验收的课程路线。它服务于 2026 全国大学生计算机系统能力大赛 OS 设计赛（全国）OS 功能挑战赛道 proj54，核心目标是把“面向操作系统课程的操作系统竞赛和实验”落实为文档、patch、脚本和证据链。
 
-## 如果你是第一次做 OS 实验，先看这里
+当前正式版本采用 integrated suite `0001-0009`。该版本统一提供 `hello`、`add2`、`pstate`、`pcount`、`fcount`、`pgcount`、`fdcount`、`memstat` 和 `fdinfo`，syscall 编号为 22 到 30。rain、root、z2996 三方 `teammate-verify.sh --full` 已登记为 PASS，最终演示视频和 SHA256 记录在 [submissions/evidence_manifest.md](submissions/evidence_manifest.md)。
 
-- 别想着把整个仓库读完再动手，那样大概率三天后还在读文档。
-- 先跑 Lab0：把 xv6 编译出来、在 QEMU 里启动、看到 `init: starting sh`。环境通了再谈别的。
-- 然后做 Lab1 的 `hello`/`add2`，把"用户程序 → 内核 → 返回"这条链路走通一次，后面所有实验都是这条路的变体。
-- 之后按顺序来：Lab2 看进程表，Lab3 看页表和 copyout，Lab4 看 fd/file 三层关系，Lab5 做综合复现。
-- 每关先读 `labs/<lab>/README.md`（教程），再做 `student_tasks.md`（作业和验收标准）。
-- 卡住了先查 [docs/troubleshooting.md](docs/troubleshooting.md)——里面是我们自己踩过的坑。不要上来就改 `patches/integrated-labs/` 里的最终集成补丁，那是全套验证的基线。
+本仓库不保存第三方 xv6 源码本体。`external/xv6-riscv/` 是本地工作目录并被 Git 忽略，仓库只保存本队编写的 lab 文档、patch、脚本、提交材料和证据索引。
 
-## 这是什么
+## 项目定位
 
-- 一套基于 [xv6-riscv](https://github.com/mit-pdos/xv6-riscv) 的分阶段实验：Lab0 到 Lab5，外加一条把所有实验合在一个内核里的 integrated patch 路线（`0001-0009`）。
-- 每个实验都是"小步增量"：一个 patch、一个用户测试程序、一组能照抄的验证命令。
-- 所有实验都能从干净的 xv6 源码一键复现——这不是口号，仓库里有脚本（`scripts/xv6/`）替你做 reset、apply、make、boot、跑测试。
-- 仓库不包含 xv6 源码本体（第三方代码不入库），只包含我们写的 patch、脚本、文档和测试记录。
+本项目面向四类读者。学生可以按 Lab0 到 Lab5 学习 xv6 入门机制；教师和助教可以使用教程、任务书、评分标准和排障手册布置课程；队友复现人员可以用一条脚本从 clean baseline 验证当前正式 integrated suite；评审可以通过正式报告、证据清单和复现脚本审查项目事实。
 
-## 适合谁
+项目不把 xv6 改造成复杂内核，也不声称 LTP 覆盖。`pgcount()` 和 `memstat()` 是内存与页表观察接口，不是完整内存管理；`fcount()`、`fdcount()` 和 `fdinfo()` 是 file/fd 观察接口，不是完整文件系统；Lab5 是 capstone 综合复现实验，不新增内核机制。
 
-- 大一/大二，学过一点 C，但没碰过内核的同学。
-- 想提前入门操作系统的高中/初中信息学竞赛学生——只要你会用命令行、能看懂指针，就能跟下来。
-- 上 OS 课需要做 xv6 实验、想要一套带验收标准的练习的人。
-- 想看一个"实验怎么做到可复现、证据怎么留"的完整工程样例的人。
+## 快速开始
 
-不适合：想找现成大作业答案直接交的人。每个 lab 的 `student_tasks.md` 留了必做任务，答案要你自己写。
+所有 xv6 构建、QEMU 和用户程序验证命令建议在 WSL2 Ubuntu 或等价 Linux 环境运行。Windows PowerShell 和 Git Bash 可用于阅读文档，不适合直接承担 xv6 构建与 QEMU 交互。
 
-## 你会学到什么
+```bash
+bash scripts/labctl.sh doctor        # 只读环境体检
+bash scripts/labctl.sh setup --yes   # clean xv6 + integrated 0001-0009 + make
+bash scripts/labctl.sh boot          # 捕获 boot 证据
+bash scripts/labctl.sh test lab1     # 运行 Lab1 检查
+bash scripts/labctl.sh test all      # 运行全部用户程序检查
+bash scripts/labctl.sh verify        # full verification
+```
 
-按 Lab 顺序，每一关解决一个具体问题：
+`bash scripts/labctl.sh list` 会列出 lab 与测试程序的对应关系。遇到 QEMU 卡住、timeout、`Ctrl+Z` 挂起、`/mnt` 路径构建过慢或 patch 应用失败，先运行：
 
-| 关卡 | 你会搞明白的事 |
+```bash
+bash scripts/labctl.sh clean
+bash scripts/labctl.sh doctor
+```
+
+常见问题见 [docs/troubleshooting.md](docs/troubleshooting.md)。
+
+## 学习路线
+
+| 阶段 | 入口 | 核心内容 | 验收信号 |
+| --- | --- | --- | --- |
+| Lab0 | [labs/lab0-env-setup/README.md](labs/lab0-env-setup/README.md) | 环境、baseline、make、QEMU boot | 捕获 `xv6 kernel is booting` 与 `init: starting sh` |
+| Lab1 | [labs/lab1-system-call/README.md](labs/lab1-system-call/README.md) | 最小 syscall、`argint()`、user/kernel 边界 | `hello`、`add2test` 通过 |
+| Lab2 | [labs/lab2-process-and-scheduling/README.md](labs/lab2-process-and-scheduling/README.md) | `struct proc`、进程状态、锁、调度观察 | `pstatetest`、`pcounttest`、`pchildtest` 通过 |
+| Lab3 | [labs/lab3-memory-and-pagetable/README.md](labs/lab3-memory-and-pagetable/README.md) | 页表映射数量、地址空间大小、结构体 copyout | `pgcounttest`、`memstattest` 通过 |
+| Lab4 | [labs/lab4-file-system/README.md](labs/lab4-file-system/README.md) | fd table、`struct file`、全局 file table、fd 元数据 | `fcounttest`、`fdcounttest`、`fdinfotest` 通过 |
+| Lab5 | [labs/lab5-final-integration/README.md](labs/lab5-final-integration/README.md) | clean baseline 到 full verification 的综合复现 | `teammate-verify.sh --full` overall PASS |
+
+每个 lab 目录都包含 `README.md` 和 `student_tasks.md`。`README.md` 是教程，`student_tasks.md` 是作业、验收标准和评分细则。建议学生先跑通教程中的命令，再完成任务书中的改动、解释题和报告。
+
+## 学习目标
+
+Lab1 让学生看到用户程序如何通过 `user/usys.pl` 生成的 stub、`ecall`、`kernel/syscall.c` 分发表和 `sys_*` 处理函数进入内核。Lab2 把同一条 syscall 路径连接到进程表、状态枚举和锁。Lab3 让学生区分进程地址空间大小与实际页表映射数量，并通过 `memstat` 观察结构体从内核安全拷回用户态。Lab4 让学生区分用户态 fd、当前进程 `ofile[]`、内核 `struct file` 和全局 file table。Lab5 训练学生把多个实验组织为可复现的工程证据。
+
+这条路线强调工程习惯：patch 应从声明的 baseline 应用；测试程序应真实计算 delta，不能打印写死结果；summary、日志和视频元数据应能追溯；第三方源码、raw logs、summary 原件、视频、截图和隐私材料不进入 Git。
+
+## Integrated Patch Sequence
+
+单 lab 教学可使用 `patches/lab*/` 下的 independent patch。最终综合演示和队友复现使用 [patches/integrated-labs/](patches/integrated-labs/) 中的 `0001-0009`。不要把多个 independent patch 直接叠加，因为它们常为单关教学复用 syscall 编号。
+
+integrated sequence 使用 `scripts/xv6/apply-integrated-labs.sh` 中声明的 clean xv6 baseline。baseline 元数据见 [external/xv6-baseline-record.md](external/xv6-baseline-record.md)，文档正文只说明复现入口，不展开机器参数。
+
+| Patch | 内容 | syscall | 用户程序 |
+| --- | --- | --- | --- |
+| `0001` | `hello()` 最小系统调用 | `SYS_hello = 22` | `hello` |
+| `0002` | `add2(int,int)` 参数读取 | `SYS_add2 = 23` | `add2test` |
+| `0003` | `pstate(int)` 进程状态观察 | `SYS_pstate = 24` | `pstatetest` |
+| `0004` | `pcount(int)` 与子进程状态观察 | `SYS_pcount = 25` | `pcounttest`、`pchildtest` |
+| `0005` | `fcount()` 全局 file table 观察 | `SYS_fcount = 26` | `fcounttest` |
+| `0006` | `pgcount()` 页表映射数量观察 | `SYS_pgcount = 27` | `pgcounttest` |
+| `0007` | `fdcount()` 当前进程 fd table 观察 | `SYS_fdcount = 28` | `fdcounttest` |
+| `0008` | `memstat(struct memstat*)` 地址空间结构体返回 | `SYS_memstat = 29` | `memstattest` |
+| `0009` | `fdinfo(int, struct fdinfo*)` fd 元数据结构体返回 | `SYS_fdinfo = 30` | `fdinfotest` |
+
+从 clean baseline 构建 integrated 版本：
+
+```bash
+bash scripts/xv6/apply-integrated-labs.sh --make --yes
+```
+
+该命令会重置 ignored 的 `external/xv6-riscv/`，按顺序应用 `0001-0009` 并运行 `make`。不要在 `external/xv6-riscv/` 保存未备份的个人改动。
+
+## 验证体系
+
+full verification 覆盖环境、baseline、patch 应用、make、boot、用户程序检查和 overall：
+
+```text
+doctor/check-env/baseline/apply+make/boot/hello/add2test/pstatetest/pcounttest/pchildtest/fcounttest/pgcounttest/fdcounttest/memstattest/fdinfotest/overall
+```
+
+核心命令为：
+
+```bash
+bash scripts/xv6/teammate-verify.sh --full
+```
+
+`scripts/labctl.sh verify` 是同一验证入口的课程化封装。`scripts/grade-summaries.sh` 可批量解析 summary，标记 overall 与单项矛盾、缺新测试项、验证身份不符和内容雷同等风险。它是助教验收辅助工具，不自动打分。
+
+## 当前证据状态
+
+| 项目 | 状态 |
 | --- | --- |
-| Lab0 | xv6 怎么编译、怎么在 QEMU 里启动、`init: starting sh` 之前发生了什么 |
-| Lab1 | 用户程序调用 `hello()` 时，怎么穿过 `usys.pl` 生成的 stub、`ecall`、`syscall.c` 分发表，落到内核函数上；`argint()` 怎么把整数参数取出来 |
-| Lab2 | 进程在内核里长什么样（`struct proc`）、状态枚举怎么读、为什么观察进程状态要拿锁 |
-| Lab3 | 进程地址空间和页表映射的区别；`sbrk` 立刻给页（eager）和先记账后给页（lazy）在页表里看起来差多少 |
-| Lab4 | fd、`struct file`、全局 file table 三层关系；`dup` 为什么让 fd 变多但 file table 不一定变多 |
-| Lab3/4 进阶 | 内核怎么把一个结构体安全拷回用户态：`argaddr + copyout + struct ABI`（`memstat`/`fdinfo`），为什么不能直接解引用用户指针 |
-| Lab5 | 把前面所有实验从干净源码一次性复现，写出一份有证据的实验报告（capstone，不新增内核机制） |
+| 当前正式验证范围 | `integrated 0001-0009` |
+| full verification | rain、root、z2996 三方 PASS |
+| grade-summaries | 3 clean PASS，0 needs attention |
+| final video | `20260611_final_integrated_0001_0009_demo.mp4`，SHA256 已登记 |
+| evidence hash check | `14/14 matched` |
+| 历史证据范围 | `historical integrated 0001-0007`，只作历史证据 |
 
-另外你会顺带学到一套工程习惯：为什么实验要可复现、为什么测试程序要自己算 delta 而不是硬编码输出、为什么日志和第三方源码不进 Git。
+证据边界必须保持清楚：`historical integrated 0001-0007` 不覆盖 `memstat` 和 `fdinfo`；证据文档只登记外部资产和哈希，不定义新的工程复现基准；最终工程复现仍以 `integrated 0001-0009` 为准。
 
-## 从零开始怎么学
+## 教师与助教入口
 
-> 所有 make/QEMU 命令都要在 WSL2 Ubuntu 或等价 Linux 里跑，Windows Git Bash 只能看文档。环境装好前别急着跳关。
+教师可按 2 次、3 次或 5 次课使用本项目，安排建议见 [docs/teacher_guide.md](docs/teacher_guide.md)。评分原则见 [docs/grading_and_rubric.md](docs/grading_and_rubric.md)。建议验收时统一收 `bash scripts/xv6/teammate-verify.sh --full` 输出中的 `COPY THIS SUMMARY TO TEAM LEAD` 块，再结合学生 patch、报告和口头抽查判断理解程度。
 
-- **第 0 步：准备环境。** 看 [docs/final/01_environment_setup.md](docs/final/01_environment_setup.md)，装好 `qemu-system-riscv64` 和 RISC-V gcc，然后跑 `bash scripts/xv6/doctor.sh` 体检。
-- **第 1 步：Lab0，把 xv6 跑起来。** [labs/lab0-env-setup/README.md](labs/lab0-env-setup/README.md)。看到 `init: starting sh` 这关就过了。
-- **第 2 步：Lab1，第一个系统调用。** [labs/lab1-system-call/README.md](labs/lab1-system-call/README.md)。从 `hello()` 到带参数的 `add2(int, int)`。
-- **第 3 步：Lab2，观察进程。** [labs/lab2-process-and-scheduling/README.md](labs/lab2-process-and-scheduling/README.md)。`pstate`/`pcount`/`pchildtest`。
-- **第 4 步：Lab3，观察页表。** [labs/lab3-memory-and-pagetable/README.md](labs/lab3-memory-and-pagetable/README.md)。`pgcount` 数页，进阶 `memstat` 用 copyout 拷结构体。
-- **第 5 步：Lab4，观察文件表。** [labs/lab4-file-system/README.md](labs/lab4-file-system/README.md)。`fcount`/`fdcount` 数数，进阶 `fdinfo` 看单个 fd 的元数据。
-- **第 6 步：Lab5，综合复现。** [labs/lab5-final-integration/README.md](labs/lab5-final-integration/README.md)。把全部实验串成一次验收。
-- **第 7 步：integrated `0001-0009`。** 一个内核同时装下全部 9 个实验 syscall（编号 22-30），入口见 [patches/integrated-labs/README.md](patches/integrated-labs/README.md)。
+课程使用时不要把本仓库直接当作作业答案发布。每个 lab 的 `student_tasks.md` 保留了学生需要独立完成和解释的任务。
 
-每个 lab 目录里有两个文件：`README.md` 是教程，`student_tasks.md` 是练习和验收标准。建议先读教程、跑通验证命令，再做任务。做完一关可以只测这一关：`bash scripts/labctl.sh test lab3`。
+## 评审与提交材料入口
 
-## 做实验前建议补的知识
+评审或提交材料维护者可从以下文件进入：
 
-不用全会再开始，缺哪补哪：
+| 文件 | 作用 |
+| --- | --- |
+| [docs/final/technical_report_v1.0.md](docs/final/technical_report_v1.0.md) | 正式技术报告 |
+| [docs/final/](docs/final/) | 项目概述、环境、lab、验证、复现、设计取舍、AI 使用、许可证和限制 |
+| [submissions/evidence_manifest.md](submissions/evidence_manifest.md) | 最终证据索引 |
+| [submissions/submission_checklist.md](submissions/submission_checklist.md) | 提交前自查清单 |
+| [slides/final_ppt.md](slides/final_ppt.md) | 答辩 PPT 源稿 |
+| [slides/final_defense_ppt.pptx](slides/final_defense_ppt.pptx) | 生成后的答辩 PPTX |
 
-- **C 语言**：指针、结构体、头文件和函数声明。Lab3/Lab4 进阶要读 `copyout` 相关代码，指针不熟会很痛苦。
-- **Linux shell / WSL**：能进目录、跑脚本、看日志输出。所有 make/QEMU 命令都在 WSL2 Ubuntu 里执行。
-- **make 和 QEMU**：知道 `make` 在干什么、QEMU 是模拟器就够，细节实验里会碰到。
-- **Git**：至少会 `clone`、`status`、`diff`、`apply`。我们的每个实验就是一个 patch。
-- **xv6 教材**：不用通读，跟着实验进度看系统调用、进程、页表、文件描述符对应章节即可。
-- **实验习惯**：一次只改一个点；失败了把现象记下来再动下一步；输出贴文本，不要拿截图当唯一证据。
+外部证据资产包不进入 Git。当前登记的外部目录为 `proj54_submission_assets`，百度网盘链接为 <https://pan.baidu.com/s/1Xt-G6VgP04eEAumqiMo7Uw?pwd=1234>，提取码 `1234`。下载后可运行：
+
+```bash
+XV6_EVIDENCE_BASE=<local path>/proj54_submission_assets bash scripts/check-evidence-sha256.sh
+```
+
+证据索引和 SHA256 以 [submissions/evidence_manifest.md](submissions/evidence_manifest.md) 及核验脚本为准，网盘只作为原始大文件存放位置。
+
+## 文档体系
+
+[docs/README.md](docs/README.md) 是文档导航，说明学生、教师、评审和历史追溯人员该读哪些文件。[docs/documentation_standard.md](docs/documentation_standard.md) 是本项目文档写作规范。`docs/final/` 是正式提交文档，`docs/00` 到 `docs/25` 主要是历史计划、审查和过程记录。
+
+后续维护文档时，应先确认当前工程事实，再更新正式文档和历史记录。旧阶段文档只能解释“当时为什么这样做”，不能覆盖当前正式验证范围。
+
+## 仓库结构
+
+| 路径 | 作用 |
+| --- | --- |
+| `labs/` | 学生学习路径，每个 lab 有教程和任务书 |
+| `patches/` | 独立 lab patch 与 integrated patch sequence |
+| `scripts/` | 环境检查、应用补丁、启动 QEMU、运行测试、验收和门禁脚本 |
+| `docs/` | 课程文档、正式提交文档、历史审查和排障材料 |
+| `submissions/` | 提交清单、证据索引和复现记录 |
+| `slides/` | 答辩 PPT 源稿、生成器和 PPTX |
+| `videos/` | 视频说明；视频本体在外部证据资产包 |
+| `external/` | 第三方 xv6 baseline 信息；源码本体不入 Git |
+| `logs/` | 日志说明；raw logs 和 summary 原件不提交 |
+| `tests/` | 各 lab 测试说明 |
+| `references/` | 延伸阅读和参考资料说明 |
+| `reproducibility/` | 复现说明入口 |
+
+## 质量标准
+
+项目文档和报告遵循五项标准：事实可追溯，命令可复现，读者路径清晰，历史与当前状态分离，边界不夸大。修改 README 或正式文档后，至少运行：
+
+```bash
+git diff --check
+bash scripts/check-docs-consistency.sh
+bash scripts/check-final-hygiene.sh
+```
+
+需要核验外部证据时，再运行 `bash scripts/check-evidence-sha256.sh`，并设置 `XV6_EVIDENCE_BASE` 指向本地证据资产包。
+
+## 仓库边界
+
+本项目不提交 `external/xv6-riscv/`、raw logs、summary 原件、console captures、视频、截图、`.claude/`、`.vscode/`、压缩包、token、密码或隐私材料。timeout 自动捕获只说明某次脚本匹配到预期输出，不代表长期稳定性测试。
+
+AI 工具可用于规划、审查和文档辅助，但不能替代真实验证。所有 PASS、视频、summary 和 SHA256 均以实际证据、核验脚本和 [submissions/evidence_manifest.md](submissions/evidence_manifest.md) 为准。
 
 ## 推荐阅读
 
-只放最常用的几个，每条都写了什么时候看。完整的分层清单（含往届作品、同学经验帖）在 [references/README.md](references/README.md)。
-
-- [proj0 赛题原文](https://github.com/oscomp/proj0-contest-and-lab-for-os-course?tab=readme-ov-file#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-1)：这个题本来就是"面向 OS 课程的竞赛和实验"——想理解本项目为什么做成实验包，先看它。
-- [MIT 6.1810（原 6.S081）](https://pdos.csail.mit.edu/6.1810/2025/)：xv6 的官方课程。做完 Lab1-Lab2 想系统学一遍时再去，别一开始就跳。
-- [xv6-riscv-book-CN](https://github.com/shzhxh/xv6-riscv-book-CN)：xv6 教材中文翻译，英文版读不动时的台阶。
-- [rCore Tutorial Book v3](https://rcore-os.github.io/rCore-Tutorial-Book-v3/)：想从"观察 OS"进阶到"从零写 OS"时看，完整得多的课程生态。
-- [LearningOS rCore 2025S](https://github.com/LearningOS/rCore-Tutorial-Guide-2025S) / [uCore 2025S](https://github.com/LearningOS/uCore-Tutorial-Guide-2025S)：想跟一个有作业有验收的完整开源课程时选一条路线。
-- [PKE 代理内核课程实验](https://gitee.com/hustos/pke-doc)：轻量实验设计思路，和我们"一个 patch 一关"的做法最接近，适合想自己设计实验的人。
-
-## 如果你只想先跑起来
-
-整个课程有一个统一命令入口 `labctl`（它只是封装下面的现有脚本，不重复实现任何逻辑）。在 WSL2 Ubuntu 里：
-
-```bash
-bash scripts/labctl.sh doctor        # 环境体检
-bash scripts/labctl.sh setup --yes   # 干净源码 + 全部 9 个 patch + make（会重置 ignored 的 external/xv6-riscv/）
-bash scripts/labctl.sh boot          # 启动并抓 boot 证据
-bash scripts/labctl.sh test lab1     # 只跑 Lab1 的两条检查
-bash scripts/labctl.sh test all      # 跑全部 10 条用户程序检查
-bash scripts/labctl.sh verify        # 一键 full 验证（等价 teammate-verify.sh --full）
-```
-
-`bash scripts/labctl.sh list` 能看到每个 lab 对应哪些测试。想直接用底层脚本也完全可以（`scripts/xv6/` 下的路径都在 labctl help 里标着）。
-
-卡住、报错、或者误按了 `Ctrl+Z`：先跑 `bash scripts/labctl.sh clean`，再看 [docs/troubleshooting.md](docs/troubleshooting.md)。`/mnt/` 路径下第一次 boot 偏慢是正常的。
-
-## 如果你要把它拿去布置课程
-
-- 教学顺序就按 Lab0-Lab5，2 次、3 次、5 次课的三种切法在 [docs/teacher_guide.md](docs/teacher_guide.md)，含每次课讲什么、怎么处理学生环境问题。
-- 评分用 [docs/grading_and_rubric.md](docs/grading_and_rubric.md)：每个 lab 的任务书自带 100 分细则和常见扣分点。
-- 复现验收统一收 `bash scripts/xv6/teammate-verify.sh --full` 输出的 `COPY THIS SUMMARY TO TEAM LEAD` 块；收齐后 `bash scripts/grade-summaries.sh logs/student-summaries/` 批量解析，它会把 overall 不一致、缺新测试项（旧 suite）、内容雷同的文件标出来——注意这只是辅助验收，最终评分仍按 rubric 和抽查。
-- 提前说清边界，免得学生期望错位：这是观察型/入门型实验包，不是完整 OS 子系统实现，也不改调度器和文件系统布局。
-
-## 如果你是评委或在看提交材料
-
-为了方便评审和复现，集中入口如下：
-
-- 证据总索引：[submissions/evidence_manifest.md](submissions/evidence_manifest.md)
-- 技术报告：[docs/final/technical_report_v1.0.md](docs/final/technical_report_v1.0.md)
-- 答辩 PPT 源稿：[slides/final_ppt.md](slides/final_ppt.md)（成稿 `slides/final_defense_ppt.pptx`）
-- 正式文档目录：[docs/final/](docs/final/)，材料索引 [submissions/draft-report-index.md](submissions/draft-report-index.md)
-- 外部证据资产包（演示视频、三方复现 summary/截图等大文件，不入 Git）：百度网盘目录 `proj54_submission_assets`，链接 <https://pan.baidu.com/s/1Xt-G6VgP04eEAumqiMo7Uw?pwd=1234>（提取码 `1234`）。下载后可用 `XV6_EVIDENCE_BASE=<解压路径> bash scripts/check-evidence-sha256.sh` 逐文件核对哈希——以仓库内 manifest 和该脚本为准，网盘只是文件的存放处。
-
-比赛信息：2026 全国大学生计算机系统能力大赛 OS 设计赛（全国）OS 功能挑战赛道 proj54，中国海洋大学"蓝色系统队"。
-
-## 为什么目录看起来比较多？
-
-第一次打开仓库可能觉得目录不少，其实每个只管一件事：
-
-- `labs/`：学生学习路径，每关一个教程 + 一份任务书。
-- `patches/`：可回放的实现——每个实验就是一个能从干净源码 apply 的 patch。
-- `scripts/`：复现和验收工具（`labctl` 入口、验证脚本、三道提交门禁）。
-- `docs/`：课程文档、教师材料、排障和过程记录；`docs/final/` 是正式提交文档。
-- `submissions/`：提交清单和证据索引。
-- `slides/`：答辩材料（源稿 + 生成的 PPTX）。
-- `videos/`：只放视频说明，视频本体在网盘。
-- `external/`：只记录第三方源码来源和基线 commit，xv6 源码本体不入库。
-- `logs/`：只放说明，原始日志一律不提交。
-- `references/`：延伸阅读清单。
-
-## 当前证据状态（诚实边界）
-
-- 当前最终工程状态 = `db85947 / 0001-0009`（hello=22 … fdinfo=30，连续编号）：rain/root/z2996 三方 `teammate-verify.sh --full` 全 PASS，新演示视频与 SHA256 已登记（详见 [submissions/evidence_manifest.md](submissions/evidence_manifest.md)）。
-- `caf8ced` 只是证据文档登记提交，用于记录 final demo、三方复现、SHA256 和外部资产索引；工程复现仍以 `db85947 / 0001-0009` 为准。
-- `e8e2fb9 / 0001-0007` 的三方 full PASS 和旧视频 = **historical stable checkpoint**，只覆盖 `0001-0007`，保留不删但不作为 current final。
-- 一直成立的边界：`pgcount`/`memstat` 不是完整内存管理，`fcount`/`fdcount`/`fdinfo` 不是完整文件系统，Lab5 不新增内核机制，QEMU timeout 捕获不等于长期稳定性测试。
-- 不入 Git 的东西：`external/xv6-riscv/`、`logs/`、视频、截图、`.claude/`、`.vscode/`、隐私材料。提交前三道自查：`bash scripts/check-final-hygiene.sh`（仓库卫生）、`bash scripts/check-docs-consistency.sh`（文档与脚本状态一致）、`bash scripts/check-evidence-sha256.sh`（外部证据哈希）。
-
----
-
-最后说一句：这套实验包是我们一边踩坑一边整理出来的。给测试程序起名 `pstatechildtest` 结果 `mkfs` 直接构建失败（xv6 的 `DIRSIZ` 限制文件名长度，后来改成了 `pchildtest`）；把 lab2 的 patch 往 lab1 上叠，`git apply` 当场报错，才实测确认了 independent patch 之间 `SYS_*=22` 的编号冲突；`/mnt` 路径下第一次 boot 慢到以为卡死。这些坑的现象和解法都写进了 [docs/troubleshooting.md](docs/troubleshooting.md) 和各 lab 的"常见卡点"，希望你比我们少走点弯路。
+完整阅读清单见 [references/README.md](references/README.md)。第一次学习时建议先看赛题原文、MIT xv6 课程主页和 xv6-riscv book；完成 Lab1-Lab2 后，再根据兴趣阅读 rCore、uCore、PKE 和往届作品。外部资料用于理解课程组织和背景，不是本项目实现来源。

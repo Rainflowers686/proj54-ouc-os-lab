@@ -52,10 +52,10 @@ index 454d1b4..50e94f5 100644
  #define SYS_close  21
 +#define SYS_pgcount 22
 diff --git a/kernel/sysproc.c b/kernel/sysproc.c
-index 73ff1f3..a91a1fc 100644
+index 73ff1f3..8982000 100644
 --- a/kernel/sysproc.c
 +++ b/kernel/sysproc.c
-@@ -22,6 +22,13 @@ sys_getpid(void)
+@@ -22,6 +22,14 @@ sys_getpid(void)
    return myproc()->pid;
  }
  
@@ -63,6 +63,7 @@ index 73ff1f3..a91a1fc 100644
 +sys_pgcount(void)
 +{
 +  struct proc *p = myproc();
++  // p->sz is address-space size. uvmpagecount() counts present user mappings.
 +  return uvmpagecount(p->pagetable, p->sz);
 +}
 +
@@ -97,17 +98,17 @@ index 6bc3730..a83e258 100644
  void
 diff --git a/user/pgcounttest.c b/user/pgcounttest.c
 new file mode 100644
-index 0000000..0a4b2e8
+index 0000000..bf98786
 --- /dev/null
 +++ b/user/pgcounttest.c
-@@ -0,0 +1,105 @@
+@@ -0,0 +1,114 @@
 +#include "kernel/types.h"
 +#include "kernel/stat.h"
 +#include "kernel/riscv.h"
 +#include "user/user.h"
 +
 +static void
-+fail(const char *msg)
++fail(char *msg)
 +{
 +  printf("pgcounttest FAIL: %s\n", msg);
 +  exit(1);
@@ -116,93 +117,102 @@ index 0000000..0a4b2e8
 +static void
 +align_break(void)
 +{
-+  uint64 cur = (uint64)sbrk(0);
-+  uint64 rem = cur % PGSIZE;
++  uint64 current = (uint64)sbrk(0);
++  uint64 aligned = PGROUNDUP(current);
 +
-+  if (rem != 0) {
-+    int grow = PGSIZE - rem;
-+    if (sbrk(grow) == SBRK_ERROR)
-+      fail("align sbrk failed");
++  if (aligned != current) {
++    if (sbrk(aligned - current) == (char *)-1)
++      fail("sbrk align failed");
 +  }
 +}
 +
++// xv6 sbrk() allocates physical pages immediately in the baseline kernel.
++// pgcount should therefore grow as soon as the address space grows.
 +static void
-+eager_test(void)
++test_eager(void)
 +{
-+  int before = pgcount();
-+  char *base = sbrk(2 * PGSIZE);
-+  if (base == SBRK_ERROR)
-+    fail("eager sbrk failed");
++  int before;
++  int after_alloc;
++  int after_free;
++  int delta;
++  char *base;
 +
-+  int after_alloc = pgcount();
-+  int delta = after_alloc - before;
++  align_break();
 +
-+  printf("pgcount eager before = %d\n", before);
-+  printf("pgcount eager after alloc = %d\n", after_alloc);
++  before = pgcount();
++  base = sbrk(2 * PGSIZE);
++  if (base == (char *)-1)
++    fail("sbrk eager allocation failed");
++
++  after_alloc = pgcount();
++  delta = after_alloc - before;
 +  printf("pgcount eager delta = %d\n", delta);
 +
 +  if (delta != 2)
-+    fail("eager delta is not 2");
++    fail("expected eager delta 2");
 +
-+  if (sbrk(-2 * PGSIZE) == SBRK_ERROR)
-+    fail("eager free failed");
++  if (sbrk(-2 * PGSIZE) == (char *)-1)
++    fail("sbrk eager free failed");
 +
-+  int after_free = pgcount();
-+  printf("pgcount eager after free = %d\n", after_free);
-+  printf("pgcount eager free delta = %d\n", after_free - before);
++  after_free = pgcount();
++  printf("pgcount eager delta after free = %d\n", after_free - before);
 +}
 +
++// sbrklazy() reserves virtual address space and maps pages only when touched.
++// This test separates "address exists" from "PTE_V && PTE_U mapping exists".
 +static void
-+lazy_test(void)
++test_lazy(void)
 +{
-+  int before = pgcount();
-+  char *base = sbrklazy(2 * PGSIZE);
-+  if (base == SBRK_ERROR)
-+    fail("lazy sbrklazy failed");
++  int before;
++  int after_alloc;
++  int after_touch_one;
++  int after_touch_two;
++  int delta_before_touch;
++  int delta_after_one;
++  int delta_after_two;
++  char *base;
 +
-+  int after_lazy_alloc = pgcount();
-+  int delta_before_touch = after_lazy_alloc - before;
++  align_break();
 +
-+  printf("pgcount lazy before = %d\n", before);
-+  printf("pgcount lazy after reserve = %d\n", after_lazy_alloc);
++  before = pgcount();
++  base = sbrklazy(2 * PGSIZE);
++  if (base == (char *)-1)
++    fail("sbrklazy allocation failed");
++
++  after_alloc = pgcount();
++  delta_before_touch = after_alloc - before;
 +  printf("pgcount lazy delta before touch = %d\n", delta_before_touch);
 +
 +  if (delta_before_touch != 0)
-+    fail("lazy reserve mapped pages before touch");
++    fail("expected lazy delta before touch 0");
 +
 +  base[0] = 1;
-+  int after_touch_one = pgcount();
-+  int delta_after_one = after_touch_one - before;
++  after_touch_one = pgcount();
++  delta_after_one = after_touch_one - before;
 +  printf("pgcount lazy delta after one touch = %d\n", delta_after_one);
 +
 +  if (delta_after_one != 1)
-+    fail("lazy one-page touch delta is not 1");
++    fail("expected lazy delta after one touch 1");
 +
 +  base[PGSIZE] = 1;
-+  int after_touch_two = pgcount();
-+  int delta_after_two = after_touch_two - before;
++  after_touch_two = pgcount();
++  delta_after_two = after_touch_two - before;
 +  printf("pgcount lazy delta after two touches = %d\n", delta_after_two);
 +
 +  if (delta_after_two != 2)
-+    fail("lazy two-page touch delta is not 2");
++    fail("expected lazy delta after two touches 2");
 +
-+  if (sbrk(-2 * PGSIZE) == SBRK_ERROR)
-+    fail("lazy free failed");
++  if (sbrk(-2 * PGSIZE) == (char *)-1)
++    fail("sbrk lazy free failed");
 +
-+  int after_free = pgcount();
-+  printf("pgcount lazy after free = %d\n", after_free);
++  printf("pgcount lazy delta after free = %d\n", pgcount() - before);
 +}
 +
 +int
 +main(int argc, char *argv[])
 +{
-+  (void)argc;
-+  (void)argv;
-+
-+  align_break();
-+  eager_test();
-+  lazy_test();
-+
++  test_eager();
++  test_lazy();
 +  printf("pgcounttest done\n");
 +  exit(0);
 +}

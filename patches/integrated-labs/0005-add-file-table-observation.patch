@@ -23,10 +23,10 @@ index ee5d495..cee70ed 100644
  void            fileinit(void);
  int             fileread(struct file*, uint64, int n);
 diff --git a/kernel/file.c b/kernel/file.c
-index 13a4e69..9857b4f 100644
+index 13a4e69..c416a7b 100644
 --- a/kernel/file.c
 +++ b/kernel/file.c
-@@ -25,6 +25,22 @@ fileinit(void)
+@@ -25,6 +25,23 @@ fileinit(void)
    initlock(&ftable.lock, "ftable");
  }
  
@@ -36,6 +36,7 @@ index 13a4e69..9857b4f 100644
 +  struct file *f;
 +  int count = 0;
 +
++  // ftable is global, so take its lock before reading reference counts.
 +  acquire(&ftable.lock);
 +  for (f = ftable.file; f < ftable.file + NFILE; f++) {
 +    if (f->ref > 0)
@@ -97,13 +98,20 @@ index a6299e9..aae9061 100644
  sys_link(void)
 diff --git a/user/fcounttest.c b/user/fcounttest.c
 new file mode 100644
-index 0000000..b961046
+index 0000000..250f928
 --- /dev/null
 +++ b/user/fcounttest.c
-@@ -0,0 +1,39 @@
+@@ -0,0 +1,49 @@
 +#include "kernel/types.h"
 +#include "kernel/fcntl.h"
 +#include "user/user.h"
++
++static void
++fail(char *msg)
++{
++  printf("fcounttest FAIL: %s\n", msg);
++  exit(1);
++}
 +
 +int
 +main(void)
@@ -117,17 +125,14 @@ index 0000000..b961046
 +
 +  before = fcount();
 +  fd = open("fcnttmp", O_CREATE | O_RDWR);
-+  if (fd < 0) {
-+    printf("fcounttest: open fcnttmp failed\n");
-+    exit(1);
-+  }
++  if (fd < 0)
++    fail("open fcnttmp failed");
 +
 +  after_open = fcount();
 +  if (write(fd, "x", 1) != 1) {
-+    printf("fcounttest: write failed\n");
 +    close(fd);
 +    unlink("fcnttmp");
-+    exit(1);
++    fail("write failed");
 +  }
 +
 +  close(fd);
@@ -137,6 +142,12 @@ index 0000000..b961046
 +  printf("fcount(before) = %d\n", before);
 +  printf("fcount(after_open) = %d\n", after_open);
 +  printf("fcount(after_close) = %d\n", after_close);
++
++  if (after_open - before != 1)
++    fail("expected global file table delta after open 1");
++  if (after_close != before)
++    fail("expected global file table count to return after close");
++
 +  printf("fcounttest done\n");
 +  exit(0);
 +}

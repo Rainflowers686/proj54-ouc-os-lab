@@ -1,172 +1,33 @@
-# Demo 脚本草案
+# Demo Script
 
-## Demo 目标
+## 目标
 
-展示当前 lab0/lab1/lab2 的最小工程闭环和 integrated-labs 综合演示路径：
+本文提供演示视频脚本，帮助录制者按项目定位、复现流程和证据边界组织讲解。
 
-- 项目定位是教学型 OS 实验体系。
-- xv6-riscv baseline 被隔离在 `external/`，不提交第三方源码。
-- lab1 通过 patch 复现最小 `hello()` syscall。
-- lab1 进阶 patch 通过 `add2(int a, int b)` 演示 `argint()` 参数传递。
-- lab2 通过 `pstate(int pid)`、`pcount(int state)` 和子进程观察演示进程表查找、状态读取和进程状态统计。
-- integrated-labs 解决 lab1/lab2 independent patch 不能直接叠加的问题，用同一个 xv6 构建同时运行 hello、add2test、pstatetest、pcounttest、pchildtest。
-- 真实证据包括环境检查、boot evidence、hello/add2 输出捕获、pstatetest 输出捕获、pcounttest 输出捕获和 pchildtest 输出捕获。
+## 适用对象
 
-当前状态：
+适用于录屏人员、答辩讲者和提交材料维护者。
 
-- 自动捕获证据已有。
-- 人工录屏：TODO。
-- 人工交互演示：TODO。
+## 内容范围
 
-## 录制建议
+脚本覆盖 README 项目定位、baseline、integrated patches、环境检查、apply+make、boot、用户程序验证、证据索引和边界说明。
 
-- 不录个人隐私、聊天窗口、浏览器账号、token、密码或报名材料。
-- 不展示身份证明、手机号、邮箱收件箱或系统通知。
-- 只录 VS Code、终端、GitLab/GitHub 项目中必要部分。
-- 不录制或提交大型原始视频文件，先确认比赛平台要求。
-- 若使用外部图表或图片，需记录来源和许可证。
+## 演示流程
 
-## Demo 流程
+1. 展示 README 中项目定位和 当前正式验证范围。
+2. 展示 `patches/integrated-labs/README.md` 的 `0001-0009`。
+3. 运行或展示 `teammate-verify.sh --full` summary。
+4. 展示 `submissions/evidence_manifest.md` 的视频 SHA256 和三方复现。
+5. 说明 raw logs、视频、截图和隐私材料不入 Git。
 
-建议总时长控制在 2-3 分钟。
+## 语言风格
 
-1. 打开 `README.md`，说明项目定位和当前状态。
-2. 展示 `external/xv6-baseline-record.md`，说明 baseline commit 与第三方源码隔离。
-3. 展示 `patches/lab1-system-call/`、`patches/lab2-process-observation/` 和 `patches/integrated-labs/`，说明独立教学 patch 与综合演示 patch 分开维护。
-4. 运行环境检查：
+讲解应控制在事实和证据范围内，不说“长期稳定”或“完整文件系统/内存管理”。
 
-   ```bash
-   bash scripts/check-env.sh
-   ```
+## 质量标准
 
-5. 展示 integrated-labs 助手脚本：
+录制前应关闭隐私窗口和通知，确认没有 token、密码、报名材料或个人信息。
 
-   ```bash
-   bash scripts/xv6/apply-integrated-labs.sh
-   bash scripts/xv6/apply-integrated-labs.sh --make --yes
-   ```
+## 边界条件
 
-   说明：该脚本只会 reset/clean ignored 的 `external/xv6-riscv/`，不会修改主仓库 tracked 文件。
-
-6. 捕获 boot evidence：
-
-   ```bash
-   bash scripts/xv6/boot-xv6.sh
-   ```
-
-7. 捕获 hello 输出：
-
-   ```bash
-   bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"
-   ```
-
-8. 捕获 add2 输出：
-
-   ```bash
-   bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"
-   ```
-
-9. 捕获 pstatetest 输出：
-
-   ```bash
-   bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="
-   ```
-
-10. 捕获 pcounttest 和 pchildtest 输出：
-
-   ```bash
-   bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(RUNNING) ="
-   bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(99) = -1"
-   bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="
-   ```
-
-   说明：实际命令名使用 `pchildtest`，不是 `pstatechildtest`，因为 xv6 `DIRSIZ` 限制会让过长文件名导致 `mkfs` 失败。
-
-11. 展示 `docs/12_lab1_patch_review.md`、`docs/14_lab1_argint_extension_review.md`、`docs/15_lab2_process_observation_review.md` 和 `docs/19_lab2_v0.2_process_observation_review.md`，说明 clean baseline apply 复现已审查。
-12. 展示 `docs/16_patch_strategy_and_integration_plan.md` 和 `patches/integrated-labs/README.md`，说明 integrated sequence 已解决综合演示冲突，并通过 `0004` 补充 pcount、子进程观察和负向测试。
-13. 展示 `docs/04_test_report.md`，说明只记录真实执行证据。
-
-## 可选人工交互流程
-
-该流程尚未录制，完成后再更新状态。
-
-```bash
-bash scripts/xv6/apply-integrated-labs.sh --make --yes
-cd external/xv6-riscv
-make qemu
-```
-
-进入 xv6 shell 后输入：
-
-```text
-hello
-add2test
-pstatetest
-pcounttest
-pchildtest
-```
-
-预期输出：
-
-```text
-hello syscall returned 2026
-add2(20, 6) returned 26
-pstate(self) = 4 (RUNNING)
-pcount(RUNNING) = <n>
-pcount(99) = -1
-pstate(child) = <state> (<STATE_NAME>)
-```
-
-退出 QEMU：
-
-```text
-Ctrl-a
-x
-```
-
-## 讲解词草案
-
-> 本项目对应 proj54 教学型赛题，目标不是单纯堆内核功能，而是为低年级同学提供可以逐步复现的 OS 竞赛入门实验体系。当前已打通 lab0、lab1 和 lab2 的最小闭环：lab0 完成环境检查、xv6 baseline build 和 boot evidence；lab1 通过 hello 和 add2 讲解 syscall 与 argint 参数传递；lab2 通过 pstate、pcount 和 pchildtest 讲解进程表、进程状态、进程锁、负向输入和调度时序不确定性。由于 lab1 和 lab2 的独立 patch 不能直接叠加，仓库新增了 integrated-labs 序列，用统一 syscall number 在同一构建中演示 hello、add2test、pstatetest、pcounttest 和 pchildtest。第三方 xv6 源码放在 ignored 的 external 目录，原始日志也不提交，仓库只提交自有文档、脚本、patch 和证据摘要。未完成的队友复现、人工录屏和长期稳定性测试均明确标记为 TODO。
-
-## 边界说明
-
-- 自动脚本捕获到的 boot/hello evidence 不等同于人工交互视频。
-- 当前不声称完成长期稳定性测试。
-- 当前不声称第二名队员已独立复现。
-
-## stage6a 更新：lab4 demo 补充
-
-综合 demo 现在建议展示 integrated `0001-0005`，在原有 lab1/lab2 命令后追加：
-
-```bash
-bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(before) ="
-bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_open) ="
-bash scripts/xv6/run-xv6-command.sh fcounttest "fcount(after_close) ="
-bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"
-```
-
-人工交互录屏时，在 xv6 shell 中追加：
-
-```text
-fcounttest
-```
-
-讲解补充：
-
-> lab4 当前只做文件表观察，不是完整文件系统改造。`fcount()` 统计全局文件表中 `ref > 0` 的 `struct file`，用于说明 file descriptor 背后对应内核文件对象，`open/close` 会影响引用计数。具体数字受 shell、console 和时序影响，因此测试只匹配稳定前缀，不固定承诺某个数值。
-
-## stage6c 更新：boot evidence 录制前检查
-
-录制前建议先运行：
-
-```bash
-bash scripts/xv6/boot-xv6.sh
-```
-
-当前脚本默认 45 秒 timeout、最多 2 次尝试。clean build 后首次 boot 可能因为 `fs.img` 补建或 `/mnt/d` mtime skew 超时，脚本会自动重试。需要更保守时可运行：
-
-```bash
-XV6_BOOT_TIMEOUT_SECONDS=60 XV6_BOOT_RETRIES=2 bash scripts/xv6/boot-xv6.sh
-```
-
-Demo 讲解时只说“捕获到 boot evidence”，不要说这是长期稳定性测试，也不要说人工交互录屏或队友复现已完成。
+不提交 `external/xv6-riscv/`、raw logs、summary 原件、视频、截图、token、密码或隐私材料。不把 timeout evidence 写成长期稳定性测试。不把 `pgcount`/`memstat` 写成完整内存管理；不把 `fcount`/`fdcount`/`fdinfo` 写成完整文件系统；Lab5 不新增内核机制。
