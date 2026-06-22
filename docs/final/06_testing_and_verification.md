@@ -1,4 +1,4 @@
-# 06 Testing and Verification
+# 06 测试与验证（Testing and Verification）
 
 ## 测试原则
 

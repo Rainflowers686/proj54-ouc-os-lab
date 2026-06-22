@@ -1,4 +1,4 @@
-# 10 Reference and License Statement
+# 10 参考来源与许可证说明（Reference and License Statement）
 
 ## xv6-riscv baseline
 
@@ -32,7 +32,7 @@ xv6-riscv 上游 LICENSE 为 MIT License。项目使用 xv6 作为教学 OS base
 
 当前 `docs/final/` 中只做定位性对比，不复制上述项目的大段文本、代码或图片。
 
-## Final-Check Table
+## 最终核对表（Final-Check Table）
 
 | 项目 | 类型 | URL 状态 | License 状态 | 是否作为直接来源 | 当前处理 |
 | --- | --- | --- | --- | --- | --- |
