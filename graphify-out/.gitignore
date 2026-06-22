@@ -1,4 +1,0 @@
-# graphify output/cache directory.
-# Contains generated graphs, manifests, caches, and absolute-path metadata.
-*
-!.gitignore

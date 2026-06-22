@@ -8,8 +8,8 @@ Thumbs.db
 
 .claude/
 .cursor/
-.idea/*
-!.idea/.gitignore
+.idea/
+.github/
 .vscode/
 *.code-workspace
 *.iml
@@ -123,12 +123,9 @@ logs/student-summaries/
 !logs/README.md
 
 ### Generated project graphs and private planning state
-.code-review-graph/*
-!.code-review-graph/.gitignore
-graphify-out/*
-!graphify-out/.gitignore
-plan/*
-!plan/.gitignore
+.code-review-graph/
+graphify-out/
+plan/
 
 ### Archives, media, and generated submission assets
 *.7z
