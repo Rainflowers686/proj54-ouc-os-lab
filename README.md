@@ -21,7 +21,7 @@ OUC xv6 Lab Kit 是一套面向 OS 课程的 xv6-riscv 入门实验包：按 Lab
 ## 适合谁
 
 - 大一/大二，学过一点 C，但没碰过内核的同学。
-- 想提前入门操作系统的高中/初中信息学竞赛学生——只要你会用命令行、能看懂指针，就能跟下来。
+- 有信息学竞赛背景，或有 C 语言和命令行基础、想提前接触操作系统的自学者——如果能看懂指针和结构体，可以先从 Lab0-Lab2 跟着走一遍；后面的页表、文件表实验再按自己的节奏补。
 - 上 OS 课需要做 xv6 实验、想要一套带验收标准的练习的人。
 - 想看一个"实验怎么做到可复现、证据怎么留"的完整工程样例的人。
 
@@ -31,15 +31,15 @@ OUC xv6 Lab Kit 是一套面向 OS 课程的 xv6-riscv 入门实验包：按 Lab
 
 按 Lab 顺序，每一关解决一个具体问题：
 
-| 关卡 | 你会搞明白的事 |
-| --- | --- |
-| Lab0 | xv6 怎么编译、怎么在 QEMU 里启动、`init: starting sh` 之前发生了什么 |
-| Lab1 | 用户程序调用 `hello()` 时，怎么穿过 `usys.pl` 生成的 stub、`ecall`、`syscall.c` 分发表，落到内核函数上；`argint()` 怎么把整数参数取出来 |
-| Lab2 | 进程在内核里长什么样（`struct proc`）、状态枚举怎么读、为什么观察进程状态要拿锁 |
-| Lab3 | 进程地址空间和页表映射的区别；`sbrk` 立刻给页（eager）和先记账后给页（lazy）在页表里看起来差多少 |
-| Lab4 | fd、`struct file`、全局 file table 三层关系；`dup` 为什么让 fd 变多但 file table 不一定变多 |
-| Lab3/4 进阶 | 内核怎么把一个结构体安全拷回用户态：`argaddr + copyout + struct ABI`（`memstat`/`fdinfo`），为什么不能直接解引用用户指针 |
-| Lab5 | 把前面所有实验从干净源码一次性复现，写出一份有证据的实验报告（capstone，不新增内核机制） |
+| 关卡        | 你会搞明白的事                                                                                                                                    |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lab0        | xv6 怎么编译、怎么在 QEMU 里启动、`init: starting sh` 之前发生了什么                                                                            |
+| Lab1        | 用户程序调用 `hello()` 时，怎么穿过 `usys.pl` 生成的 stub、`ecall`、`syscall.c` 分发表，落到内核函数上；`argint()` 怎么把整数参数取出来 |
+| Lab2        | 进程在内核里长什么样（`struct proc`）、状态枚举怎么读、为什么观察进程状态要拿锁                                                                 |
+| Lab3        | 进程地址空间和页表映射的区别；`sbrk` 立刻给页（eager）和先记账后给页（lazy）在页表里看起来差多少                                                |
+| Lab4        | fd、`struct file`、全局 file table 三层关系；`dup` 为什么让 fd 变多但 file table 不一定变多                                                   |
+| Lab3/4 进阶 | 内核怎么把一个结构体安全拷回用户态：`argaddr + copyout + struct ABI`（`memstat`/`fdinfo`），为什么不能直接解引用用户指针                    |
+| Lab5        | 把前面所有实验从干净源码一次性复现，写出一份有证据的实验报告（capstone，不新增内核机制）                                                          |
 
 另外你会顺带学到一套工程习惯：为什么实验要可复现、为什么测试程序要自己算 delta 而不是硬编码输出、为什么日志和第三方源码不进 Git。
 
@@ -112,7 +112,7 @@ bash scripts/labctl.sh verify        # 一键 full 验证（等价 teammate-veri
 - 技术报告：[docs/final/technical_report_v1.0.md](docs/final/technical_report_v1.0.md)
 - 答辩 PPT 源稿：[slides/final_ppt.md](slides/final_ppt.md)（成稿 `slides/final_defense_ppt.pptx`）
 - 正式文档目录：[docs/final/](docs/final/)，材料索引 [submissions/draft-report-index.md](submissions/draft-report-index.md)
-- 外部证据资产包（演示视频、三方复现 summary/截图等大文件，不入 Git）：百度网盘目录 `proj54_submission_assets`，链接 <https://pan.baidu.com/s/1Xt-G6VgP04eEAumqiMo7Uw?pwd=1234>（提取码 `1234`）。下载后可用 `XV6_EVIDENCE_BASE=<解压路径> bash scripts/check-evidence-sha256.sh` 逐文件核对哈希——以仓库内 manifest 和该脚本为准，网盘只是文件的存放处。
+- 外部证据资产包（演示视频、三方复现 summary/截图等大文件，不入 Git）：百度网盘目录 `proj54_submission_assets`，链接 [https://pan.baidu.com/s/1Xt-G6VgP04eEAumqiMo7Uw?pwd=1234](https://pan.baidu.com/s/1Xt-G6VgP04eEAumqiMo7Uw?pwd=1234)（提取码 `1234`）。下载后可用 `XV6_EVIDENCE_BASE=<解压路径> bash scripts/check-evidence-sha256.sh` 逐文件核对哈希——以仓库内 manifest 和该脚本为准，网盘只是文件的存放处。
 
 比赛信息：2026 全国大学生计算机系统能力大赛 OS 设计赛（全国）OS 功能挑战赛道 proj54，中国海洋大学"蓝色系统队"。
 
