@@ -1,37 +1,58 @@
-# Lab5 学生任务书
+# Lab5 学生任务书：综合复现（capstone）
 
-## 目标
+> 先读 [README.md](README.md)。这一关不写新内核代码，考的是工程素养：复现、记录、解释、诚实。
 
-本任务书要求学生完成 integrated `0001-0009` full verification，并提交可被助教复查的综合实验报告。
+## 学生目标
 
-## 适用对象
+独立完成 integrated `0001-0009` 的全流程复现，交出一份别人能照着重跑的实验报告。
 
-适用于已完成 Lab0-Lab4 的学生。
+## 必做任务
 
-## 内容范围
+1. **T1 全流程复现**：依次执行环境诊断、clean apply+make、boot、全部用户程序验证（推荐直接 `bash scripts/xv6/teammate-verify.sh --full`）。把最终的 `COPY THIS SUMMARY TO TEAM LEAD` 块原样贴进报告（含 commit 行）。
+2. **T2 patch 导读**：从 `patches/integrated-labs/` 的 9 个 patch 里挑 3 个（必须包含 `0008` 或 `0009` 之一），各用 150 字说明：加了什么 syscall、改了哪些文件、教学点是什么。
+3. **T3 机制串讲**：回答"一个 syscall 的一生"：以 `memstattest` 调用 `memstat(&st)` 为例，从用户程序写到内核返回，路径上至少点名 6 个文件。
+4. **T4 故障记录**：复现过程中至少记录一次真实异常（boot 第一次超时、`Ctrl+Z` 卡住、`/mnt` 慢、make 重编……没有遇到就主动制造一次 `Ctrl+Z` 再救回来），写：症状 → 处理命令（如 `cleanup-qemu.sh`）→ 结果。
+5. **T5 证据边界声明**：报告末尾用自己的话写清三句：哪些结果是你本机自动捕获；哪些需要他人复现才算数；为什么不能拿别人旧 commit 的 PASS 当自己的证据。
 
-任务覆盖环境诊断、clean apply、make、boot、全部用户程序验证、patch walkthrough、故障记录和证据边界说明。
+## 选做挑战
 
-## 任务结构
+- **C1**：在另一台机器（或同学机器）上重跑 T1，对比两份 summary 的差异并解释。
+- **C2**：给 9 个 syscall 画一张"编号 22-30 + 所属 lab + 观察对象"的总览图。
 
-T1：运行 `teammate-verify.sh --full` 并保存 summary。T2：解释 `0001-0009` 每个 patch 的主题。T3：记录一次真实故障或风险项。T4：写明哪些文件不应进入 Git。T5：用三句话说明 Lab5 不新增内核机制。
+## 提交内容
 
-## 提交要求
+- 实验报告（含 T1 summary 块、T2-T5）。
+- 不提交 `external/xv6-riscv/`、`logs/`、视频、截图原图。
 
-提交 summary 块、报告、patch 阅读说明和故障记录。不要提交 raw logs、视频、截图或 `external/xv6-riscv/`。
+## 自检命令
 
-## 评分标准
+```bash
+bash scripts/xv6/doctor.sh
+bash scripts/xv6/teammate-verify.sh --full
+# 卡住时：
+bash scripts/xv6/cleanup-qemu.sh
+```
 
-full verification 30 分，patch walkthrough 25 分，故障记录 20 分，证据边界 15 分，表达质量 10 分。
+## 评分 rubric（100 分）
 
-## 语言风格
+| 项目 | 分值 | 标准 |
+| --- | ---: | --- |
+| T1 复现 | 25 | summary 真实完整，overall PASS 或如实记录失败 |
+| T2 patch 导读 | 20 | 三段都落到具体文件与机制 |
+| T3 机制串讲 | 20 | 路径连贯，文件点名准确 |
+| T4 故障记录 | 15 | 症状-处理-结果三段齐 |
+| T5 证据边界 | 10 | 三句话立场正确 |
+| 报告可重跑性 | 10 | 他人按报告能操作 |
 
-报告应像复现实验说明，不像流水账。每个结论都应能回到命令、输出或文件。
+## 常见扣分点
 
-## 质量标准
+- summary 块被手工改过（时间戳/commit 对不上，按伪造处理）。
+- 报告只有成功，没有任何异常记录——真实复现几乎不可能零波折。
+- 把 timeout 自动捕获说成"长期稳定运行"。
+- 把历史 `0001-0007` 证据说成覆盖当前 `0001-0009`。
 
-合格答案必须能被助教按报告重跑，且 summary 未被手工篡改。
+## 思考题
 
-## 边界条件
-
-本任务不要求新增 syscall。不提交 `external/xv6-riscv/`、raw logs、summary 原件、视频、截图、token、密码或隐私材料。不把 timeout evidence 写成长期稳定性测试。不把 `pgcount`/`memstat` 写成完整内存管理；不把 `fcount`/`fdcount`/`fdinfo` 写成完整文件系统；Lab5 不新增内核机制。
+1. 为什么 integrated 序列要统一编号 22-30，而 independent patch 各自用 22？
+2. "在我机器上能跑"和"可复现"之间差的是哪些东西？
+3. 如果你是助教，拿到一份全 PASS 的报告，你会抽查什么来确认它不是编的？

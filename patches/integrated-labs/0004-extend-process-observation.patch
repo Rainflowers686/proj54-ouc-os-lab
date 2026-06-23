@@ -41,16 +41,14 @@ index 0c3fa4d..5275dc7 100644
  #define SYS_pstate 24
 +#define SYS_pcount 25
 diff --git a/kernel/sysproc.c b/kernel/sysproc.c
-index 93e3e38..ea507fc 100644
+index 042854c..d9e896b 100644
 --- a/kernel/sysproc.c
 +++ b/kernel/sysproc.c
-@@ -152,3 +152,26 @@ sys_pstate(void)
+@@ -150,3 +150,24 @@ sys_pstate(void)
  
    return -1;
  }
 +
-+// Count process table entries in one enum procstate. This is a snapshot for
-+// teaching; the scheduler may change states immediately after locks release.
 +uint64
 +sys_pcount(void)
 +{
@@ -73,13 +71,33 @@ index 93e3e38..ea507fc 100644
 +}
 diff --git a/user/pchildtest.c b/user/pchildtest.c
 new file mode 100644
-index 0000000..d380714
+index 0000000..701d945
 --- /dev/null
 +++ b/user/pchildtest.c
-@@ -0,0 +1,29 @@
+@@ -0,0 +1,49 @@
 +#include "kernel/types.h"
-+#include "user/labproc.h"
 +#include "user/user.h"
++
++static char *
++state_name(int state)
++{
++  switch (state) {
++  case 0:
++    return "UNUSED";
++  case 1:
++    return "USED";
++  case 2:
++    return "SLEEPING";
++  case 3:
++    return "RUNNABLE";
++  case 4:
++    return "RUNNING";
++  case 5:
++    return "ZOMBIE";
++  default:
++    return "UNKNOWN";
++  }
++}
 +
 +int
 +main(void)
@@ -99,7 +117,7 @@ index 0000000..d380714
 +
 +  pause(2);
 +  int state = pstate(child);
-+  printf("pstate(child) = %d (%s)\n", state, lab_proc_state_name(state));
++  printf("pstate(child) = %d (%s)\n", state, state_name(state));
 +  printf("pstate(-1) = %d\n", pstate(-1));
 +
 +  kill(child);
@@ -108,18 +126,19 @@ index 0000000..d380714
 +}
 diff --git a/user/pcounttest.c b/user/pcounttest.c
 new file mode 100644
-index 0000000..8e7ac96
+index 0000000..9af8bf3
 --- /dev/null
 +++ b/user/pcounttest.c
-@@ -0,0 +1,14 @@
+@@ -0,0 +1,15 @@
 +#include "kernel/types.h"
-+#include "user/labproc.h"
 +#include "user/user.h"
++
++#define PROC_STATE_RUNNING 4
 +
 +int
 +main(void)
 +{
-+  int running = pcount(LAB_PROC_RUNNING);
++  int running = pcount(PROC_STATE_RUNNING);
 +  int invalid = pcount(99);
 +
 +  printf("pcount(RUNNING) = %d\n", running);

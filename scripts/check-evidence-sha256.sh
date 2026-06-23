@@ -13,8 +13,8 @@
 #   - file present and hash differs        -> FAIL, exit 1
 #
 # Covered evidence sets:
-#   - historical integrated 0001-0007 evidence (4 videos + 4 teammate files)
-#   - integrated 0001-0009 evidence (1 video + 3 summaries + 2 screenshots),
+#   - historical stable checkpoint: e8e2fb9 / 0001-0007 (4 videos + 4 teammate files)
+#   - current final: db85947 / 0001-0009 (1 video + 3 summaries + 2 screenshots),
 #     recorded in stage14 after the real three-way reproduction
 #
 # Override the evidence location with:
@@ -108,8 +108,8 @@ $EXPECTED
 EOF
 
 echo
-echo "[NOTE] table covers both evidence sets: historical integrated 0001-0007 and"
-echo "[NOTE] integrated 0001-0009 (recorded in stage14)."
+echo "[NOTE] table covers both evidence sets: historical e8e2fb9/0001-0007 and"
+echo "[NOTE] current final db85947/0001-0009 (recorded in stage14)."
 echo
 echo "files present+hashed: $checked  matched: $matched  missing: $missing"
 if [ "$fail" -eq 0 ]; then

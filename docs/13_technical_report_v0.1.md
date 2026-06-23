@@ -1,37 +1,460 @@
-# 技术报告 v0.1（历史草案）
+# 技术报告 v0.1
 
-## 目标
+> **历史草案说明（stage8b 补充）**
+>
+> 本文档是早期技术报告草案 v0.1，不是最终技术报告。它不包含 stage6+ 的完整 lab4 文件表观察、stage7+ 的 doctor/local/teammate verification workflow、stage8 的 `docs/final/` 正式文档体系，也不包含 stage8b 的两份队友 full verification PASS 摘要和视频元数据记录。
+>
+> 正式提交应以根 `README.md`、`docs/final/` 和后续技术报告 v1.0 为准。保留本文档是为了过程透明，不代表最终报告。
 
-本文保留早期技术报告的历史定位。正式提交和评审不应引用本草案作为当前最终报告，当前正式验证范围 应使用 `docs/final/technical_report_v1.0.md`。
+项目：`proj54-ouc-os-lab`
 
-## 适用对象
+队伍：中国海洋大学“蓝色系统队”
 
-适用于追溯项目早期叙事、材料组织和范围变化的维护者。学生、评审和答辩人员应阅读 v1.0。
+赛题：2026 全国大学生计算机系统能力大赛 OS 功能挑战赛 `proj54：面向操作系统课程的操作系统竞赛和实验`
 
-## 历史内容范围
+版本说明：本文档是初赛技术报告草案 v0.1，用于整理当前 lab0/lab1/lab2 与 integrated-labs 的真实工程闭环。它不是最终报告，不声称完整 OS 实验体系已经完成。
 
-v0.1 曾覆盖项目定位、Lab0-Lab4、早期 integrated sequence、测试脚本和初步证据链。后续项目已经扩展到 integrated `0001-0009`，并形成正式教师材料、评分标准、排障文档、Lab5 和最终证据 manifest。
+## 1. 项目概述
 
-## 当前有效结论
+本项目面向中国海洋大学低年级计算机学生，建设一套 OS 竞赛入门实验体系。当前主线暂定为 xv6-riscv，参考 rCore/uCore 等课程资源的组织方式，逐步形成从环境搭建、baseline 验证、系统调用、进程与调度、页表与内存、文件系统到最终集成的 step by step 实验教程、patch、测试脚本、参考记录和 FAQ。
 
-仍然有效的是课程化定位、clean baseline patch workflow、可复现验证和证据边界。已被替代的是旧 suite 身份、旧视频范围、旧队友复现范围和未覆盖 `memstat`/`fdinfo` 的描述。
+当前 v0.1 的重点不是堆叠复杂内核功能，而是建立一个诚实、可复现、可扩展的最小工程闭环：
 
-## 质量标准
+- lab0：环境检查、xv6-riscv baseline 获取、build 与 boot evidence。
+- lab1：`hello()` 最小 system call patch、`add2(int a, int b)` 参数传递进阶 patch、构建验证、QEMU 输出捕获、clean baseline 复现审查。
+- lab2：`pstate(int pid)` 进程状态观察 patch、进程表查找、进程锁使用说明、QEMU 输出捕获。
+- integrated-labs：面向综合演示的统一 patch sequence，在同一个 xv6 构建中同时验证 `hello`、`add2test`、`pstatetest`。
+- 工程治理：第三方源码隔离、原始日志不提交、patch 作为可提交产物、AI 使用和进度记录透明化。
 
-引用本文件时必须标注“历史草案”。若内容与 `docs/final/technical_report_v1.0.md` 或 `submissions/evidence_manifest.md` 冲突，以正式文档和 evidence manifest 为准。
+## 2. 赛题理解
 
-## 边界条件
+proj54 属于教学型赛题，不是普通的“完成一个 OS 作业”或“只追求内核功能难度”的题目。项目最终需要服务于本校 OS 实验教学和竞赛入门，重点在于：
 
-本文件不作为 当前正式验证范围 完成度证明，不作为最终答辩材料，不作为 `0001-0009` 的验证依据。
+- 能否把复杂 OS 任务拆成低年级同学可以逐步完成的实验。
+- 是否提供清晰的 step by step 过程，而不是只给最终答案。
+- 是否能让后续同学复现环境、复现 patch、复现测试结果。
+- 是否对引用、改造、第三方源码、AI 使用和测试证据保持诚实记录。
 
-## 内容范围
+因此，本项目当前选择先打通 lab0/lab1 的最小闭环，再用 lab2 进入进程状态观察。这样比直接堆多个未验证功能更符合教学型赛题的评价方向。
 
-本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 当前正式验证范围、历史证据、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
+## 3. 总体设计
 
-## 结构规范
+### 3.1 主线选择
 
-文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 当前正式验证范围。
+当前主线暂定为 xv6-riscv。
 
-## 语言风格
+选择理由：
 
-使用中文技术写作风格，命令、文件名、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。
+- xv6-riscv 代码规模适中，适合讲解 OS 基础概念。
+- 系统调用、进程、页表、文件系统等模块边界清晰，适合拆成独立实验。
+- 社区资料较多，便于和教材、课程资源、往年竞赛资料建立引用关系。
+- 适合作为低年级同学从“会运行”到“能修改内核”的入门载体。
+
+### 3.2 lab0：环境与 baseline
+
+lab0 的目标是让同学先获得可验证环境，而不是直接进入内核修改。
+
+当前已完成：
+
+- WSL2 Ubuntu 环境下运行 `scripts/check-env.sh`。
+- 检测到 `git`、`bash`、`make`、`qemu-system-riscv64`、`riscv64-linux-gnu-gcc`。
+- `riscv64-unknown-elf-gcc` 缺失，记录为 WARN。
+- 获取 xv6-riscv baseline 到 `external/xv6-riscv/`。
+- 记录 baseline commit：`74f84181a3404d1d6a6ff98d342233979066ebb8`。
+- baseline `make` 成功。
+- 捕获 boot evidence：检测到 `xv6 kernel is booting` 和 `init: starting sh`。
+
+### 3.3 lab1：syscall 入门与参数传递
+
+lab1 的目标是展示从用户态到内核态的系统调用路径，并在最小闭环之后补充整数参数传递。
+
+第一档为 `hello()`：
+
+- 新增 syscall `hello()`。
+- 内核返回整数 `2026`。
+- 用户态程序 `hello` 输出 `hello syscall returned 2026`。
+
+第二档为 `add2(int a, int b)`：
+
+- 新增 syscall `add2()`。
+- 用户程序调用 `add2(20, 6)`。
+- 内核通过 `argint(0, &a)` 和 `argint(1, &b)` 获取参数。
+- 内核返回 `a + b`。
+- 用户态程序 `add2test` 输出 `add2(20, 6) returned 26`。
+
+该设计保持小规模，便于讲清楚 syscall number、用户态 stub、trap、dispatcher、`argint()` 参数读取、内核实现和返回值路径。
+
+### 3.4 lab2：进程状态观察
+
+lab2 的目标是从 lab1 syscall 参数传递自然过渡到进程表观察。当前实现选择 `pstate(int pid)`：
+
+- 用户程序通过 `getpid()` 获取自己的 pid。
+- 用户程序调用 `pstate(pid)`。
+- 内核通过 `argint(0, &pid)` 获取 pid。
+- 内核遍历 `proc[]` 查找目标进程。
+- 读取 `p->state` 时持有 `p->lock`。
+- 用户程序 `pstatetest` 输出 `pstate(self) = 4 (RUNNING)`。
+
+该实验只观察单个 pid，不实现完整 `ps`，不修改调度算法。
+
+### 3.5 后续扩展计划
+
+后续计划不在本轮实现，只记录方向（`add2` 带参数 syscall 已在 3.3 完成，不再列为待办）：
+
+- lab1 教学化：补充学生动手任务（给骨架让学生自己实现 syscall）、负向实验（故意漏 `entry`/dispatch 观察现象）、指针/字符串参数（`argaddr`/`argstr`）和评分标准，使其从"参考实现 demo"升级为"可布置的实验"。
+- lab2 扩展：增加 `pcount(state)`、scheduler trace 或 ps-like summary。
+- lab4：文件系统实验，例如 inode/file 相关观察或最小功能修改。
+
+lab2 与 lab4 将根据初赛时间和队伍能力二选一深化，不同时推进过多未验证功能。当前 lab1 仅覆盖 syscall 入门与整数参数传递，**未覆盖指针/字符串参数和全部 syscall 机制**（见 `docs/14_lab1_argint_extension_review.md` 教学价值评估）。
+
+stage5a 已将 lab2 进程观察从 v0.1 扩展到 v0.2，并以 integrated `0004` 形式验证：
+
+- `pcount(int state)`：统计 `proc[]` 中指定 `enum procstate` 的进程数量，演示状态枚举、进程表遍历和 `p->lock`。
+- `pcounttest`：捕获 `pcount(RUNNING) =`，并用 `pcount(99) = -1` 覆盖无效状态负向输入。
+- `pchildtest`：通过 `fork()` 创建子进程并观察 child pid 的状态，输出 `pstate(child) = ...`。状态受调度时序影响，不固定承诺为 `SLEEPING`。
+- 原计划命令名 `pstatechildtest` 因 xv6 `DIRSIZ` 文件名限制导致真实 `mkfs` 失败，已缩短为 `pchildtest` 并记录原因。
+
+该扩展仍不实现完整 `ps`，不修改调度器，也不声称长期稳定性测试。
+
+## 4. 工程架构
+
+### 4.1 自有仓库
+
+本仓库存放自有文档、脚本、patch、测试记录和提交材料索引。官方 GitLab 是比赛主仓库，GitHub 是私有备份与协作仓库。
+
+### 4.2 第三方源码隔离
+
+xv6-riscv 源码位于：
+
+```text
+external/xv6-riscv/
+```
+
+该目录被 `.gitignore` 忽略，不提交第三方源码。
+
+可提交 metadata 位于：
+
+```text
+external/xv6-baseline-record.md
+```
+
+### 4.3 patch 机制
+
+lab1 的源码改动不直接提交 xv6-riscv 源码，而是导出 patch：
+
+```text
+patches/lab1-system-call/0001-add-hello-syscall.patch
+patches/lab1-system-call/0002-add-argint-add2-syscall.patch
+patches/lab2-process-observation/0001-add-pstate-syscall.patch
+patches/integrated-labs/0001-add-hello-syscall.patch
+patches/integrated-labs/0002-add-argint-add2-syscall.patch
+patches/integrated-labs/0003-add-pstate-syscall.patch
+patches/integrated-labs/0004-extend-process-observation.patch
+```
+
+评委或队友可以从 clean baseline 应用 patch 复现。注意：lab1 序列（`0001`+`0002`）与 lab2 独立 patch **不能直接叠加**（`SYS_hello` 与 `SYS_pstate` 均为 22，已实测 `git apply --check` 冲突）。综合演示使用 `patches/integrated-labs/`，其中 `SYS_pstate` 统一调整为 24，`SYS_pcount` 使用 25。详见 `docs/16_patch_strategy_and_integration_plan.md`。
+
+### 4.4 日志策略
+
+原始日志位于：
+
+```text
+logs/*.log
+```
+
+这些文件被 Git 忽略，不提交。项目文档只摘录关键命令、结果、环境和风险，不复制完整日志。
+
+### 4.5 双远程策略
+
+- `origin`：官方比赛 GitLab，最终提交主仓库。
+- `github`：私有 GitHub 备份与协作仓库，用于 issue、协作和 Codex/Claude 辅助工作。
+
+不得把 GitHub 当作最终比赛提交平台。
+
+## 5. 当前真实成果
+
+| 成果 | 状态 | 证据位置 |
+| --- | --- | --- |
+| 环境检测 | 已通过 | `scripts/check-env.sh`，`docs/04_test_report.md` |
+| baseline make | 已成功 | `logs/xv6-make-20260603-235003.log` 摘要见 `docs/04_test_report.md` |
+| baseline boot evidence | 已捕获 | `logs/xv6-boot-20260604-001736.log` 摘要见 `docs/04_test_report.md` |
+| lab1 hello syscall patch | 已生成 | `patches/lab1-system-call/0001-add-hello-syscall.patch` |
+| lab1 add2 argint patch | 已生成 | `patches/lab1-system-call/0002-add-argint-add2-syscall.patch` |
+| lab2 pstate process observation patch | 已生成 | `patches/lab2-process-observation/0001-add-pstate-syscall.patch` |
+| integrated lab1+lab2 patch sequence | 已生成并验证 | `patches/integrated-labs/README.md` |
+| integrated lab2 v0.2 process observation patch | 已生成并验证 | `patches/integrated-labs/0004-extend-process-observation.patch`，`docs/19_lab2_v0.2_process_observation_review.md` |
+| clean baseline apply 复现 | 已通过 stage2b 审查 | `docs/12_lab1_patch_review.md` |
+| patched make | 已成功 | 摘要见 `docs/04_test_report.md` 与 `docs/12_lab1_patch_review.md` |
+| hello 输出捕获 | 已成功 | 检测到 `hello syscall returned 2026` |
+| add2 输出捕获 | 已成功 | 检测到 `add2(20, 6) returned 26`，见 `docs/14_lab1_argint_extension_review.md` |
+| pstatetest 输出捕获 | 已成功 | 检测到 `pstate(self) = 4 (RUNNING)`，见 `docs/15_lab2_process_observation_review.md` |
+| integrated 五程序输出捕获 | 已成功 | 同一构建中检测到 hello/add2test/pstatetest/pcounttest/pchildtest 输出，见 `docs/04_test_report.md` |
+
+以上均为当前阶段的真实记录。尚未完成的内容继续标记为 TODO。
+
+## 6. lab1 技术说明
+
+### 6.1 修改文件
+
+| 文件 | 作用 |
+| --- | --- |
+| `kernel/syscall.h` | 增加 `SYS_hello 22` 和 `SYS_add2 23`。 |
+| `kernel/syscall.c` | 声明 `sys_hello`、`sys_add2` 并加入 syscall dispatch table。 |
+| `kernel/sysproc.c` | 实现 `sys_hello()` 和 `sys_add2()`。 |
+| `user/user.h` | 声明 `int hello(void);` 和 `int add2(int, int);`。 |
+| `user/usys.pl` | 增加 `entry("hello")` 和 `entry("add2")`，生成用户态 syscall stub。 |
+| `Makefile` | 将 `_hello` 和 `_add2test` 加入 `UPROGS`。 |
+| `user/hello.c` | 新增 hello 用户态测试程序。 |
+| `user/add2test.c` | 新增 add2 用户态测试程序。 |
+
+### 6.2 调用链
+
+```text
+user/hello.c
+  -> user/user.h 中的 hello() 声明
+  -> user/usys.pl 生成的用户态 stub
+  -> ecall / trap 进入 kernel
+  -> kernel/syscall.c 中的 syscall dispatcher
+  -> kernel/sysproc.c 中的 sys_hello()
+  -> 返回值通过 a0 回到用户态
+  -> printf 输出 hello syscall returned 2026
+```
+
+`add2()` 调用链：
+
+```text
+user/add2test.c
+  -> add2(20, 6)
+  -> user/usys.pl 生成的 add2 stub
+  -> ecall / trap 进入 kernel
+  -> kernel/syscall.c 中的 syscall dispatcher
+  -> kernel/sysproc.c 中的 sys_add2()
+  -> argint(0, &a) 读取 20
+  -> argint(1, &b) 读取 6
+  -> 返回 26
+```
+
+### 6.3 教学意义
+
+该实验可以引导学生依次理解：
+
+- 用户程序如何声明和调用系统调用。
+- syscall number 如何绑定用户态和内核态。
+- `usys.pl` 如何生成用户态 stub。
+- trap 之后内核如何通过 dispatch table 找到实现函数。
+- `argint()` 如何从用户态寄存器约定中取出整数参数。
+- 返回值如何从内核回到用户态。
+
+## 7. 测试与证据
+
+### 7.1 环境检查
+
+```bash
+bash scripts/check-env.sh
+```
+
+当前记录：基础工具 OK，QEMU OK，`riscv64-linux-gnu-gcc` OK，`riscv64-unknown-elf-gcc` WARN。
+
+### 7.2 baseline 结构检查
+
+```bash
+bash scripts/xv6/check-xv6-baseline.sh
+```
+
+当前记录：baseline directory、`Makefile`、`LICENSE` 存在。
+
+### 7.3 baseline make
+
+```bash
+bash scripts/xv6/check-xv6-baseline.sh --make
+```
+
+当前记录：已成功。原始日志不提交，摘要见 `docs/04_test_report.md`。
+
+### 7.4 boot evidence
+
+```bash
+bash scripts/xv6/boot-xv6.sh
+```
+
+当前记录：已检测到 `xv6 kernel is booting` 和 `init: starting sh`。
+
+### 7.5 hello 输出捕获
+
+```bash
+bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"
+```
+
+当前记录：已检测到 `hello syscall returned 2026`。
+
+### 7.6 add2 输出捕获
+
+```bash
+bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"
+```
+
+当前记录：已检测到 `add2(20, 6) returned 26`。
+
+### 7.7 clean apply review
+
+stage2b 已完成 clean baseline patch reproducibility review，记录见：
+
+```text
+docs/12_lab1_patch_review.md
+docs/14_lab1_argint_extension_review.md
+docs/15_lab2_process_observation_review.md
+```
+
+### 7.8 lab2 pstate 输出捕获
+
+```bash
+bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="
+bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
+```
+
+当前记录：已检测到 `pstate(self) = 4 (RUNNING)`。
+
+### 7.9 integrated-labs 综合验证
+
+```bash
+bash scripts/xv6/apply-integrated-labs.sh
+bash scripts/xv6/apply-integrated-labs.sh --make --yes
+bash scripts/xv6/boot-xv6.sh
+bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"
+bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"
+bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="
+bash scripts/xv6/run-xv6-command.sh pstatetest "RUNNING"
+bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(RUNNING) ="
+bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(99) = -1"
+bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="
+```
+
+当前记录：`scripts/xv6/apply-integrated-labs.sh` 已新增；预览模式不修改 external tree；`--make --yes` 可 reset/clean ignored 的 `external/xv6-riscv/`、应用 integrated `0001-0005` 并完成 `make`。boot evidence、hello、add2test、pstatetest、pcounttest、pchildtest、fcounttest 均已通过真实命令验证。该结果只代表 timeout 自动捕获到关键输出，不代表长期稳定性或人工录屏。
+
+## 8. 风险与边界
+
+| 风险 / 边界 | 当前处理 |
+| --- | --- |
+| timeout 自动捕获不是长期稳定性测试 | 文档中只写 boot evidence、hello evidence、add2 evidence 和 pstatetest evidence，不写长期稳定。 |
+| 不是人工交互录屏 | 人工 demo 仍为 TODO，见 `videos/demo_script.md`。 |
+| 第二名队员复现 | TODO，不伪造队友复现结果。 |
+| `riscv64-unknown-elf-gcc` 缺失 | 当前使用 `riscv64-linux-gnu-gcc` 构建成功，继续记录 WARN。 |
+| linker RWX warning | 已记录为风险；后续需要解释来源和影响。 |
+| patch 绑定 baseline commit | patch 目标 commit 为 `74f84181a3404d1d6a6ff98d342233979066ebb8`，baseline 变化时需重新验证。 |
+| lab1/lab2 patch 合并 | independent patch 仍不可直接叠加；integrated-labs 已提供统一序列，使用 `hello=22/add2=23/pstate=24`。 |
+| 子进程状态观察时序不确定 | `pchildtest` 只要求捕获 `pstate(child) =` 前缀；本地曾观察到 `RUNNABLE` 与 `SLEEPING`，不伪造固定状态。 |
+| xv6 文件名长度限制 | 原计划 `pstatechildtest` 因 `_pstatechildtest` 超过 `DIRSIZ` 导致真实 `mkfs` 失败；实际命令名改为 `pchildtest` 并记录原因。 |
+| 第三方源码提交风险 | `external/xv6-riscv/` 被 `.gitignore` 忽略，验证 `git ls-files external/xv6-riscv` 无输出。 |
+| 原始日志提交风险 | `logs/*.log` 被 `.gitignore` 忽略，验证 `git ls-files logs/*.log` 无输出。 |
+
+## 9. AI 使用说明
+
+AI 工具用于：
+
+- 项目计划和文档结构整理。
+- shell 脚本草案与审查辅助。
+- 测试证据摘要整理。
+- patch 复现文档和技术报告草案生成。
+
+AI 工具不得用于：
+
+- 伪造命令输出。
+- 伪造测试通过记录。
+- 伪造队友复现结果。
+- 伪造视频、截图、评审意见或比赛成绩。
+
+真实命令由队长执行或由 agent 在本地环境执行；AI 输出必须经人工复核后才能进入最终作品。持续记录见 `docs/05_ai_usage_record.md`。
+
+## 10. 下一步路线
+
+1. 第二名队员独立复现 lab0/lab1/lab2/integrated-labs，并填写复现记录。
+2. 完成人工交互 demo：使用 integrated-labs 构建，手动进入 xv6 shell，输入 `hello`、`add2test`、`pstatetest`、`pcounttest`、`pchildtest`，退出 QEMU。
+3. 将 lab1 的 hello/add2 两档内容和 lab2 pstate/pcount/child 观察内容整理成更完整的 step by step 教程。
+4. 在 scheduler trace、ps-like summary 或 lab4 文件系统实验中选择一个方向深化，避免同时展开过多内容。
+5. 将本文档升级为初赛技术报告 v0.2，并补充 PPT 与 Demo 结果。
+
+## 11. 附录索引
+
+- 项目首页：`README.md`
+- 测试报告：`docs/04_test_report.md`
+- 内部红队审查：`docs/10_red_team_review.md`
+- lab1 clean baseline 复现审查：`docs/12_lab1_patch_review.md`
+- lab1 argint 进阶复现审查：`docs/14_lab1_argint_extension_review.md`
+- lab1 patch 说明：`patches/lab1-system-call/README.md`
+- lab2 进程观察复现审查：`docs/15_lab2_process_observation_review.md`
+- lab2 patch 说明：`patches/lab2-process-observation/README.md`
+- patch 策略与集成计划：`docs/16_patch_strategy_and_integration_plan.md`
+- integrated-labs patch 说明：`patches/integrated-labs/README.md`
+- lab2 v0.2 进程观察审查：`docs/19_lab2_v0.2_process_observation_review.md`
+- lab1 patch 应用脚本：`scripts/xv6/apply-lab1-patch.sh`
+- 复现包：`reproducibility/README.md`
+- Demo 脚本：`videos/demo_script.md`
+- 初赛材料索引：`submissions/draft-report-index.md`
+
+## stage6a 更新：lab4 文件表观察实验
+
+stage6a 在既有 lab0/lab1/lab2 基础上新增了一个范围克制的 lab4 文件系统观察实验。该实验不修改文件系统布局，不观察 inode，也不实现完整文件系统工具；当前只通过 `fcount()` 观察 xv6 全局文件表中 `ref > 0` 的 `struct file` 数量。
+
+新增交付物：
+
+- independent lab4 patch：`patches/lab4-file-table-observation/0001-add-fcount-syscall.patch`，从 clean baseline 单独应用，使用 `SYS_fcount = 22`。
+- integrated lab4 patch：`patches/integrated-labs/0005-add-file-table-observation.patch`，在 integrated `0001-0004` 之后应用，使用 `SYS_fcount = 26`。
+- lab4 教程：`labs/lab4-file-system/README.md`。
+- lab4 测试说明：`tests/lab4/README.md`。
+- lab4 审查报告：`docs/20_lab4_file_table_observation_review.md`。
+
+当前 integrated final demo patch sequence 扩展为：
+
+| 顺序 | 内容 | syscall number | 用户程序 |
+| --- | --- | --- | --- |
+| `0001` | `hello()` | 22 | `hello` |
+| `0002` | `add2(int, int)` | 23 | `add2test` |
+| `0003` | `pstate(int pid)` | 24 | `pstatetest` |
+| `0004` | `pcount(int state)` 和子进程状态观察 | 25 | `pcounttest`、`pchildtest` |
+| `0005` | `fcount()` 文件表观察 | 26 | `fcounttest` |
+
+真实验证摘要：
+
+- independent lab4 patch：clean baseline apply PASS，`make` PASS，`fcounttest done` 捕获 PASS。
+- integrated `0001-0005`：`apply-integrated-labs.sh --make --yes` PASS，boot evidence PASS。
+- 同一 integrated 构建中已捕获 `hello`、`add2test`、`pstatetest`、`pcounttest`、`pchildtest`、`fcounttest` 的关键输出。
+
+教学价值：
+
+- 从用户态 file descriptor 过渡到内核 `struct file`。
+- 通过 `ref` 引用计数解释打开文件对象生命周期。
+- 通过 `open/close` 前后观察说明用户态操作会影响全局文件表。
+- 通过 `ftable.lock` 引出共享内核数据结构读取时的锁保护。
+
+边界仍需明确：
+
+- `fcount(...)` 的具体数字不固定，不作为验收标准。
+- timeout 自动捕获不是长期稳定性测试。
+- 人工录屏和第二名队员独立复现仍为 TODO。
+- lab3 尚未完成，lab4 当前也不是完整文件系统实验。
+
+## stage6c 更新：boot evidence 脚本加固
+
+stage6a/stage6b 发现一个真实工程风险：clean build 后首次运行 `boot-xv6.sh` 可能因为 `fs.img` 补建、`/mnt/d` mtime skew 或构建耗时，在原 20 秒 timeout 内没有捕获到 boot evidence；后续重试可以成功捕获。这不是可以忽略的失败，技术报告中需要如实记录。
+
+stage6c 对 `scripts/xv6/boot-xv6.sh` 做了脚本层加固：
+
+- 默认 timeout 从 20 秒提高到 45 秒。
+- 默认最多尝试 2 次。
+- 每次尝试写独立日志：`logs/xv6-boot-YYYYMMDD-HHMMSS-attemptN.log`。
+- 支持环境变量覆盖：
+
+  ```bash
+  XV6_BOOT_TIMEOUT_SECONDS=60 XV6_BOOT_RETRIES=2 bash scripts/xv6/boot-xv6.sh
+  ```
+
+- 只有同一次尝试中同时检测到 `xv6 kernel is booting` 和 `init: starting sh` 才判定 `BOOT_EVIDENCE_FOUND`。
+- 如果所有尝试都失败，脚本仍非 0 退出，不伪造 boot 成功。
+
+该改动不修改 xv6 patch，不新增 OS 功能，只提高证据捕获脚本的鲁棒性。它仍然不代表长期稳定性测试、人工交互录屏或第二名队员独立复现。
+
+stage6c 已在 WSL2 中真实验证：
+
+- `bash scripts/xv6/boot-xv6.sh` 使用默认 45 秒 / 2 次尝试，在第 1 次尝试捕获 boot evidence。
+- `XV6_BOOT_TIMEOUT_SECONDS=60 XV6_BOOT_RETRIES=2 bash scripts/xv6/boot-xv6.sh` 确认环境变量覆盖生效，并在第 1 次尝试捕获 boot evidence。
+- integrated `0001-0005` 重新 `make` 成功，hello/add2test/pstatetest/pcounttest/pchildtest/fcounttest 回归命令均捕获到关键输出。

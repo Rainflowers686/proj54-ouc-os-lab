@@ -1,29 +1,40 @@
-# Lab1 Test Record
+# lab1 测试记录
 
-## 目标
+## 测试目标
 
-本文记录 Lab1 测试证据的索引和解释，说明 `hello` 与 `add2test` 的验证范围。
+lab1 测试用于验证两个 system call patch：
 
-## 适用对象
+- minimal：`hello()`，输出 `hello syscall returned 2026`。
+- advanced：`add2(int a, int b)`，通过 `argint()` 获取参数，输出 `add2(20, 6) returned 26`。
 
-适用于助教、维护者和学生报告复查人员。
+## 已真实执行命令
 
-## 内容范围
+| 目的 | 命令 | 结果 |
+| --- | --- | --- |
+| 初始 hello 回归 | `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"` | PASS |
+| clean baseline + 0001 + 0002 apply | `git apply` patch sequence | PASS |
+| 构建 patched xv6 | `cd external/xv6-riscv && make` | PASS |
+| hello 回归 | `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"` | PASS |
+| add2 输出捕获 | `bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"` | PASS |
 
-记录覆盖 `hello syscall returned 2026` 和 `add2(20, 6) returned 26`。正式 当前正式验证范围 覆盖以 `submissions/evidence_manifest.md` 为准。
+## 证据摘要
 
-## 结构规范
+| 证据 | 状态 | 说明 |
+| --- | --- | --- |
+| baseline make | PASS | stage2 已记录 |
+| boot evidence | PASS | stage2 已记录；stage3 最终验证会复跑 |
+| hello output | PASS | stage3a 在 `0001+0002` 后仍成功 |
+| add2test output | PASS | stage3a 捕获到 `add2(20, 6) returned 26` |
 
-测试记录应包含命令、匹配文本、范围和边界。
+原始日志被 Git 忽略，不应提交。
 
-## 语言风格
+## 尚未覆盖
 
-只记录真实输出，不补写未运行结果。
+- TODO: 长期 QEMU 稳定性测试。
+- TODO: 人工交互 shell 测试与录屏。
+- TODO: 第二名队员独立复现。
+- TODO: 负向测试，例如 syscall number 冲突、用户态 stub 缺失、参数错误。
 
-## 质量标准
+## 与测试报告的关系
 
-记录应能对应 Lab1 README 和验证脚本。
-
-## 边界条件
-
-不提交 `external/xv6-riscv/`、raw logs、summary 原件、视频、截图、token、密码或隐私材料。不把 timeout evidence 写成长期稳定性测试。不把 `pgcount`/`memstat` 写成完整内存管理；不把 `fcount`/`fdcount`/`fdinfo` 写成完整文件系统；Lab5 不新增内核机制。
+正式摘要记录在 `docs/04_test_report.md`。进阶 add2 复现审查见 `docs/14_lab1_argint_extension_review.md`。本文件保留 lab1 专项测试说明，不复制完整日志。

@@ -53,7 +53,7 @@ index 32ab378..91ea68b 100644
  #define SYS_fdcount 28
 +#define SYS_memstat 29
 diff --git a/kernel/sysproc.c b/kernel/sysproc.c
-index f88cae5..04a540e 100644
+index 0e1ef1c..e289a8b 100644
 --- a/kernel/sysproc.c
 +++ b/kernel/sysproc.c
 @@ -6,6 +6,7 @@
@@ -64,8 +64,8 @@ index f88cae5..04a540e 100644
  
  extern struct proc proc[NPROC];
  
-@@ -183,3 +184,25 @@ sys_pgcount(void)
-   // p->sz is address-space size. uvmpagecount() counts present user mappings.
+@@ -178,3 +179,25 @@ sys_pgcount(void)
+   struct proc *p = myproc();
    return uvmpagecount(p->pagetable, p->sz);
  }
 +

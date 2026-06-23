@@ -1,36 +1,125 @@
-# Lab3 Patch Guide
+# Lab3 Memory and Pagetable Patch
 
-## 目标
+> 维护时间：2026-06-06（stage9b）。
 
-本目录保存 Lab3 independent patch，用于教学 `pgcount()` 和进阶 `memstat()`。
+## Baseline
 
-## 适用对象
+| 字段 | 内容 |
+| --- | --- |
+| upstream | `https://github.com/mit-pdos/xv6-riscv.git` |
+| baseline commit | `74f84181a3404d1d6a6ff98d342233979066ebb8` |
+| patch | `0001-add-pgcount-syscall.patch` |
+| syscall number | `SYS_pgcount = 22`（clean baseline independent patch） |
 
-适用于学习页表映射、lazy allocation 和 copyout 的学生、助教和维护者。
+## Patch 作用
 
-## 内容范围
+本 patch 新增 `pgcount()` 系统调用和 `pgcounttest` 用户程序，用于观察当前进程用户页表中已经映射的用户页数量。
 
-`0001` 增加 `pgcount()`；`0002` 增加 `memstat(struct memstat*)`。integrated 中对应 `SYS_pgcount = 27` 和 `SYS_memstat = 29`。
+它是 Lab3 的 independent patch，不属于 integrated-labs `0001-0005`，也没有新增 integrated `0006`。
 
-## 结构规范
+## 涉及文件
 
-说明应区分 independent 编号与 integrated 编号，并写明 `walk(..., 0)`、`PTE_V`、`PTE_U` 和 `copyout` 边界。
+| 文件 | 作用 |
+| --- | --- |
+| `kernel/syscall.h` | 新增 `SYS_pgcount 22` |
+| `kernel/syscall.c` | 注册 `sys_pgcount` |
+| `kernel/sysproc.c` | 实现 `sys_pgcount()`，只统计当前进程 |
+| `kernel/vm.c` | 新增只读 helper `uvmpagecount(pagetable, sz)` |
+| `kernel/defs.h` | 声明 `uvmpagecount` |
+| `user/user.h` | 声明 `int pgcount(void)` |
+| `user/usys.pl` | 生成用户态 syscall stub |
+| `user/pgcounttest.c` | eager/lazy allocation 对比测试 |
+| `Makefile` | 加入 `_pgcounttest` |
 
-## 验证命令
+## 应用方式
+
+从 clean baseline 应用：
 
 ```bash
+cd external/xv6-riscv
+git reset --hard 74f84181a3404d1d6a6ff98d342233979066ebb8
+git clean -fdx
+git apply ../../patches/lab3-memory-and-pagetable/0001-add-pgcount-syscall.patch
+make
+```
+
+## 运行方式
+
+在仓库根目录使用现有 QEMU 捕获脚本：
+
+```bash
+bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcount eager delta = 2"
+bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcount lazy delta before touch = 0"
+bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcount lazy delta after two touches = 2"
 bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcounttest done"
+```
+
+## 预期输出
+
+`pgcounttest` 会打印真实计算出的 page count 差值：
+
+```text
+pgcount eager delta = 2
+pgcount lazy delta before touch = 0
+pgcount lazy delta after one touch = 1
+pgcount lazy delta after two touches = 2
+pgcounttest done
+```
+
+不依赖 `pgcount before/after` 的绝对值。
+
+## 教学说明
+
+- baseline 已有 eager/lazy allocation：`sbrk(n)` 走 `SBRK_EAGER`，`sbrklazy(n)` 走 `SBRK_LAZY`。
+- eager `sbrk(2 * PGSIZE)` 会立即映射 2 个用户页，因此 `pgcount` delta 应为 2。
+- lazy `sbrklazy(2 * PGSIZE)` 只扩大 `p->sz`，触摸前不映射物理页，因此 delta 应为 0。
+- 触摸 lazy 区域的第 1 页和第 2 页后，`vmfault()` 按需分配页，delta 分别变为 1 和 2。
+
+边界：这是页表映射数量观察实验，不是完整内存管理、物理内存统计、page fault 改造或长期稳定性测试。
+
+## Advanced optional：`0002-add-memstat-syscall.patch`（memstat）
+
+> 维护时间：2026-06-08（stage11a）。这是 Lab3 的进阶可选 independent patch，独立于 `0001-add-pgcount-syscall.patch`。
+
+| 字段 | 内容 |
+| --- | --- |
+| patch | `patches/lab3-memory-and-pagetable/0002-add-memstat-syscall.patch` |
+| 接口 | `int memstat(struct memstat *out)` |
+| 返回结构 | `struct memstat { uint64 sz_bytes; int mapped_pages; int page_size; }` |
+| syscall number | `SYS_memstat = 22`（clean baseline independent patch） |
+| 教学点 | `argaddr + copyout + struct ABI`：第一次让学生看到内核如何把一个结构体安全拷回用户态 |
+
+`memstat()` 在 `pgcount()` 的"数页"基础上更进一步：用 `argaddr(0, &uaddr)` 取用户缓冲区地址，把 `{sz_bytes = p->sz, mapped_pages = [0,sz) 内 PTE_V && PTE_U 的页数, page_size = PGSIZE}` 通过 `copyout()` 拷回用户态；`copyout` 失败返回 -1，成功返回 0。它仍然只读、不分配、不修改 PTE、不输出物理地址。
+
+涉及文件：`Makefile`、`kernel/memstat.h`（新增 struct）、`kernel/syscall.c`、`kernel/syscall.h`、`kernel/sysproc.c`、`user/user.h`、`user/usys.pl`、`user/memstattest.c`（新增）。
+
+应用与验证（clean baseline，独立于 `0001`）：
+
+```bash
+cd external/xv6-riscv
+git reset --hard 74f84181a3404d1d6a6ff98d342233979066ebb8
+git clean -fdx
+git apply ../../patches/lab3-memory-and-pagetable/0002-add-memstat-syscall.patch
+make
+cd ../..
 bash scripts/xv6/run-xv6-command.sh memstattest "memstattest done"
 ```
 
-## 语言风格
+clean baseline round-trip 已验证，实测输出（delta 为程序真实计算，非硬编码）：
 
-用“页表映射数量观察”描述实验，不用“内存管理实现”。
+```text
+memstat page_size = 4096
+memstat mapped delta = 2
+memstat size delta = 8192
+memstat invalid pointer = -1
+memstattest done
+```
 
-## 质量标准
+边界与状态：
 
-测试应验证 eager/lazy delta 和 bad pointer 行为。
-
-## 边界条件
-
-Lab3 patch 不修改 page fault 策略。不提交 `external/xv6-riscv/`、raw logs、summary 原件、视频、截图、token、密码或隐私材料。不把 timeout evidence 写成长期稳定性测试。不把 `pgcount`/`memstat` 写成完整内存管理；不把 `fcount`/`fdcount`/`fdinfo` 写成完整文件系统；Lab5 不新增内核机制。
+- 这是页表/地址空间**观察**实验，**不是完整内存管理实验**。
+- `SYS_memstat = 22` 与 `pgcount` 的 `SYS_pgcount = 22` 相同：两个 independent patch **不可叠加**，各自从 clean baseline 单独应用。组合演示走 integrated 路线。
+- stage11b 起 `memstat` **已进入** integrated `0008`（`patches/integrated-labs/0008-add-memstat-copyout-observation.patch`，integrated 编号 `SYS_memstat = 29`，复用 integrated `0006` 的 `uvmpagecount()`），current integrated suite 为 `0001-0009`。
+- integrated 变体已在队长本机 `local-verify --full` overall PASS（含 `memstattest`）；本 independent patch 本身仍未纳入队友 full verification。
+- `e8e2fb9` 三方 full PASS 是 historical stable checkpoint，只覆盖 `0001-0007`，**不覆盖** `0001-0009`。
+- 含 memstat 的 `0001-0009` 队友 full verify（rain/root/z2996）、新视频、新 SHA256 已于 stage14 在 current final commit `db85947` 上完成并登记（见 `submissions/evidence_manifest.md`）。

@@ -1,50 +1,72 @@
-# 06 Testing and Verification
+# 06 测试与验证（Testing and Verification）
 
-## 目标
+## 测试原则
 
-本文定义项目测试和证据口径，说明哪些命令支撑 当前正式验证范围，哪些结果只能作为历史或局部证据。
+- 只记录真实执行过的命令和结果。
+- 原始日志和 summary 默认在 `logs/` 下，Git 忽略，不提交。
+- timeout 自动捕获不等于长期稳定性测试。
+- 队长本机验证不等于队友独立复现。
+- 不固定 `pcount(RUNNING)`、`fcount(...)` 数字或 `pchildtest` 状态。
 
-## 适用对象
+## 测试覆盖表
 
-适用于评审、队友复现人员、助教和项目维护者。
+| 测试项 | 覆盖内容 | 命令 | 预期结果 | 当前真实结果 | 证据位置 |
+| --- | --- | --- | --- | --- | --- |
+| doctor | 环境、工具链、baseline、ignored logs、QEMU 残留 | `bash scripts/xv6/doctor.sh` | `READY` 或 `READY WITH WARNINGS`；缺关键工具非 0 | PASS；`riscv64-unknown-elf-gcc` 和 `/mnt/` 可 WARN | `docs/06_progress_log.md`，ignored summary/logs |
+| baseline build | clean xv6 baseline 构建 | `bash scripts/xv6/check-xv6-baseline.sh --make` | make 成功 | PASS | `external/xv6-baseline-record.md`，`docs/04_test_report.md` |
+| boot | xv6 启动关键文本 | `bash scripts/xv6/boot-xv6.sh` | `BOOT_EVIDENCE_FOUND`，匹配 `xv6 kernel is booting` 和 `init: starting sh` | PASS | `docs/04_test_report.md`，ignored `logs/xv6-boot-*.log` |
+| hello | lab1 `hello()` syscall | `bash scripts/xv6/run-xv6-command.sh hello "hello syscall returned 2026"` | 匹配指定文本 | PASS | `docs/04_test_report.md` |
+| add2test | lab1 `add2(int,int)` syscall | `bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"` | 匹配指定文本 | PASS | `docs/14_lab1_argint_extension_review.md`，`docs/04_test_report.md` |
+| pstatetest | lab2 `pstate(int pid)` | `bash scripts/xv6/run-xv6-command.sh pstatetest "pstate(self) ="` | 匹配前缀 | PASS | `docs/15_lab2_process_observation_review.md`，`docs/04_test_report.md` |
+| pcounttest | lab2 `pcount(int state)` 正常和负向输入 | `bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(RUNNING) ="`；`bash scripts/xv6/run-xv6-command.sh pcounttest "pcount(99) = -1"` | 匹配前缀和 invalid state `-1` | PASS；数值不固定 | `docs/19_lab2_v0.2_process_observation_review.md` |
+| pchildtest | lab2 子进程状态观察 | `bash scripts/xv6/run-xv6-command.sh pchildtest "pstate(child) ="` | 匹配前缀；状态不固定 | PASS | `docs/19_lab2_v0.2_process_observation_review.md` |
+| pgcounttest | lab3 页表映射数量观察；eager/lazy allocation 对比 | `bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcount eager delta = 2"`；`bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcount lazy delta before touch = 0"`；`bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcount lazy delta after two touches = 2"`；`bash scripts/xv6/run-xv6-command.sh pgcounttest "pgcounttest done"` | 匹配真实计算出的 delta 和完成标记 | PASS；integrated `0006` 已验证；current final `db85947 / 0001-0009` 三方 full verify 已覆盖（historical `e8e2fb9 / 0001-0007` 三方记录保留） | `tests/lab3/README.md`，`patches/integrated-labs/README.md`，`submissions/teammate_reproduction_record.md` |
+| fcounttest | lab4 文件表观察 | `bash scripts/xv6/run-xv6-command.sh fcounttest "fcounttest done"` | 匹配 `fcounttest done`；可选检查 before/open/close 前缀 | PASS；数字不固定 | `docs/20_lab4_file_table_observation_review.md` |
+| fdcounttest | lab4 v0.2 当前进程 fd table 观察 | `bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"` | 匹配 `fdcounttest done`；fd delta 由程序真实计算 | PASS；integrated `0007` 已验证；不依赖绝对 fcount | `patches/integrated-labs/README.md`，`docs/06_progress_log.md` |
+| memstattest | lab3 进阶 `memstat(struct memstat*)` 地址空间观察（argaddr + copyout + struct ABI） | `bash scripts/xv6/run-xv6-command.sh memstattest "memstattest done"` | 匹配 `memstattest done`；`page_size = 4096`，mapped/size delta 由程序真实计算并 `exit(1)` on mismatch | PASS；stage11b integrated `0008`（`SYS_memstat = 29`）队长本机 `local-verify --full` 已验证；不是完整内存管理 | `patches/integrated-labs/0008-add-memstat-copyout-observation.patch`，`docs/06_progress_log.md` |
+| fdinfotest | lab4 进阶 `fdinfo(int,struct fdinfo*)` fd 元数据观察（argint + argaddr + copyout + struct ABI） | `bash scripts/xv6/run-xv6-command.sh fdinfotest "fdinfotest done"` | 匹配 `fdinfotest done`；open/dup ok、closed fd `-1`、bad fd `-1` 由程序真实判定并 `exit(1)` on mismatch | PASS；stage11b integrated `0009`（`SYS_fdinfo = 30`）队长本机 `local-verify --full` 已验证；只查自己的 `ofile[fd]`，不返回路径/inode/内容 | `patches/integrated-labs/0009-add-fdinfo-copyout-observation.patch`，`docs/06_progress_log.md` |
+| local-verify | 队长本机预检 | `bash scripts/xv6/local-verify.sh --quick` 或 `--full` | copy-to-lead summary overall PASS | PASS；stage11b `0001-0009`（含 memstat/fdinfo）队长本机 `full` overall PASS 已完成；旧 `e8e2fb9 / 0001-0007` 队长 `full` 为 historical；summary 文件在 ignored `logs/` 下 | `submissions/teammate_reproduction_record.md`，`logs/teammate-verify-*.summary.txt` ignored |
+| teammate-verify | 队友正式复现入口 | `bash scripts/xv6/teammate-verify.sh --full` | 队友机器 summary overall PASS（现含 memstattest/fdinfotest） | **current final：`db85947 / 0001-0009` 三方（rain/root/z2996）full PASS 已登记，grade-summaries 解析 3/3 clean**；`e8e2fb9 / 0001-0007` 与 `1ba9db6` 记录为 historical | `submissions/teammate_reproduction_record.md`，`submissions/evidence_manifest.md` |
+| manual xv6 shell demo | 人工进入 xv6 shell 运行 hello/add2/pstate/pcount/pchild/fcount/pgcount/fdcount/memstat/fdinfo | `cd external/xv6-riscv && make qemu` 后手动输入用户程序 | 真实 shell 输出，不依赖 timeout 自动捕获 | **current final：`20260611_final_integrated_0001_0009_demo.mp4` 已录制并登记 SHA256**（覆盖 `0001-0009` 含 memstat/fdinfo）；`0001-0007` 视频与旧三段视频为 historical evidence；视频/截图隐私复核已由用户确认 OK；平台提交方式待最终确认 | `submissions/demo_record.md`，`submissions/evidence_manifest.md` |
 
-## 覆盖范围
+## 一键验证路径
 
-integrated suite `0001-0009` 的 full verification 覆盖 doctor、baseline、apply+make、boot、十个用户程序检查和 overall。十个用户程序为 `hello`、`add2test`、`pstatetest`、`pcounttest`、`pchildtest`、`fcounttest`、`pgcounttest`、`fdcounttest`、`memstattest`、`fdinfotest`。
-
-## 推荐命令
+第一次正式复现：
 
 ```bash
 bash scripts/xv6/teammate-verify.sh --full
-bash scripts/labctl.sh verify
 ```
 
-已完成构建后的快速重测：
+已 make 成功后的重测：
 
 ```bash
 bash scripts/xv6/teammate-verify.sh --quick
 ```
 
-## 证据状态
+队长录屏前：
 
-rain、root、z2996 三方 full verification 已登记为 PASS，`grade-summaries` 解析为 3 clean PASS。最终视频 `20260611_final_integrated_0001_0009_demo.mp4` 与 SHA256 已登记。historical `0001-0007` 不覆盖 `memstat` 和 `fdinfo`。
+```bash
+bash scripts/xv6/local-verify.sh --quick
+```
 
-## 质量标准
+## 失败处理
 
-验证文档必须写清 suite、命令、匹配文本和证据位置。易变输出只匹配稳定前缀。raw logs、summary 原件、截图和视频不进入 Git。
+```bash
+bash scripts/xv6/cleanup-qemu.sh
+```
 
-## 边界条件
+如果同一个 shell 里误按过 `Ctrl+Z`，还需要：
 
-timeout evidence 不是长期稳定性测试。队长本机验证不等于队友复现。PPT 引用证据不等于证据本体。
+```bash
+jobs -l
+kill %1
+```
 
-## 内容范围
+## 证据边界
 
-本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 当前正式验证范围、历史证据、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
-
-## 结构规范
-
-文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 当前正式验证范围。
-
-## 语言风格
-
-使用中文技术写作风格，命令、文件名、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。
+- summary 和 raw logs 不提交 Git。
+- 脚本 PASS 必须来自真实日志匹配，不从 expected text 标题中伪匹配。
+- `apply-integrated-labs.sh --make --yes` 打印 `[OK] make completed successfully` 才表示 make 阶段完成。
+- manual video 与 timeout evidence 分开记录。
+- 队友复现记录只保存文字摘要和外部证据 SHA256；原始 logs、summary 文件和截图不入仓。
+- Lab3 当前已进入 integrated `0006`，Lab4 v0.2 `fdcount()` 已进入 integrated `0007`；stage11b 进阶 `memstat` 进入 integrated `0008`、`fdinfo` 进入 integrated `0009`，final integrated suite 扩展为 `0001-0009`。证据层级：current final 为 `db85947 / 0001-0009` 三方 full PASS（stage14 已登记）；`e8e2fb9 / 0001-0007` 三方 PASS 为 historical stable checkpoint；`1ba9db6` 记录只覆盖更早 workflow。

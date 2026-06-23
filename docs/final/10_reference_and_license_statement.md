@@ -1,41 +1,77 @@
-# 10 Reference and License Statement
+# 10 参考来源与许可证说明（Reference and License Statement）
 
-## 目标
+## xv6-riscv baseline
 
-本文说明本项目引用、参考和许可证边界，避免混淆上游 xv6、外部课程资料和本队增量贡献。
+| 字段 | 内容 |
+| --- | --- |
+| 上游仓库 | `https://github.com/mit-pdos/xv6-riscv.git` |
+| baseline commit | `74f84181a3404d1d6a6ff98d342233979066ebb8` |
+| 本地路径 | `external/xv6-riscv/` |
+| metadata | `external/xv6-baseline-record.md` |
+| LICENSE | MIT License（已从本地 `external/xv6-riscv/LICENSE` 核对） |
 
-## 适用对象
+`external/xv6-riscv/` 不入库。本仓库只提交自有文档、脚本、patch、测试摘要和 metadata。
 
-适用于评审、队伍成员、指导教师和后续维护者。
+## xv6 MIT License 边界
 
-## 上游项目
+xv6-riscv 上游 LICENSE 为 MIT License。项目使用 xv6 作为教学 OS baseline，并通过 patch 展示增量修改。提交材料应保留上游来源、baseline commit 和 LICENSE 说明，不应声称拥有 xv6 上游源码版权。
 
-本项目基于 MIT PDOS `xv6-riscv`，baseline 版本由 `scripts/xv6/apply-integrated-labs.sh` 和 `external/xv6-baseline-record.md` 记录。上游源码按其许可证使用，本仓库不提交 `external/xv6-riscv/`。
+本仓库不复制完整上游源码；如最终提交包需要包含 patch，应说明 patch 是基于上述 baseline 生成的增量。
 
-## 参考资料
+## 参考项目
 
-MIT 6.1810、xv6-riscv book、uCore、rCore、PKE、YatSen OS、F-Tutorials 和往届 OS 竞赛作品用于定位课程组织、实验表达和提交材料结构。正式引用应核对 URL 和许可证。
+以下项目可作为课程组织、实验结构和竞赛材料展示参考。正式报告/PPT 中使用时必须补充具体 URL、许可证和引用位置。团队收集的候选链接已整理在 [references/README.md](../../references/README.md)（每条标了用途和阅读时机）；放入本声明前仍需逐项核对许可证，下表"待核对"状态以本文件为准。
 
-## 本队增量
+| 参考 | 用途 | 当前状态 |
+| --- | --- | --- |
+| uCore Tutorial / uCore OS Lab | 分阶段 OS 实验组织参考 | URL/许可证待核对 |
+| rCore Tutorial | 教程结构、实验章节化参考 | URL/许可证待核对 |
+| YatSen OS | 往届/同类课程 OS 材料展示参考 | URL/许可证待核对 |
+| F-Tutorials | tutorial 组织和教学表达参考 | URL/许可证待核对 |
+| 往届 OS 竞赛资料 | 提交材料结构、评审关注点参考 | URL/许可证待核对 |
 
-本队增量包括 Lab1-Lab4 独立 patch、integrated `0001-0009`、Lab5 综合复现、验证脚本、`labctl`、教师指南、评分标准、排障手册、正式技术报告、PPT 文稿和证据索引。
+当前 `docs/final/` 中只做定位性对比，不复制上述项目的大段文本、代码或图片。
 
-## 质量标准
+## 最终核对表（Final-Check Table）
 
-引用材料时应说明用途，不把外部项目内容写成本队原创。若最终提交平台要求更严格的引用格式，应以平台规范补充。
+| 项目 | 类型 | URL 状态 | License 状态 | 是否作为直接来源 | 当前处理 |
+| --- | --- | --- | --- | --- | --- |
+| xv6-riscv | baseline / teaching OS | 已记录：`https://github.com/mit-pdos/xv6-riscv.git` | 已核对：MIT License，本地 `external/xv6-riscv/LICENSE` | 是，作为 baseline；本仓库提交 patch 增量 | 记录 baseline commit、MIT License 和 external 不入仓边界 |
+| uCore Tutorial / uCore OS Lab | reference candidate | 待核对 | 待核对 | 否；仅作为课程实验组织对比候选 | 最终报告/PPT 如引用需补 URL/license，不复制代码或大段文本 |
+| rCore Tutorial | reference candidate | 待核对 | 待核对 | 否；仅作为教程结构对比候选 | 最终报告/PPT 如引用需补 URL/license，不复制代码或大段文本 |
+| YatSen OS | reference candidate | 待核对 | 待核对 | 否；仅作为同类课程/竞赛材料展示参考 | 最终报告/PPT 如引用需补 URL/license，不复制代码或图片 |
+| F-Tutorials | reference candidate | 待核对 | 待核对 | 否；仅作为 tutorial 组织参考候选 | 最终报告/PPT 如引用需补 URL/license，不复制代码或大段文本 |
+| 往届 OS 竞赛作品 | reference candidate | 待核对 | 待核对 | 否；仅作为提交材料结构和评审关注点参考 | 最终报告/PPT 如引用需补 URL/license，不复制私有材料 |
 
-## 边界条件
+## 待核对清单
 
-不复制外部项目代码、图片、PPT 或大段文本。不用未经核对的许可证判断作为正式声明。
+最终技术报告/PPT 引用前必须逐项核对 URL、许可证和引用位置，不要在未核对时补造链接：
 
-## 内容范围
+- uCore Tutorial / uCore OS Lab。
+- rCore Tutorial。
+- YatSen OS。
+- F-Tutorials。
+- xv6-riscv MIT License。
+- 往届 OS 竞赛作品仓库。
 
-本文内容限定在当前标题所对应的项目记录、教学说明、复现步骤或审查结论内。涉及 当前正式验证范围、历史证据、验证命令和证据材料时，应以 `submissions/evidence_manifest.md`、`patches/integrated-labs/README.md` 和相关脚本为准。
+当前已确认项：xv6-riscv 是本项目上游 baseline，baseline commit 为 `74f84181a3404d1d6a6ff98d342233979066ebb8`，LICENSE 为 MIT License，`external/xv6-riscv/` 不入仓。
 
-## 结构规范
+stage10c final check 结论：当前仓库内只确认了 xv6-riscv 的上游 URL、baseline commit 和 MIT License。uCore、rCore、YatSen OS、F-Tutorials、往届作品仍只作为同类项目对比候选；在未完成 URL/license 核对前，技术报告和 PPT 只使用概括性定位对比，不把它们写成直接来源。
 
-文档应按“背景或问题、过程或设计、证据或命令、风险和后续动作”的顺序组织。历史文档可保留阶段性记录，但必须避免覆盖 当前正式验证范围。
+## 本队增量贡献
 
-## 语言风格
+- `patches/lab1-system-call/`：hello/add2 syscall 教学 patch。
+- `patches/lab2-process-observation/`：pstate independent patch。
+- `patches/lab4-file-table-observation/`：fcount independent patch。
+- `patches/integrated-labs/0001-0007`：统一 syscall number 的综合 patch sequence。
+- `scripts/xv6/`：fetch/check/apply/boot/run/doctor/local/teammate/cleanup 工具链。
+- `docs/final/`：面向提交和评委阅读的正式文档入口。
+- OUC 本校课程叙事、一键验证、队友复现流程、测试覆盖表和诚信边界说明。
 
-使用中文技术写作风格，命令、文件名、syscall 名和 SHA256 保持原样。结论应有证据支撑，不使用宣传性、绝对化或无法验证的表述。
+## 禁止事项
+
+- 不把第三方源码写成自有源码。
+- 不提交 `external/xv6-riscv/`。
+- 不复制大段外部教程或论文。
+- 不在未核对许可证的情况下使用外部图片、PPT、视频或代码。
+- 不把参考项目对比写成已完成的功能来源。

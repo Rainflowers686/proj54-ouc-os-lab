@@ -1,29 +1,72 @@
-# External Directory
+# external
 
-## 目标
+This directory is reserved for third-party baselines and related metadata.
 
-本目录说明第三方 xv6-riscv 源码的本地放置方式和不入库边界。
+## Policy
 
-## 适用对象
+- Third-party source trees under `external/` are not committed as plain source.
+- `external/xv6-riscv/` is a local clone target and is ignored by `.gitignore`.
+- `external/README.md` and `external/xv6-baseline-record.md` are tracked project metadata.
+- Do not place registration materials, private account data, screenshots, tokens, or large binaries here.
 
-适用于复现人员、维护者和评审。
+## xv6-riscv Baseline
 
-## 内容范围
+Default upstream:
 
-`external/xv6-riscv/` 是本地工作目录，用于 clone 上游 xv6-riscv 并应用 patch。该目录被 Git 忽略。baseline metadata 可记录在 `external/xv6-baseline-record.md`。
+```text
+https://github.com/mit-pdos/xv6-riscv.git
+```
 
-## 结构规范
+Default local path:
 
-外部源码说明应写清上游仓库、baseline 版本、用途和不提交策略。
+```text
+external/xv6-riscv
+```
 
-## 语言风格
+Metadata record:
 
-使用依赖说明语言，不把上游源码写成本队贡献。
+```text
+external/xv6-baseline-record.md
+```
 
-## 质量标准
+The metadata record stores the upstream URL, current commit hash, current branch, remote URL, LICENSE presence, generation time, and build status. It does not claim that xv6 has been built or booted.
 
-任何复现文档引用 baseline 时应与这里和正式文档一致。
+## Script Usage
 
-## 边界条件
+Preview only:
 
-不提交 `external/xv6-riscv/`、raw logs、summary 原件、视频、截图、token、密码或隐私材料。不把 timeout evidence 写成长期稳定性测试。不把 `pgcount`/`memstat` 写成完整内存管理；不把 `fcount`/`fdcount`/`fdinfo` 写成完整文件系统；Lab5 不新增内核机制。
+```bash
+bash scripts/xv6/fetch-xv6.sh
+```
+
+Clone after team-lead authorization:
+
+```bash
+bash scripts/xv6/fetch-xv6.sh --run
+```
+
+Show current local baseline status:
+
+```bash
+bash scripts/xv6/fetch-xv6.sh --status
+```
+
+Check baseline files and tools without running make:
+
+```bash
+bash scripts/xv6/check-xv6-baseline.sh
+```
+
+Future build check, not used in stage1b:
+
+```bash
+bash scripts/xv6/check-xv6-baseline.sh --make
+```
+
+If `--make` is used later, the script writes a real local log under `logs/`. Do not fabricate success or failure results.
+
+## Current Status
+
+- stage1b is authorized to fetch the local xv6 baseline.
+- `make` and QEMU boot verification are not authorized in this stage.
+- Baseline metadata should be committed; third-party source code should not.
