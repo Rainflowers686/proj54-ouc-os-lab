@@ -179,6 +179,7 @@ pstatetest
 
 ## 不要误解什么
 
+- 报告应区分"观察到的某次输出"和"机制上必然成立的事实"。
 - 这不是完整 `ps`，也不修改调度算法——只是状态**观察**。
 - `pcount(RUNNING)` 的数字不固定，`pstate(child)` 的状态受调度时序影响；实验报告里写"观察到的一次取值"，不要写成"必然等于"。
 - lab2 independent patch 用 `SYS_pstate = 22`，和 lab1 independent 的 `SYS_hello = 22` 冲突——independent patch 之间**不可叠加**，这是实测过的（`git apply --check` 直接失败）。组合演示走 integrated `0001-0009`（integrated 里 pstate=24、pcount=25）。

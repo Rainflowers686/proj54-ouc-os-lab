@@ -186,6 +186,7 @@ bash scripts/xv6/run-xv6-command.sh add2test "add2(20, 6) returned 26"
 
 ## 不要误解什么
 
+- 学习重点不是返回 `2026` 或 `26`，而是理解 `usys.pl` stub、`ecall`、`syscall()` 分发、`argint()` 和 `a0` 返回值。
 - lab1 只覆盖 syscall 入门与**整数参数**传递，**未覆盖**指针参数（`argaddr`）、字符串参数（`argstr`）、参数校验语义——这些在 Lab3/Lab4 进阶（`memstat`/`fdinfo`）里才出现。
 - 不要把 lab1 表述为"已覆盖全部 syscall 机制"。
 - `hello()` 返回固定值 `2026` 是刻意设计（让验证文本稳定），不代表 syscall 都该返回常量。

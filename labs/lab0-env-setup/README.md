@@ -2,7 +2,7 @@
 
 ## 实验目标
 
-lab0 面向第一次接触 OS 实验的低年级同学，目标是完成基础环境检查、获取 xv6-riscv baseline metadata，并记录可复现的 baseline build 与 boot evidence。
+Lab0 面向第一次接触 OS 实验的低年级同学。学生应在修改 xv6 前完成工具链检查、baseline 识别、clean build 和 boot evidence 捕获，确认后续实验不是建立在不确定环境上。
 
 本实验不要求修改 xv6 内核代码。
 

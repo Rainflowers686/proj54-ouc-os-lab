@@ -16,7 +16,7 @@ OUC xv6 Lab Kit 是一套面向 OS 课程的 xv6-riscv 入门实验包：按 Lab
 - 一套基于 [xv6-riscv](https://github.com/mit-pdos/xv6-riscv) 的分阶段实验：Lab0 到 Lab5，外加一条把所有实验合在一个内核里的 integrated patch 路线（`0001-0009`）。
 - 每个实验都是"小步增量"：一个 patch、一个用户测试程序、一组能照抄的验证命令。
 - 所有实验都能从干净的 xv6 源码一键复现——这不是口号，仓库里有脚本（`scripts/xv6/`）替你做 reset、apply、make、boot、跑测试。
-- 仓库不包含 xv6 源码本体（第三方代码不入库），只包含我们写的 patch、脚本、文档和测试记录。
+- 本仓库不保存第三方 xv6 源码本体。`external/xv6-riscv/` 是本地工作目录并被 Git 忽略；仓库只保存本队写的 patch、脚本、文档和测试记录。
 
 ## 适合谁
 
@@ -45,7 +45,7 @@ OUC xv6 Lab Kit 是一套面向 OS 课程的 xv6-riscv 入门实验包：按 Lab
 
 ## 从零开始怎么学
 
-> 所有 make/QEMU 命令都要在 WSL2 Ubuntu 或等价 Linux 里跑，Windows Git Bash 只能看文档。环境装好前别急着跳关。
+> 所有 make/QEMU 命令都要在 WSL2 Ubuntu 或等价 Linux 里跑。Windows PowerShell 和 Git Bash 可以看文档，不适合承担 xv6 构建和 QEMU 交互。环境装好前别急着跳关。
 
 - **第 0 步：准备环境。** 看 [docs/final/01_environment_setup.md](docs/final/01_environment_setup.md)，装好 `qemu-system-riscv64` 和 RISC-V gcc，然后跑 `bash scripts/xv6/doctor.sh` 体检。
 - **第 1 步：Lab0，把 xv6 跑起来。** [labs/lab0-env-setup/README.md](labs/lab0-env-setup/README.md)。看到 `init: starting sh` 这关就过了。
@@ -56,7 +56,7 @@ OUC xv6 Lab Kit 是一套面向 OS 课程的 xv6-riscv 入门实验包：按 Lab
 - **第 6 步：Lab5，综合复现。** [labs/lab5-final-integration/README.md](labs/lab5-final-integration/README.md)。把全部实验串成一次验收。
 - **第 7 步：integrated `0001-0009`。** 一个内核同时装下全部 9 个实验 syscall（编号 22-30），入口见 [patches/integrated-labs/README.md](patches/integrated-labs/README.md)。
 
-每个 lab 目录里有两个文件：`README.md` 是教程，`student_tasks.md` 是练习和验收标准。建议先读教程、跑通验证命令，再做任务。做完一关可以只测这一关：`bash scripts/labctl.sh test lab3`。
+每个 lab 目录里有两个文件：`README.md` 是教程，`student_tasks.md` 是作业、验收标准和评分细则。建议先读教程、跑通验证命令，再做任务。做完一关可以只测这一关：`bash scripts/labctl.sh test lab3`。
 
 ## 做实验前建议补的知识
 

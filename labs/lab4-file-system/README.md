@@ -147,7 +147,7 @@ bash scripts/xv6/run-xv6-command.sh fdcounttest "fdcounttest done"
 
 ## 不要误解什么
 
-- 这不是完整文件系统实验：不观察 inode，不修改文件系统布局，`fdinfo` 不返回路径/inode 号/文件内容。
+- 这不是完整文件系统实验：不讲磁盘布局、路径解析或 inode 管理；`fdinfo` 也不返回路径、inode 号或文件内容。
 - `fdinfo` 只能查**自己**的 fd（`myproc()->ofile[fd]`），没有实现跨进程的 `fdinfo(pid, fd)`，也没有 open file summary。
 - `fcount` 的绝对数字不固定，稳定的只有 open/close 的 +1/-1 delta。
 - timeout 自动捕获不等于长期稳定性测试。
