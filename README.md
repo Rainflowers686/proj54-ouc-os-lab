@@ -1,6 +1,6 @@
 # OUC xv6 Lab Kit：从零开始的操作系统实验
 
-OUC xv6 Lab Kit 是一套面向 OS 课程的 xv6-riscv 入门实验包：按 Lab0-Lab5 一关一关走，逐步理解 syscall、进程、页表、fd/file 的关系，最后能从干净源码完成一次可复现的完整验证。它不假设你写过内核——做完之后，你能自己给内核加一个系统调用，并讲清它从用户态到内核态的完整路径。
+OUC xv6 Lab Kit 是一套面向 OS 课程的 xv6-riscv 入门实验包。它把环境、syscall、进程、页表、fd/file 和综合复现拆成 Lab0-Lab5 六步，让第一次接触内核的同学也能按顺序走下去。它不假设你写过内核；做完之后，你应该能自己给 xv6 加一个系统调用，并讲清它从用户态到内核态的完整路径。
 
 ## 如果你是第一次做 OS 实验，先看这里
 
@@ -15,7 +15,7 @@ OUC xv6 Lab Kit 是一套面向 OS 课程的 xv6-riscv 入门实验包：按 Lab
 
 - 一套基于 [xv6-riscv](https://github.com/mit-pdos/xv6-riscv) 的分阶段实验：Lab0 到 Lab5，外加一条把所有实验合在一个内核里的 integrated patch 路线（`0001-0009`）。
 - 每个实验都是"小步增量"：一个 patch、一个用户测试程序、一组能照抄的验证命令。
-- 所有实验都能从干净的 xv6 源码一键复现——这不是口号，仓库里有脚本（`scripts/xv6/`）替你做 reset、apply、make、boot、跑测试。
+- 所有实验都能从干净的 xv6 源码重新跑。仓库里的脚本（`scripts/xv6/`）会按固定顺序做 reset、apply、make、boot 和测试，减少手工步骤出错。
 - 本仓库不保存第三方 xv6 源码本体。`external/xv6-riscv/` 是本地工作目录并被 Git 忽略；仓库只保存本队写的 patch、脚本、文档和测试记录。
 
 ## 适合谁
@@ -23,7 +23,7 @@ OUC xv6 Lab Kit 是一套面向 OS 课程的 xv6-riscv 入门实验包：按 Lab
 - 大一/大二，学过一点 C，但没碰过内核的同学。
 - 有信息学竞赛背景，或有 C 语言和命令行基础、想提前接触操作系统的自学者——如果能看懂指针和结构体，可以先从 Lab0-Lab2 跟着走一遍；后面的页表、文件表实验再按自己的节奏补。
 - 上 OS 课需要做 xv6 实验、想要一套带验收标准的练习的人。
-- 想看一个"实验怎么做到可复现、证据怎么留"的完整工程样例的人。
+- 想看一个"实验怎么做到可复现、证据怎么留"的实际工程样例的人。
 
 不适合：想找现成大作业答案直接交的人。每个 lab 的 `student_tasks.md` 留了必做任务，答案要你自己写。
 
@@ -82,7 +82,7 @@ OUC xv6 Lab Kit 是一套面向 OS 课程的 xv6-riscv 入门实验包：按 Lab
 
 ## 如果你只想先跑起来
 
-整个课程有一个统一命令入口 `labctl`（它只是封装下面的现有脚本，不重复实现任何逻辑）。在 WSL2 Ubuntu 里：
+如果你只想先确认仓库能不能跑，用 `labctl` 就够。它只是封装下面的现有脚本，不重复实现任何逻辑。在 WSL2 Ubuntu 里：
 
 ```bash
 bash scripts/labctl.sh doctor        # 环境体检
@@ -101,7 +101,7 @@ bash scripts/labctl.sh verify        # 一键 full 验证（等价 teammate-veri
 
 - 教学顺序就按 Lab0-Lab5，2 次、3 次、5 次课的三种切法在 [docs/teacher_guide.md](docs/teacher_guide.md)，含每次课讲什么、怎么处理学生环境问题。
 - 评分用 [docs/grading_and_rubric.md](docs/grading_and_rubric.md)：每个 lab 的任务书自带 100 分细则和常见扣分点。
-- 复现验收统一收 `bash scripts/xv6/teammate-verify.sh --full` 输出的 `COPY THIS SUMMARY TO TEAM LEAD` 块；收齐后 `bash scripts/grade-summaries.sh logs/student-summaries/` 批量解析，它会把 overall 不一致、缺新测试项（旧 suite）、内容雷同的文件标出来——注意这只是辅助验收，最终评分仍按 rubric 和抽查。
+- 复现验收统一收 `bash scripts/xv6/teammate-verify.sh --full` 输出的 `COPY THIS SUMMARY TO TEAM LEAD` 块；收齐后 `bash scripts/grade-summaries.sh logs/student-summaries/` 批量解析。它会把 overall 不一致、缺新测试项（旧 suite）、内容雷同的文件标出来；这只是帮助教先筛一遍，最终评分仍按 rubric、报告和抽查。
 - 提前说清边界，免得学生期望错位：这是观察型/入门型实验包，不是完整 OS 子系统实现，也不改调度器和文件系统布局。
 
 ## 如果你是评委或在看提交材料

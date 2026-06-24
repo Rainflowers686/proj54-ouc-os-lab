@@ -2,9 +2,9 @@
 
 > 维护时间：2026-06-12（stage19 入口微调；结构自 stage12）。current integrated suite 为 `0001-0009`。
 
-docs 目录里既有教程、教师材料，也有比赛报告和大量过程记录。读者不应从 `docs/00` 顺序读到 `docs/24`，而应按身份进入对应路径；编号过程文档主要给追溯历史的人看。
+docs 目录里放了几类材料：学生教程、教师/助教材料、正式提交文档，还有早期过程记录。不要从 `docs/00` 一路顺序读到 `docs/24`。先看你现在要做什么，再进对应入口；编号过程文档主要给追溯历史的人看。
 
-## 1. 第一次学 OS 实验：按这个顺序看
+## 1. 第一次学 OS 实验：先按这个顺序看
 
 1. 根目录 [README.md](../README.md)：学习路线总览（第 0 步到第 7 步），开头还有"建议补的知识"和精选阅读。
 2. [docs/final/01_environment_setup.md](final/01_environment_setup.md)：装环境。
@@ -12,7 +12,7 @@ docs 目录里既有教程、教师材料，也有比赛报告和大量过程记
 4. 卡住了看 [docs/troubleshooting.md](troubleshooting.md)。
 5. 想补背景或往深里走：[references/README.md](../references/README.md)（赛题原文、xv6 官方、rCore/uCore/PKE、往届作品，都标了"什么时候看"）。
 
-学习阶段不需要读 `docs/final/` 的报告，也不需要读编号文档。
+学习阶段先不用读 `docs/final/` 的报告，也不用翻编号文档。先把 Lab0-Lab2 跑通，比提前读完整个仓库更有用。
 
 ## 2. 已经能跑 xv6：直接进 Lab
 
@@ -27,7 +27,7 @@ docs 目录里既有教程、教师材料，也有比赛报告和大量过程记
 - [docs/grading_and_rubric.md](grading_and_rubric.md)：评分建议与常见扣分点。
 - 每个 lab 的 `student_tasks.md` 可以直接当作业布置；验收统一收 `teammate-verify.sh` 的 summary 块，收齐后用 `bash scripts/grade-summaries.sh <目录>` 批量解析和防伪标记（辅助验收，不是评分）。
 
-## 4. 比赛/提交材料：证据在哪
+## 4. 评委/提交材料：先看证据在哪
 
 - [docs/final/](final/)：正式提交文档（项目概述、各 lab 正式版、测试覆盖、设计取舍、AI/许可证声明、技术报告 v1.0）。
 - [submissions/evidence_manifest.md](../submissions/evidence_manifest.md)：证据总索引——current final（`db85947 / 0001-0009`：三方 full PASS + 新视频 + SHA256，stage14 已登记）与 historical checkpoint（`e8e2fb9 / 0001-0007`）分层记录。

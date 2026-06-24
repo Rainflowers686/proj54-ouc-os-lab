@@ -125,7 +125,7 @@ pgcounttest done
 
 ## 进阶可选实验：memstat（advanced optional, independent + integrated `0008`）
 
-`pgcount()` 之后，可以做一个进阶可选实验 `memstat()`，把"数页"升级为"用 `copyout` 把一个结构体拷回用户态"。
+`pgcount()` 之后，可以做一个进阶可选实验 `memstat()`，把"数页"升级为"用 `copyout` 把一个结构体拷回用户态"。这一步主要是为了让你看到：内核不能直接写用户指针，必须按 xv6 的用户地址检查和拷贝规则来。
 
 - patch：`patches/lab3-memory-and-pagetable/0002-add-memstat-syscall.patch`（独立于 `0001`）。
 - 接口：`int memstat(struct memstat *out)`，返回 `{sz_bytes, mapped_pages, page_size}`。

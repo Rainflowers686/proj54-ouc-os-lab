@@ -2,7 +2,7 @@
 
 > 维护时间：2026-06-10（stage13 增补批量解析说明；rubric 自 stage12）。配合各 lab 的 `student_tasks.md` 使用——每份任务书自带 100 分细则，这里给跨 lab 的统一原则和总评建议。
 
-批量收 summary 时先过一遍 `bash scripts/grade-summaries.sh <目录>`：它把"overall 与单项矛盾、缺新测试项、内容雷同、commit 不符"的文件标出来，帮你决定优先抽查谁。**它不自动打分**，只帮助发现风险；干净 PASS 不代表满分，失败但定位清楚也应获得过程分。下面的维度和扣分表才是评分依据。
+批量收 summary 时先过一遍 `bash scripts/grade-summaries.sh <目录>`：它把"overall 与单项矛盾、缺新测试项、内容雷同、commit 不符"的文件标出来，帮你决定优先抽查谁。**它不自动打分**，只帮助发现风险；干净 PASS 不代表满分，失败但定位清楚也应获得过程分。最后还是要看 patch、报告、机制理解和抽查结果。
 
 ## 四个评分维度
 

@@ -2,11 +2,11 @@
 
 ## 这一关学什么
 
-三个观察接口，从粗到细看清"fd → `struct file` → 全局 file table"三层关系：
+三个观察接口，从粗到细看清"fd → `struct file` → 全局 file table"三层关系。这里不讲磁盘布局，也不讲路径解析；先把 fd 后面到底连着什么看清楚。
 
 - `fcount()`：看**全局** file table 里 `ref > 0` 的 `struct file` 有几个——系统级趋势。
 - `fdcount()`：看**当前进程** `ofile[]` 里非空 fd 有几个——你自己开了几个文件。
-- 进阶 `fdinfo(int fd, struct fdinfo *out)`：看**单个 fd** 的结构化状态 `{type, readable, writable, ref}`，用 `argint + argaddr + copyout` 拷回来。
+- 进阶 `fdinfo(int fd, struct fdinfo *out)`：看**单个 fd** 的结构化状态 `{type, readable, writable, ref}`，用 `argint + argaddr + copyout` 拷回来；它不返回路径、inode 号或文件内容。
 
 配套实验：`open` 让 fcount/fdcount 都 +1；`dup` 让 fdcount +1 但 fcount **不变**（两个 fd 指向同一个 `struct file`，只是 `ref` +1）；`close` 反向。这一组对比做完，三层关系就不再是背的。
 

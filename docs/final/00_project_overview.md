@@ -2,13 +2,13 @@
 
 ## 一句话简介
 
-OUC xv6 Lab Kit 是面向中国海洋大学操作系统课程的 xv6-riscv 分阶段实验指导、参考实现与可复现验证体系。
+OUC xv6 Lab Kit 是面向中国海洋大学操作系统课程的 xv6-riscv 分阶段实验包，包含教程、参考 patch、验证脚本和复现证据。
 
 ## 赛题定位
 
 本项目对应 2026 全国大学生计算机系统能力大赛 - 操作系统设计赛（全国）- OS 功能挑战赛道 proj54：面向操作系统课程的操作系统竞赛和实验。
 
-proj54 是教学型功能挑战，不是“内核实现赛道刷 LTP”项目。本项目的核心价值不是堆叠大量未验证内核功能，而是把低年级同学可以理解、可以复现、可以继续扩展的 OS 实验链条搭起来。
+proj54 是教学型功能挑战，不是“内核实现赛道刷 LTP”项目。本项目不追求堆叠大量内核功能，而是把低年级同学能理解、能复现、能继续改的 OS 实验步骤整理清楚。
 
 ## 面向对象
 
@@ -26,7 +26,7 @@ proj54 是教学型功能挑战，不是“内核实现赛道刷 LTP”项目。
 | 决赛 | 初赛阶段成绩 | 20% | 以上初赛材料与 current final evidence 继续作为基础证据 |
 | 决赛 | 决赛阶段成绩 | 80% | 现场答辩、最终技术报告、最终 PPT、演示视频、提交过程记录、源码分析和最终方案说明 |
 | 决赛阶段 | 项目/源代码执行展示 | 15% | clean baseline apply、integrated `0001-0009`、`labctl`、full/quick verification、final demo video |
-| 决赛阶段 | 设计方案文档撰写 | 25% | `docs/final/technical_report_v1.0.md`、`docs/final/` 正式文档体系、lab 教学文档、教师指南和评分 rubric |
+| 决赛阶段 | 设计方案文档撰写 | 25% | `docs/final/technical_report_v1.0.md`、`docs/final/` 正式文档、lab 教学文档、教师指南和评分 rubric |
 | 决赛阶段 | 现场答辩/提交过程记录/源码分析/最终设计方案/答辩幻灯片/作品演示视频 | 40% | `slides/final_defense_ppt.pptx`、`submissions/evidence_manifest.md`、`submissions/demo_record.md`、`submissions/teammate_reproduction_record.md`、外部 demo video 与 SHA256 |
 
 ## 当前完成状态
@@ -56,7 +56,7 @@ proj54 是教学型功能挑战，不是“内核实现赛道刷 LTP”项目。
 5. lab4 连接用户态 fd、内核 `struct file`、全局 file table 和引用计数。
 6. integrated-labs 让多个实验在同一构建中演示，避免“每个实验只能孤立跑”的问题。
 
-这个组织方式更适合课程教学和竞赛入门，而不是单次功能冲刺。
+这种安排更适合课程教学和竞赛入门，而不是一次性堆功能。
 
 ## 同类项目对比定位
 
