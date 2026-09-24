@@ -2,11 +2,13 @@
 
 *A six-lab xv6-riscv learning path for OUC operating-systems coursework.*
 
+![xv6-riscv](https://img.shields.io/badge/xv6-RISC--V-5A4FCF) ![C](https://img.shields.io/badge/Language-C-A8B9CC?logo=c&logoColor=white) ![Course learning kit](https://img.shields.io/badge/Status-Course%20learning%20kit-687078)
 
-[English](README.md) | [简体中文](README.zh-CN.md)
+
 
 **Guide:** [Status](#project-status) · [Where to start](#where-to-start)
 
+[English](README.md) | [简体中文](README.zh-CN.md)
 
 OUC xv6 Lab Kit is a learning repository for an operating-systems course. It organizes an xv6-riscv path into six labs, from setup through core kernel work and integrated reproduction.
 
